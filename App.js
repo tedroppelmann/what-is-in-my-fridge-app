@@ -32,6 +32,7 @@ import MainScreen from  './components/Main'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Stack = createStackNavigator();
+
 export class App extends Component {
   constructor(props) {
     super(props);
@@ -79,7 +80,11 @@ export class App extends Component {
     }
     return (
       <Provider store={store}>
-        <MainScreen/>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName='Main'>
+            <Stack.Screen name="Main" component={MainScreen} options={{headerShown: false}}/>
+          </Stack.Navigator>
+        </NavigationContainer>
       </Provider>
     )
   }
