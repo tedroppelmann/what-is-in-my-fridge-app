@@ -2,15 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
+import rootReducer from './redux/reducers'
+import thunk from 'redux-thunk'
+const store = createStore(rootReducer, applyMiddleware(thunk))
+
+
 import { initializeApp } from "firebase/app";
 const firebaseConfig = {
-  apiKey: "AIzaSyDs9yOIS_NCtQyOYZXH66KTQx2be3IgCPo",
-  authDomain: "mobile-app-course-a4cea.firebaseapp.com",
-  projectId: "mobile-app-course-a4cea",
-  storageBucket: "mobile-app-course-a4cea.appspot.com",
-  messagingSenderId: "1052673092228",
-  appId: "1:1052673092228:web:1b2d2e524e538823dd70d1",
-  measurementId: "G-MK3L8MRG8H"
+  apiKey: "AIzaSyDit6k1tOCrdsXQudPATUdQytB-LryhE10",
+  authDomain: "mobile-app-dev-b6760.firebaseapp.com",
+  projectId: "mobile-app-dev-b6760",
+  storageBucket: "mobile-app-dev-b6760.appspot.com",
+  messagingSenderId: "727645352873",
+  appId: "1:727645352873:web:b13fae7f75dd0be97a4ab8",
+  measurementId: "G-X3BSQKSRTP"
 };
 const app = initializeApp(firebaseConfig);
 
@@ -20,6 +27,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LandingScreen from './components/auth/Landing';
 import RegisterScreen from './components/auth/Register';
 import LoginScreen from './components/auth/Login';
+import MainScreen from  './components/Main'
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -70,9 +78,9 @@ export class App extends Component {
       )
     }
     return (
-      <View style={{ flex: 1, justifyContent: 'center'}}>
-        <Text>User is logged in </Text>
-      </View>
+      <Provider store={store}>
+        <MainScreen/>
+      </Provider>
     )
   }
 }
