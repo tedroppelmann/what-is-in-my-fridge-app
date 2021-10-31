@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { ActivityIndicator, View, Text } from 'react-native'
 
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
@@ -63,7 +63,7 @@ export class App extends Component {
     if (!loaded) {
       return (
         <View style={{ flex: 1, justifyContent: 'center'}}>
-          <Text>Loading</Text>
+          <ActivityIndicator size="large" />
         </View>
       )
     }
