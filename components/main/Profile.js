@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Button, Text } from 'react-native'
+import { Title } from 'react-native-paper';
 
 import { getAuth }  from 'firebase/auth'
 
@@ -23,8 +24,8 @@ function Profile(props) {
     return (
         <View style={styles.container}>
             <View style={styles.containerInfo}>
-                <Text>Nombre: {user.name}</Text>
-                <Text>Email: {user.email}</Text>
+                <Title style={styles.titleInfo}>{user.name}</Title>
+                <Title style={styles.subtitleInfo}>{user.email}</Title>
                 <Button
                     title="Logout"
                     onPress={() => onLogout()}
@@ -40,6 +41,13 @@ const styles = StyleSheet.create({
     },
     containerInfo: {
         margin: 20
+    },
+    titleInfo: {
+        alignSelf: 'center',
+    },
+    subtitleInfo: {
+        alignSelf: 'center',
+        fontSize: 11,
     },
 })
 
