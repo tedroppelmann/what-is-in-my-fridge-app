@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Button, Text } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Title } from 'react-native-paper';
+
+import {
+    Input,
+    Button,
+    IconButton,
+    Checkbox,
+    Text,
+    VStack,
+    HStack,
+    Heading,
+    Icon,
+    Center,
+    Box,
+    NativeBaseProvider,
+  } from 'native-base';
 
 export default function Find() {
     return (

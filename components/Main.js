@@ -18,11 +18,11 @@ export class Main extends Component {
     }
     render() {
         return (
-            <Tab.Navigator initialRouteName='Feed' tabBarOptions={{showLabel: false}}> 
+            <Tab.Navigator initialRouteName='Find' tabBarOptions={{showLabel: false}}> 
                 <Tab.Screen name='Feed' component={FeedScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='history' color={color} size={26} />
+                            <MaterialCommunityIcons name='star-outline' color={color} size={26} />
                         ),
                     }} />
                 <Tab.Screen name='Find' component={FindScreen}

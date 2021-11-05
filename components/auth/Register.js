@@ -1,8 +1,24 @@
 import React, { Component } from 'react'
-import { View, Button, TextInput } from 'react-native'
+import { View, TextInput } from 'react-native'
 
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, doc } from "firebase/firestore";
+
+import {
+    NativeBaseProvider,
+    Box,
+    Text,
+    Heading,
+    VStack,
+    FormControl,
+    Input,
+    Link,
+    Button,
+    Icon,
+    IconButton,
+    HStack,
+    Divider,
+} from 'native-base';
 
 export class Register extends Component {
     constructor(props) {
@@ -36,25 +52,46 @@ export class Register extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <TextInput
-                    placeholder='name'
-                    onChangeText={(name) => this.setState({ name })}
-                />
-                <TextInput
-                    placeholder='email'
-                    onChangeText={(email) => this.setState({ email })}
-                />
-                <TextInput
-                    placeholder='password'
-                    secureTextEntry={true}
-                    onChangeText={(password) => this.setState({ password })}
-                />
-                <Button
-                    onPress={() => this.onSignUp()}
-                    title='Sign Up'
-                />
-            </View>
+            <NativeBaseProvider>
+                <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
+                    <Heading size='xl'>
+                        Welcome
+                    </Heading>
+                    <Heading size="xs">
+                        Sign up to continue!
+                    </Heading>
+                    <VStack space={3} mt="5">
+                        <FormControl>
+                            <FormControl.Label>
+                                Name
+                            </FormControl.Label>
+                            <Input 
+                                onChangeText={(name) => this.setState({ name })}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormControl.Label>
+                                Email
+                            </FormControl.Label>
+                            <Input 
+                                onChangeText={(email) => this.setState({ email })}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormControl.Label>
+                                Password
+                            </FormControl.Label>
+                            <Input 
+                                type="password"
+                                onChangeText={(password) => this.setState({ password })}
+                            />
+                        </FormControl>
+                        <Button onPress={() => this.onSignUp()}>
+                            Sign up
+                        </Button>
+                    </VStack>
+                </Box>
+            </NativeBaseProvider>
         )
     }
 }
