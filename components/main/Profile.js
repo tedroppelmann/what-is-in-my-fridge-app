@@ -26,12 +26,20 @@ function Profile(props) {
             <View style={styles.containerInfo}>
                 <Title style={styles.titleInfo}>{user.name}</Title>
                 <Title style={styles.subtitleInfo}>{user.email}</Title>
-                <Button
+                <Button 
+                    title="Configure Dietary Restrictions"
+                    onPress={() => navigation.navigate('Restrictions')}
+                />
+            </View>
+            <View style={styles.footPage}>
+                <Button 
+                    style={styles.footPage}
                     title="Logout"
                     onPress={() => onLogout()}
                 />
             </View>
         </View>
+        
     )
 }
 
@@ -41,6 +49,9 @@ const styles = StyleSheet.create({
     },
     containerInfo: {
         margin: 20
+    },
+    footPage: {
+        alignSelf: 'flex-end',
     },
     titleInfo: {
         alignSelf: 'center',
