@@ -17,10 +17,31 @@ export class Restrictions extends Component{
 
         }
 
-        this.setDietForLoggedUser = this.setDietForLoggedUser.bind(this)
+        this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
+        this.setDiet = this.setDiet.bind(this)
     }
 
-    async setDietForLoggedUser(){
+    setDiet(){
+        // First create an array with all the diet restrictions depending on the enabled switches
+        var diets = [];
+        if(this.toggleSwitchGlutenFree == true){
+            diets.push("Gluten Free");
+        }else{
+            console.log("Gluten Free switch not selected");
+        }
+        if(this.toggleSwitchVegan == true){
+            diets.push("Vegan");
+        }else{
+            console.log("Vegan switch not selected");
+        }
+
+        // Second, returns a string separated by commas depending on the values added to the array
+        var dietsToString = diets.toString();
+        console.log("DietsToString: ", dietsToString);
+        return dietsToString;
+    }
+
+    async saveDietForLoggedUser(){
         try{
             var userDocId = "";
             var userDoc;
@@ -36,10 +57,12 @@ export class Restrictions extends Component{
                 userDocId = doc.id
             });
             
+            var diets = this.setDiet();
+            console.log(diets);
             if (userDocId != "") {
                 //Insert Diet for logged in user
                 const userDoc = doc(db, 'Users', userDocId);
-                await updateDoc(userDoc, { diets: 'GlutenFreeeee' });
+                await updateDoc(userDoc, { diets: diets }); // { fieldOnFirestore : reactVariable }
                 console.log("Document updated: ", userDocId);
             } else {
                 // doc.data() will be undefined in this case
@@ -52,9 +75,11 @@ export class Restrictions extends Component{
 
     toggleSwitchGlutenFree = (value) => {
         this.setState({toggledGlutenFree : value})
+        console.log("toggleSwitchGlutenFreeValue", value)
     }
     toggleSwitchVegan = (value) => {
         this.setState({toggledVegan : value})
+        console.log("toggleSwitchVeganValue", value)
     }
 
     render(){
@@ -77,7 +102,7 @@ export class Restrictions extends Component{
                             />
                         </HStack>
                         <HStack>
-                            <Button mt='2' onPress={() => this.setDietForLoggedUser()}>
+                            <Button mt='2' onPress={() => this.saveDietForLoggedUser()}>
                                 Save Diets
                             </Button>
                         </HStack>
