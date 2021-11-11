@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Button, Text } from 'react-native'
-import { Title } from 'react-native-paper';
-
+import { StyleSheet, View } from 'react-native'
+import { NativeBaseProvider, Button, VStack, Box, Stack } from 'native-base'
+import { Title } from 'react-native-paper'
 import { getAuth }  from 'firebase/auth'
-
 import { connect } from 'react-redux'
+import { render } from 'react-dom'
 
 function Profile(props) {
+    const navigation = props.navigation;
+
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -21,25 +23,24 @@ function Profile(props) {
     if (user === null) {
         return <View></View>
     }
-    return (
-        <View style={styles.container}>
-            <View style={styles.containerInfo}>
-                <Title style={styles.titleInfo}>{user.name}</Title>
-                <Title style={styles.subtitleInfo}>{user.email}</Title>
-                <Button 
-                    title="Configure Dietary Restrictions"
-                    onPress={() => navigation.navigate('Restrictions')}
-                />
-            </View>
-            <View style={styles.footPage}>
-                <Button 
-                    style={styles.footPage}
-                    title="Logout"
-                    onPress={() => onLogout()}
-                />
-            </View>
-        </View>
-        
+
+    return (   
+        <NativeBaseProvider>
+            <Box>
+                <View style={styles.containerInfo}>
+                    <Title style={styles.titleInfo}>{user.name}</Title>
+                    <Title style={styles.subtitleInfo}>{user.email}</Title>
+                </View>
+                <VStack style={styles.containerInfo}>
+                    <Button onPress={() => navigation.navigate('Restrictions')}>
+                        Setup Dietary Restrictions
+                    </Button>
+                    <Button mt='2' onPress={() => onLogout()}>
+                        Logout
+                    </Button>
+                </VStack>
+            </Box>
+        </NativeBaseProvider>
     )
 }
 
@@ -48,17 +49,20 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     containerInfo: {
-        margin: 20
+        margin: 20,
     },
     footPage: {
-        alignSelf: 'flex-end',
+        width: '100%',
+        height: 35, 
+        position: 'absolute',
+        bottom: 5,
     },
     titleInfo: {
         alignSelf: 'center',
     },
     subtitleInfo: {
         alignSelf: 'center',
-        fontSize: 11,
+        fontSize: 14, 
     },
 })
 
