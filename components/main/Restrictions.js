@@ -24,12 +24,12 @@ export class Restrictions extends Component{
     setDiet(){
         // First create an array with all the diet restrictions depending on the enabled switches
         var diets = [];
-        if(this.toggleSwitchGlutenFree == true){
+        if(this.state.toggledGlutenFree === true){
             diets.push("Gluten Free");
         }else{
             console.log("Gluten Free switch not selected");
         }
-        if(this.toggleSwitchVegan == true){
+        if(this.state.toggledVegan === true){
             diets.push("Vegan");
         }else{
             console.log("Vegan switch not selected");
@@ -44,7 +44,6 @@ export class Restrictions extends Component{
     async saveDietForLoggedUser(){
         try{
             var userDocId = "";
-            var userDoc;
             const db = getFirestore();
             //Get the firestore db
             const usersDb = collection(db, "Users");
