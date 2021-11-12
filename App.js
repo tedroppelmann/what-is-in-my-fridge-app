@@ -30,8 +30,12 @@ import LoginScreen from './components/auth/Login';
 import MainScreen from  './components/Main';
 import FindScreen from  './components/main/Find';
 import RecipesScreen from  './components/main/Recipes/Recipes';
-import ProfileScreen from  './components/main/Profile.js'; //AL Modifications
-import RestrictionsScreen from  './components/main/Restrictions.js'; //AL Modifications
+/* AL Modifications */
+import ProfileScreen from  './components/main/Profile';
+import DietRestrictionsScreen from  './components/main/Diet Restrictions';
+import IntoleranceRestrictionsScreen from  './components/main/Intolerance Restrictions';
+import IngredientsExclusionScreen from  './components/main/Ingredients Exclusion';
+/* AL Modifications Finish */
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -91,7 +95,9 @@ export class App extends Component {
             <Stack.Screen name="Recipes" component={RecipesScreen}/>
             {/* AL Modifications */}
             <Stack.Screen name="Profile" component={ProfileScreen}/>
-            <Stack.Screen name="Restrictions" component={RestrictionsScreen}/>
+            <Stack.Screen name="DietRestrictions" component={DietRestrictionsScreen}/>
+            <Stack.Screen name="IntoleranceRestrictions" component={IntoleranceRestrictionsScreen}/>
+            <Stack.Screen name="IngredientsExclusion" component={IngredientsExclusionScreen}/>
             {/* AL Modifications Finish */}
           </Stack.Navigator>
         </NavigationContainer>

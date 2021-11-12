@@ -7,7 +7,7 @@ import { render } from 'react-dom'
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, getDoc, getDocs, doc, updateDoc, collection, query, where } from "firebase/firestore";
 
-export class Restrictions extends Component{
+export class IntoleranceRestrictions extends Component{
     
     constructor(props) {
         super(props);
@@ -138,4 +138,4 @@ const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
 
-export default connect(mapStateToProps, null)(Restrictions);
+export default connect(mapStateToProps, null)(IntoleranceRestrictions);

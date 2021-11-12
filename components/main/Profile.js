@@ -26,16 +26,22 @@ function Profile(props) {
 
     return (   
         <NativeBaseProvider>
-            <Box>
+            <Box style={styles.container}>
                 <View style={styles.containerInfo}>
                     <Title style={styles.titleInfo}>{user.name}</Title>
                     <Title style={styles.subtitleInfo}>{user.email}</Title>
                 </View>
                 <VStack style={styles.containerInfo}>
-                    <Button onPress={() => navigation.navigate('Restrictions')}>
-                        Setup Dietary Restrictions
+                    <Button onPress={() => navigation.navigate('DietRestrictions')}>
+                        Dietary Restrictions
                     </Button>
-                    <Button mt='2' onPress={() => onLogout()}>
+                    <Button mt='2' onPress={() => navigation.navigate('IntoleranceRestrictions')}>
+                        Intolerance Restrictions
+                    </Button>
+                    <Button mt='2' onPress={() => navigation.navigate('IngredientsExclusion')}>
+                        Ingredients Exclusion
+                    </Button>
+                    <Button mt='2' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
                         Logout
                     </Button>
                 </VStack>
@@ -50,6 +56,8 @@ const styles = StyleSheet.create({
     },
     containerInfo: {
         margin: 20,
+        //alignItems: 'center', //align children components w.r.t the cross axis (y axis)
+        justifyContent: 'center', // align childrem components w.r.t the main axis (x axis)
     },
     footPage: {
         width: '100%',
