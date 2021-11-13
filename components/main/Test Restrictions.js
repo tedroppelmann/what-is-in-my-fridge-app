@@ -7,38 +7,49 @@ import { render } from 'react-dom'
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, getDoc, getDocs, doc, updateDoc, collection, query, where } from "firebase/firestore";
 
-export class IngredientsExclusion extends Component{
+export class TestRestrictions extends Component{
     
     constructor(props) {
         super(props);
         this.state = {
-            toggledGlutenFree : false,
-            toggledVegan: false,
-
+            diets: [
+                {
+                    id: 1,
+                    name: 'Gluten Free',
+                    slug: 'Gluten-Free',
+                    toggle: false,
+                    url: 'https://image.freepik.com/vector-gratis/racimo-platano-amarillo-maduro-vector-aislado-sobre-fondo-blanco_1284-45456.jpg',
+                },
+                {
+                    id: 2,
+                    name: 'Vegan',
+                    slug: 'Vegan',
+                    toggle: false,
+                    url: 'https://www.maxpixel.net/static/photo/1x/Tomatoes-Vegetables-Ripe-Healthy-Vegetarian-Food-5412517.png',
+                },
+            ],
         }
 
         this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
         this.setDiet = this.setDiet.bind(this)
+        this.toggleSwitch = this.toggleSwitch.bind(this)
     }
 
     setDiet(){
-        // First create an array with all the diet restrictions depending on the enabled switches
-        var diets = [];
-        if(this.state.toggledGlutenFree === true){
-            diets.push("Gluten Free");
-        }else{
-            console.log("Gluten Free switch not selected");
-        }
-        if(this.state.toggledVegan === true){
-            diets.push("Vegan");
-        }else{
-            console.log("Vegan switch not selected");
-        }
-
-        // Second, returns a string separated by commas depending on the values added to the array
-        var dietsToString = diets.toString();
-        console.log("DietsToString: ", dietsToString);
-        return dietsToString;
+        var selectedDiets = [];
+        var i=0;
+        this.state.diets.forEach(() => {
+            if(this.state.diets[i].toggle){
+                selectedDiets.push(this.state.diets[i].name);
+                console.log(this.state.diets[i].name," was selected.");
+            }else{
+                console.log(this.state.diets[i].name," was not selected.");
+            }
+            i++;
+        })
+        var selectedDietsToString = selectedDiets.toString();
+        console.log("Diets parsed to string: ", selectedDietsToString);
+        return selectedDietsToString; 
     }
 
     async saveDietForLoggedUser(){
@@ -57,7 +68,6 @@ export class IngredientsExclusion extends Component{
             });
             
             var diets = this.setDiet();
-            console.log(diets);
             if (userDocId != "") {
                 //Insert Diet for logged in user
                 const userDoc = doc(db, 'Users', userDocId);
@@ -72,34 +82,39 @@ export class IngredientsExclusion extends Component{
         }
     }
 
-    toggleSwitchGlutenFree = (value) => {
-        this.setState({toggledGlutenFree : value})
-        console.log("toggleSwitchGlutenFreeValue", value)
+    toggleSwitch = (i) => (event) => {
+        this.setState((state, props) => {
+          state.diets[i].toggle = !state.diets[i].toggle;
+          console.log(state.diets[i].name, " toggled.")
+          return {
+            diets: state.diets
+          }
+        })
     }
-    toggleSwitchVegan = (value) => {
-        this.setState({toggledVegan : value})
-        console.log("toggleSwitchVeganValue", value)
-    }
-
+    
     render(){
+        const { diets } = this.state
+        const dietJSX = []   
+        var i=0;    
+        diets.forEach((diet) => {
+            dietJSX.push(
+                <HStack  key={i} style={styles.containerInfo} alignItems="center" space={8}>
+                    <Text> {diet.name} </Text>
+                    <Switch
+                        key={i*1000} 
+                        onValueChange={this.toggleSwitch(i)}
+                        value={diet.toggle}
+                    />
+                </HStack>
+            )
+            i++;
+        })
+
         return (
             <NativeBaseProvider>
                 <Box>
                     <VStack style={styles.containerInfo}>
-                        <HStack style={styles.containerInfo} alignItems="center" space={8}>
-                            <Text>{this.state.toggledGlutenFree? "Gluten Free (ON)" : "Gluten Free (OFF)"}</Text>
-                            <Switch 
-                                onValueChange={this.toggleSwitchGlutenFree}
-                                value={this.state.toggledGlutenFree}
-                            />
-                        </HStack>
-                        <HStack style={styles.containerInfo} alignItems="center" space={8}>
-                            <Text>{this.state.toggledVegan? "Vegan (ON)" : "Vegan (OFF)"}</Text>
-                            <Switch 
-                                onValueChange={this.toggleSwitchVegan}
-                                value={this.state.toggledVegan}
-                            />
-                        </HStack>
+                        {dietJSX}
                         <HStack>
                             <Button mt='2' onPress={() => this.saveDietForLoggedUser()}>
                                 Save Diets
@@ -138,4 +153,4 @@ const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
 
-export default connect(mapStateToProps, null)(IngredientsExclusion);
+export default connect(mapStateToProps, null)(TestRestrictions);
