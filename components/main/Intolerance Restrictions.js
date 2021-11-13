@@ -7,6 +7,17 @@ import { render } from 'react-dom'
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, getDoc, getDocs, doc, updateDoc, collection, query, where } from "firebase/firestore";
 
+/*
+
+UI Pending tasks: 
+-Set an icon for each button in the settings shown in the profile screen.
+-Organize the list of restrictions in a grid manually and then set it dinamically.
+
+Logic Pending tasks:
+-Setup a function that reads the restrictions field from firestore and initialize a restriction object array with at least the following attributes: name, toggle.
+
+*/
+
 export class IntoleranceRestrictions extends Component{
     
     constructor(props) {
