@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
     Text,
-    View,
     StyleSheet,
     TouchableOpacity,
     Dimensions,
@@ -18,58 +17,17 @@ import {
     Image,
 } from 'native-base';
 
-import { Title } from 'react-native-paper';
 import Constants from 'expo-constants';
-  
-const { width } = Dimensions.get('window');
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+
+import { INGREDIENTS } from '../../storage/ingredients';
+import { CATEGORIES } from '../../storage/ingredients_categories';
 
 export default function App({ navigation }) {
-    const INGREDIENTS = [
-        {
-            name: 'Bananas',
-            slug: 'bananas',
-            url: 'https://image.freepik.com/vector-gratis/racimo-platano-amarillo-maduro-vector-aislado-sobre-fondo-blanco_1284-45456.jpg',
-        },
-        {
-            name: 'Tomatoes',
-            slug: 'tomatoes',
-            url: 'https://www.maxpixel.net/static/photo/1x/Tomatoes-Vegetables-Ripe-Healthy-Vegetarian-Food-5412517.png',
-        },
-        {
-            name: 'Bread',
-            slug: 'bread',
-            url: 'https://www.terhuneorchards.com/wp-content/uploads/2020/06/products-white_loaf__82103.1586278247.1000.1200.png',
-        },
-        {
-            name: 'Potatoes',
-            slug: 'potatoes',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/23457/3824efde0a7073a68ad4287e0186a4f3_large.png&width=256&type=webp&quality=80',
-        },
-        {
-            name: 'Garlic',
-            slug: 'garlic',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/1564405684704157570/b7387d856c21481fe4a0c9f144bed827_large.png&width=256&type=webp&quality=80'
-        },
-        {
-            name: 'Meat',
-            slug: 'meat',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/00203311000008/13f8e65a2fb10d445e11a3e5c770c3c6_large.png&width=256&type=webp&quality=80',
-        },
-        {
-            name: 'Eggs',
-            slug: 'eggs',
-            url: 'https://dtgxwmigmg3gc.cloudfront.net/imagery/assets/derivations/icon/256/256/true/eyJpZCI6ImU4YjczODAzMjEyMjliZTFmMjBiYzJkNDI4MDE5YzdlIiwic3RvcmFnZSI6InB1YmxpY19zdG9yZSJ9?signature=8c3c8f0a93cce35c05696ab0c0db432ba37b7374216183cd56ebfaa4796c1262',
-        },
-        {
-            name: 'Sugar',
-            slug: 'sugar',
-            url: 'https://st.depositphotos.com/1034300/1353/i/600/depositphotos_13534388-stock-photo-sugar-cubes-sweet-food.jpg',
-        },
-    ];
-    const [ingredients, setIngredients] = useState(INGREDIENTS);
+    const ingredients = INGREDIENTS;
+    const categories = CATEGORIES;
+
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchText, setSearchText] = useState('');
 
     const filteredData = searchText
@@ -77,27 +35,49 @@ export default function App({ navigation }) {
           x.slug.toLowerCase().includes(searchText.toLowerCase())
         ) : ingredients;
     
-    const renderIngredients = ({ item, index }) => {
-        const { name, slug, url } = item;
-        const isSelected = selectedIngredients.filter((i) => i === slug).length > 0;
-    
+    const renderCategories = ({ item, index }) => {
+        const isSelected = selectedCategories.filter((i) => i === item.name).length > 0;
         return (
         <TouchableOpacity
         delayPressIn={0}
         activeOpacity={1}
         onPress={() => {
         if (isSelected) {
-            setSelectedIngredients((prev) => prev.filter((i) => i !== slug));
+            setSelectedCategories((prev) => prev.filter((i) => i !== item.name));
         } else {
-            setSelectedIngredients(prev => [...prev, slug])
+            setSelectedCategories(prev => [...prev, item.name])
         }
         }}
+        style={[styles.item_categorie, isSelected && { borderColor: 'gold'}]}>
+            <Text style={{ color: isSelected ? "black" : "black"}}>{item.name}</Text>
+        </TouchableOpacity>
+        );
+    };
+    
+    const renderIngredients = ({ item, index }) => {
+        const isSelected = selectedIngredients.filter((i) => i === item.slug).length > 0;
+        {console.log(item.image)}
+        return (
+        <TouchableOpacity
+        delayPressIn={0}
+        activeOpacity={1}
+        onPress={() => {
+        if (isSelected) {
+            setSelectedIngredients((prev) => prev.filter((i) => i !== item.slug));
+        } else {
+            setSelectedIngredients(prev => [...prev, item.slug])
+        }
+        }}
+        
         style={[styles.item, isSelected && { borderColor: 'gold'}]}>
+            {console.log(item.image)}
             <Image
                 style={styles.image}
-                source={{uri: url}}
+                key={item.slug}
+                alt={item.slug}
+                source={item.image}
             />
-            <Text style={{ color: isSelected ? "black" : "black"}}>{name}</Text>
+            <Text style={{ color: isSelected ? "black" : "black"}}>{item.name}</Text>
         </TouchableOpacity>
         );
     };
@@ -111,11 +91,12 @@ export default function App({ navigation }) {
                 <Input 
                 style={styles.filterInfo}
                 placeholder='Filter'
-                onChangeText= {(text) => setSearchText(text)}
+                onChangeText= {(searchText) => setSearchText(searchText)}
                 value={searchText}
                 />
                 <FlatList
                 data={filteredData}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={renderIngredients}
                 numColumns={2}
                 >
@@ -155,7 +136,25 @@ const styles = StyleSheet.create({
         
         alignItems: 'center',
         justifyContent: 'center',
-        height: windowHeight/5,
+        height: Dimensions.get('window').height/5,
+    },
+
+    item_categorie: {
+        flex: 1/3,
+        marginRight: 2,
+        marginLeft: 2,
+        marginTop: 2,
+        marginBottom: 2,
+
+        backgroundColor: 'white',
+
+        borderWidth: 3,
+        borderColor: 'white',
+        borderRadius: 7,
+        
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: Dimensions.get('window').height/15,
     },
 
     titleInfo: {
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
 
     image: {
         width: Dimensions.get('window').width,
-        height: windowHeight/7,
+        height: Dimensions.get('window').height/7,
         resizeMode: 'contain'
     }, 
 });

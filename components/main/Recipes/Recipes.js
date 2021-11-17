@@ -33,9 +33,9 @@ export default function Recipes({ navigation, route }) {
     const ingredients = transformIngredients(route.params.selected)
 
     useEffect(() => {
-        if (recipes) {
+        if (recipes == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/findByIngredients?apiKey=80256361caf04b358f4cd2de7f094dc6&ingredients=${ingredients}&number=4&ranking=1`
+                `https://api.spoonacular.com/recipes/findByIngredients?apiKey=80256361caf04b358f4cd2de7f094dc6&ingredients=${ingredients}&number=6&ranking=1`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -50,17 +50,18 @@ export default function Recipes({ navigation, route }) {
     },[]);
 
     const renderRecipes = ({ item, index }) => {
-        const { title, image, missedIngredientCount,  } = item;
+        const { id, title, image, missedIngredientCount } = item;
 
         return (
             <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Recipe', { selected: selectedIngredients })}
             style= {styles.item}
             >
                 <Box flex={1} p="auto" py="auto">
                     <Image
                         style={styles.image}
                         source={{uri: image}}
+                        alt={title}
                     />
                     <Text bold>{title}</Text>
                     <Text bold>Missed Ingredients: {missedIngredientCount}</Text>
@@ -80,6 +81,7 @@ export default function Recipes({ navigation, route }) {
             <Box safeArea flex={1} py="6" w="90%" mx="auto">
                 <FlatList
                 data={recipes}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={renderRecipes}
                 numColumns={2}
                 ></FlatList>
