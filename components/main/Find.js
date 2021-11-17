@@ -70,13 +70,21 @@ export default function App({ navigation }) {
     ];
     const [ingredients, setIngredients] = useState(INGREDIENTS);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [searchText, setSearchText] = useState('');
 
+    const filteredData = searchText
+      ? ingredients.filter(x =>
+          x.slug.toLowerCase().includes(searchText.toLowerCase())
+        ) : ingredients;
+    
     const renderIngredients = ({ item, index }) => {
         const { name, slug, url } = item;
         const isSelected = selectedIngredients.filter((i) => i === slug).length > 0;
     
         return (
         <TouchableOpacity
+        delayPressIn={0}
+        activeOpacity={1}
         onPress={() => {
         if (isSelected) {
             setSelectedIngredients((prev) => prev.filter((i) => i !== slug));
@@ -103,9 +111,11 @@ export default function App({ navigation }) {
                 <Input 
                 style={styles.filterInfo}
                 placeholder='Filter'
+                onChangeText= {(text) => setSearchText(text)}
+                value={searchText}
                 />
                 <FlatList
-                data={ingredients}
+                data={filteredData}
                 renderItem={renderIngredients}
                 numColumns={2}
                 >
