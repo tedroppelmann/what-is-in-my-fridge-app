@@ -30,6 +30,7 @@ import LoginScreen from './components/auth/Login';
 import MainScreen from  './components/Main';
 import FindScreen from  './components/main/Find';
 import RecipesScreen from  './components/main/Recipes/Recipes';
+import RecipeScreen from  './components/main/Recipes/Recipe';
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -87,6 +88,7 @@ export class App extends Component {
             <Stack.Screen name="Main" component={MainScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Find" component={FindScreen}/>
             <Stack.Screen name="Recipes" component={RecipesScreen}/>
+            <Stack.Screen name="Recipe" component={RecipeScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

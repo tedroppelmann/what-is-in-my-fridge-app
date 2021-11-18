@@ -54,7 +54,7 @@ export default function Recipes({ navigation, route }) {
 
         return (
             <TouchableOpacity
-            onPress={() => navigation.navigate('Recipe', { selected: selectedIngredients })}
+            onPress={() => navigation.navigate('Recipe', { recipe_title: title })}
             style= {styles.item}
             >
                 <Box flex={1} p="auto" py="auto">
