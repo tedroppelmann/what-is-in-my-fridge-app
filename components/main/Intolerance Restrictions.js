@@ -11,6 +11,7 @@ import { getFirestore, setDoc, getDoc, getDocs, doc, updateDoc, collection, quer
 
 UI Pending tasks: 
 -Set an icon for each button in the settings shown in the profile screen.
+-Set an icon for each setting shown for each restriction screen.
 -Organize the list of restrictions in a grid manually and then set it dinamically.
 
 Logic Pending tasks:

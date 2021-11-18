@@ -12,7 +12,8 @@ export class DietRestrictions extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            diets: [
+            user: props.currentUser, // initialize user attribute with the currentUser from redux
+            diets: [ // initialize diets array
                 {
                     id: 1,
                     name: 'Gluten Free',
@@ -68,13 +69,13 @@ export class DietRestrictions extends Component{
             });
             
             var diets = this.setDiet();
-            if (userDocId != "") {
+            if (userDocId != "") { // You should validate if there are other docIDs and if there are more than one, throw an error. 
                 //Insert Diet for logged in user
                 const userDoc = doc(db, 'Users', userDocId);
-                await updateDoc(userDoc, { diets: diets }); // { fieldOnFirestore : reactVariable }
+                await updateDoc(userDoc, { diets: diets }); // { fieldOnFirestore : reactVariable } // Utilizar setDoc y agregar los campos nuevos con sus valores
                 console.log("Document updated: ", userDocId);
             } else {
-                // doc.data() will be undefined in this case
+                //doc.data() will be undefined in this case
                 console.log("Empty Document ID. Update was not performed.");
             }
         }catch(error){
