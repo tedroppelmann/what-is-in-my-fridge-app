@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ActivityIndicator} from 'react-native'
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import {
     View,
     StyleSheet,
@@ -27,7 +28,6 @@ export default function Recipes({ navigation, route }) {
 
     function transformIngredients(array) {
         let query = array.join();
-        console.log(query);
         return query;
     }
     const ingredients = transformIngredients(route.params.selected)
@@ -35,10 +35,11 @@ export default function Recipes({ navigation, route }) {
     useEffect(() => {
         if (recipes == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/findByIngredients?apiKey=80256361caf04b358f4cd2de7f094dc6&ingredients=${ingredients}&number=6&ranking=1`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients`
             )
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log(data);
                     setRecipes(data);
                     setLoading(true);
                 })
@@ -50,11 +51,11 @@ export default function Recipes({ navigation, route }) {
     },[]);
 
     const renderRecipes = ({ item, index }) => {
-        const { id, title, image, missedIngredientCount } = item;
+        const { id, title, image } = item;
 
         return (
             <TouchableOpacity
-            onPress={() => navigation.navigate('Recipe', { recipe_title: title })}
+            onPress={() => navigation.navigate('Recipe', { recipe_id: id })}
             style= {styles.item}
             >
                 <Box flex={1} p="auto" py="auto">
@@ -64,7 +65,6 @@ export default function Recipes({ navigation, route }) {
                         alt={title}
                     />
                     <Text bold>{title}</Text>
-                    <Text bold>Missed Ingredients: {missedIngredientCount}</Text>
                 </Box> 
             </TouchableOpacity>
         );
@@ -80,7 +80,7 @@ export default function Recipes({ navigation, route }) {
         <NativeBaseProvider>
             <Box safeArea flex={1} py="6" w="90%" mx="auto">
                 <FlatList
-                data={recipes}
+                data={recipes.results}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderRecipes}
                 numColumns={2}
