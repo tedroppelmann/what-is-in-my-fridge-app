@@ -60,7 +60,8 @@ export class DietRestrictions extends Component{
             //Get the firestore db
             const usersDb = collection(db, "Users");
             //Query the logged user from the firestore db
-            const queryResult = query(usersDb, where("email", "==", "mellon1786@gmail.com")); // HOW DO YOU GET THE EMAIL FROM THE LOGGED ON USER?
+            console.log("User email gotten from redux: ", this.state.user.email)
+            const queryResult = query(usersDb, where("email", "==", this.state.user.email)); 
             const querySnapshot = await getDocs(queryResult);
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
