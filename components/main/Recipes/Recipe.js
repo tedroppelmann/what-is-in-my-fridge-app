@@ -50,11 +50,11 @@ export default function Recipe({ navigation, route }) {
 
     const renderStep = ({ item, index }) => {
         return(
-            <HStack space={3} w="90%">
-                <Heading size='md'>
+            <HStack mb='3' space={3} w="90%">
+                <Heading size='lg'>
                     {item.number}
                 </Heading>
-                <Text mb={5}>
+                <Text>
                     {item.step}
                 </Text>
             </HStack>
@@ -115,9 +115,6 @@ export default function Recipe({ navigation, route }) {
                 <Box flex={1} w="90%" mx="auto">
                     <Heading size='lg' mb='3'>
                         Ingredients
-                    </Heading>
-                    <Heading size='sm' mb='3' textAlign='center'>
-                        Missed ingredients: {missed_ingredients.length}
                     </Heading>
                     <FlatList
                         contentContainerStyle={{justifyContent: 'center'}}

@@ -51,7 +51,7 @@ export default function Recipes({ navigation, route }) {
     },[]);
 
     const renderRecipes = ({ item, index }) => {
-        const { id, title, image, missedIngredients } = item;
+        const { id, title, image, missedIngredients, usedIngredientCount } = item;
 
         return (
             <TouchableOpacity
@@ -64,9 +64,30 @@ export default function Recipes({ navigation, route }) {
                         source={{uri: image}}
                         alt={title}
                     />
-                    <Heading size='xs' mb='5' mt='1' textAlign='center'>
+                    <Heading size='sm' mb='5' mt='2' textAlign='center'>
                     {title}
                     </Heading>
+                    <Heading size='xs' mb='2' mt='1' textAlign='center'>
+                        Ingredients
+                    </Heading>
+                    <HStack mb='5' justifyContent= 'center'>
+                        <VStack>
+                            <Heading size='lg' textAlign='center' color='yellowgreen'>
+                                {usedIngredientCount}
+                            </Heading>
+                            <Text textAlign='center'>
+                                used
+                            </Text>
+                        </VStack>
+                        <VStack ml='8'>
+                            <Heading size='lg' textAlign='center' color='tomato'>
+                                {missedIngredients.length}
+                            </Heading>
+                            <Text textAlign='center'>
+                                missed
+                            </Text>
+                        </VStack>
+                    </HStack>
                 </Box> 
             </TouchableOpacity>
         );
@@ -80,7 +101,7 @@ export default function Recipes({ navigation, route }) {
       }
     return (
         <NativeBaseProvider>
-            <Box safeArea flex={1} py="6" w="90%" mx="auto">
+            <Box safeArea flex={1} py="3" w="95%" mx="auto">
                 <FlatList
                 data={recipes.results}
                 keyExtractor={(item, index) => index.toString()}
@@ -97,18 +118,20 @@ const styles = StyleSheet.create({
     image: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height/4,
-        borderRadius: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     }, 
 
     item: {
         flex: 1/2,
-        marginRight: 10,
-        marginLeft: 10,
+        marginRight: 5,
+        marginLeft: 5,
         marginTop: 1,
-        marginBottom: 1,
+        marginBottom: 10,
+        borderRadius: 20,
 
-        /*backgroundColor: 'white',
-
+        backgroundColor: 'white',
+        /*
         borderWidth: 2,
         borderColor: 'white',
         borderRadius: 7,*/

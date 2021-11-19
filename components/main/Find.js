@@ -68,7 +68,9 @@ export default function App({ navigation }) {
         }
         }}
         
-        style={[styles.item, isSelected && { borderColor: 'gold'}, {marginRight: filteredData.length == index + 1 ? 35 : 10}]}>
+        style={[styles.item, isSelected && { borderColor: 'gold'}, 
+        {marginRight: (filteredData.length == index + 1 && filteredData.length % 3 == 1) ? 40 : 
+            (filteredData.length == index + 1 && filteredData.length % 3 == 2) ? 20 : 5}]}>
             <Image
                 style={styles.image}
                 key={item.slug}
@@ -84,9 +86,9 @@ export default function App({ navigation }) {
 
     return (
         <NativeBaseProvider backgroundColor= 'black'>
-            <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto" >
-                <Heading size='xl' mb='3'>
-                    What ingredients do you have?
+            <Box safeArea flex={1} p="2" py="4" w="95%" mx="auto" >
+                <Heading size='xl' mb='3' textAlign='center'>
+                    What's in my fridge?
                 </Heading>
                 <Input 
                 size="lg"
@@ -99,11 +101,12 @@ export default function App({ navigation }) {
                 data={filteredData}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderIngredients}
-                numColumns={2}
+                numColumns={3}
                 >
                 </FlatList>
                 <VStack mt="4">
                     <Button
+                    size = 'lg'
                     onPress={() => navigation.navigate('Recipes', { selected: selectedIngredients })}>
                         Find recipes
                     </Button>
@@ -123,29 +126,11 @@ const styles = StyleSheet.create({
     },
 
     item: {
-        flex: 1/2,
-        marginRight: 10,
-        marginLeft: 10,
-        marginTop: 10,
-        marginBottom: 10,
-
-        backgroundColor: 'white',
-
-        borderWidth: 3,
-        borderColor: 'white',
-        borderRadius: 7,
-        
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: Dimensions.get('window').height/5,
-    },
-
-    item_categorie: {
         flex: 1/3,
-        marginRight: 2,
-        marginLeft: 2,
-        marginTop: 2,
-        marginBottom: 2,
+        marginRight: 5,
+        marginLeft: 5,
+        marginTop: 5,
+        marginBottom: 5,
 
         backgroundColor: 'white',
 
@@ -155,7 +140,7 @@ const styles = StyleSheet.create({
         
         alignItems: 'center',
         justifyContent: 'center',
-        height: Dimensions.get('window').height/15,
+        height: Dimensions.get('window').height/6,
     },
 
     titleInfo: {
@@ -170,7 +155,7 @@ const styles = StyleSheet.create({
 
     image: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height/7,
+        height: Dimensions.get('window').height/10,
         resizeMode: 'contain'
     }, 
 });
