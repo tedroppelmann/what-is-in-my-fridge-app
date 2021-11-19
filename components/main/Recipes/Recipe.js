@@ -27,6 +27,8 @@ export default function Recipe({ navigation, route }) {
     const [loading, setLoading] = useState(false);
 
     const recipe_id = route.params.recipe_id;
+    const missed_ingredients = route.params.missed_ingredients;
+    console.log(missed_ingredients);
 
     useEffect(() => {
         if (recipe == '') {
@@ -60,12 +62,15 @@ export default function Recipe({ navigation, route }) {
     };
 
     const renderIngredient = ({ item, index }) => {
+        const isMissed = missed_ingredients.filter((i) => i.name === item.name).length > 0;
         return(
-            <HStack space={3} w="90%">
-                <Text mb={5}>
-                    {item.amount} {item.unit} of {item.name}
-                </Text>
-            </HStack>
+            <Center style={ [styles.item, 
+            {marginRight: (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 1) ? 25 : 
+                (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 2) ? 15 : 5},
+            {backgroundColor: isMissed ? 'tomato' : 'yellowgreen'} ] }>
+                <Text textAlign='center' bold>{item.name}</Text>
+                <Text textAlign='center'>{item.amount} {item.unit}</Text>
+            </Center>
         );
     };
 
@@ -102,21 +107,27 @@ export default function Recipe({ navigation, route }) {
                                 {recipe.servings}
                             </Text>
                         </Center>
-                        <Center h="20" w="20" rounded="md" shadow={3} />
+                        <Center h="20" w="20" rounded="md">
+                            <MaterialCommunityIcons name='star-outline' size={26} />
+                        </Center>
                     </HStack>
                 </Box>
                 <Box flex={1} w="90%" mx="auto">
                     <Heading size='lg' mb='3'>
                         Ingredients
                     </Heading>
+                    <Heading size='sm' mb='3' textAlign='center'>
+                        Missed ingredients: {missed_ingredients.length}
+                    </Heading>
                     <FlatList
+                        contentContainerStyle={{justifyContent: 'center'}}
                         scrollEnabled={false}
                         data={recipe.extendedIngredients}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderIngredient}
-                        numColumns={1}
+                        numColumns={3}
                     ></FlatList>
-                    <Heading size='lg' mb='3'>
+                    <Heading size='lg' mb='3'mt='3'>
                         Steps
                     </Heading>
                     <FlatList
@@ -138,20 +149,23 @@ const styles = StyleSheet.create({
 
     image: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height/4,
+        height: Dimensions.get('window').height/3,
     }, 
 
     item: {
-        flex: 1/2,
-        marginRight: 10,
-        marginLeft: 10,
-        marginTop: 1,
-        marginBottom: 1,
+        flex: 1/3,
+        marginRight: 5,
+        marginLeft: 5,
+        marginTop: 5,
+        marginBottom: 5,
 
-        /*backgroundColor: 'white',
+        backgroundColor: 'white',
 
-        borderWidth: 2,
-        borderColor: 'white',
-        borderRadius: 7,*/
+        
+        borderRadius: 7,
+        
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: Dimensions.get('window').height/10,
     },
 });

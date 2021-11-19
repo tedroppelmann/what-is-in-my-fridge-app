@@ -39,5 +39,30 @@ export const INGREDIENTS = [
         slug: 'lettuce',
         image: require('./ingredients_images/lettuce.png'),
     },
+    {
+        name: 'Avocado',
+        slug: 'avocado',
+        image: require('./ingredients_images/avocado.png'),
+    },
+    {
+        name: 'Cheese',
+        slug: 'cheese',
+        image: require('./ingredients_images/cheese.png'),
+    },
+    {
+        name: 'Spaghetti',
+        slug: 'spaghetti',
+        image: require('./ingredients_images/spaghetti.png'),
+    },
+    {
+        name: 'Sausage',
+        slug: 'sausage',
+        image: require('./ingredients_images/sausage.png'),
+    },
+    {
+        name: 'Onion',
+        slug: 'onion',
+        image: require('./ingredients_images/onion.png'),
+    },
 
 ];

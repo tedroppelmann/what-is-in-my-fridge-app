@@ -56,7 +56,6 @@ export default function App({ navigation }) {
     
     const renderIngredients = ({ item, index }) => {
         const isSelected = selectedIngredients.filter((i) => i === item.slug).length > 0;
-        {console.log(item.image)}
         return (
         <TouchableOpacity
         delayPressIn={0}
@@ -69,28 +68,30 @@ export default function App({ navigation }) {
         }
         }}
         
-        style={[styles.item, isSelected && { borderColor: 'gold'}]}>
-            {console.log(item.image)}
+        style={[styles.item, isSelected && { borderColor: 'gold'}, {marginRight: filteredData.length == index + 1 ? 35 : 10}]}>
             <Image
                 style={styles.image}
                 key={item.slug}
                 alt={item.slug}
                 source={item.image}
             />
-            <Text style={{ color: isSelected ? "black" : "black"}}>{item.name}</Text>
+            <Heading size='sm' mt='3' textAlign='center'>
+                {item.name}
+            </Heading>
         </TouchableOpacity>
         );
     };
 
     return (
-        <NativeBaseProvider>
-            <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+        <NativeBaseProvider backgroundColor= 'black'>
+            <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto" >
                 <Heading size='xl' mb='3'>
                     What ingredients do you have?
                 </Heading>
                 <Input 
+                size="lg"
                 style={styles.filterInfo}
-                placeholder='Filter'
+                placeholder='Search by name or categorie'
                 onChangeText= {(searchText) => setSearchText(searchText)}
                 value={searchText}
                 />

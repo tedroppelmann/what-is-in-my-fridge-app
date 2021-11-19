@@ -35,7 +35,7 @@ export default function Recipes({ navigation, route }) {
     useEffect(() => {
         if (recipes == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients&fillIngredients=true`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -51,11 +51,11 @@ export default function Recipes({ navigation, route }) {
     },[]);
 
     const renderRecipes = ({ item, index }) => {
-        const { id, title, image } = item;
+        const { id, title, image, missedIngredients } = item;
 
         return (
             <TouchableOpacity
-            onPress={() => navigation.navigate('Recipe', { recipe_id: id })}
+            onPress={() => navigation.navigate('Recipe', { recipe_id: id, missed_ingredients: missedIngredients })}
             style= {styles.item}
             >
                 <Box flex={1} p="auto" py="auto">
@@ -64,7 +64,9 @@ export default function Recipes({ navigation, route }) {
                         source={{uri: image}}
                         alt={title}
                     />
-                    <Text bold>{title}</Text>
+                    <Heading size='xs' mb='5' mt='1' textAlign='center'>
+                    {title}
+                    </Heading>
                 </Box> 
             </TouchableOpacity>
         );
@@ -95,8 +97,6 @@ const styles = StyleSheet.create({
     image: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height/4,
-
-        
         borderRadius: 20,
     }, 
 
