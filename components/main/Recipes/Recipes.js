@@ -35,7 +35,7 @@ export default function Recipes({ navigation, route }) {
     useEffect(() => {
         if (recipes == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients&fillIngredients=true`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true`
             )
                 .then((response) => response.json())
                 .then((data) => {

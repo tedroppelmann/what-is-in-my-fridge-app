@@ -24,38 +24,18 @@ import { CATEGORIES } from '../../storage/ingredients_categories';
 
 export default function App({ navigation }) {
     const ingredients = INGREDIENTS;
-    const categories = CATEGORIES;
 
     const [selectedIngredients, setSelectedIngredients] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchText, setSearchText] = useState('');
 
     const filteredData = searchText
       ? ingredients.filter(x =>
-          x.slug.toLowerCase().includes(searchText.toLowerCase())
+          x.slug.toLowerCase().includes(searchText.toLowerCase()) || x.category.toLowerCase().includes(searchText.toLowerCase())
         ) : ingredients;
-    
-    const renderCategories = ({ item, index }) => {
-        const isSelected = selectedCategories.filter((i) => i === item.name).length > 0;
-        return (
-        <TouchableOpacity
-        delayPressIn={0}
-        activeOpacity={1}
-        onPress={() => {
-        if (isSelected) {
-            setSelectedCategories((prev) => prev.filter((i) => i !== item.name));
-        } else {
-            setSelectedCategories(prev => [...prev, item.name])
-        }
-        }}
-        style={[styles.item_categorie, isSelected && { borderColor: 'gold'}]}>
-            <Text style={{ color: isSelected ? "black" : "black"}}>{item.name}</Text>
-        </TouchableOpacity>
-        );
-    };
     
     const renderIngredients = ({ item, index }) => {
         const isSelected = selectedIngredients.filter((i) => i === item.slug).length > 0;
+
         return (
         <TouchableOpacity
         delayPressIn={0}
@@ -93,7 +73,7 @@ export default function App({ navigation }) {
                 <Input 
                 size="lg"
                 style={styles.filterInfo}
-                placeholder='Search by name or categorie'
+                placeholder='Search by name or category'
                 onChangeText= {(searchText) => setSearchText(searchText)}
                 value={searchText}
                 />
