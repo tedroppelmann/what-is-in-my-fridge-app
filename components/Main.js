@@ -8,7 +8,7 @@ import { fetchUser } from '../redux/actions/index'
 
 import FeedScreen from './main/Feed'
 import ProfileScreen from './main/Profile'
-import FindScreen from './main/Find'
+import FindRecipesScreen from './main/Find_recipes'
 
 const Tab = createBottomTabNavigator();
 
@@ -18,14 +18,14 @@ export class Main extends Component {
     }
     render() {
         return (
-            <Tab.Navigator initialRouteName='Find' tabBarOptions={{showLabel: false}}> 
+            <Tab.Navigator initialRouteName='Find' screenOptions={{tabBarShowLabel: false}}> 
                 <Tab.Screen name='Feed' component={FeedScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name='star-outline' color={color} size={26} />
                         ),
                     }} />
-                <Tab.Screen name='Find' component={FindScreen}
+                <Tab.Screen name='Find' component={FindRecipesScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name='plus-box' color={color} size={48} />

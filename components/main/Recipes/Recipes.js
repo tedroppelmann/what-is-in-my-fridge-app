@@ -35,7 +35,7 @@ export default function Recipes({ navigation, route }) {
     useEffect(() => {
         if (recipes == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -56,9 +56,10 @@ export default function Recipes({ navigation, route }) {
         return (
             <TouchableOpacity
             onPress={() => navigation.navigate('Recipe', { recipe_id: id, missed_ingredients: missedIngredients })}
-            style= {styles.item}
+            style= {[styles.item ,
+            {marginBottom: (recipes.results.length == index + 1 || recipes.results.length == index + 2? 10 : 0)} ]}
             >
-                <Box flex={1} p="auto" py="auto">
+                <Box flex={1} >
                     <Image
                         style={styles.image}
                         source={{uri: image}}
@@ -67,6 +68,8 @@ export default function Recipes({ navigation, route }) {
                     <Heading size='sm' mb='5' mt='2' textAlign='center'>
                     {title}
                     </Heading>
+                </Box> 
+                <Box>
                     <Heading size='xs' mb='2' mt='1' textAlign='center'>
                         Ingredients
                     </Heading>
@@ -88,7 +91,7 @@ export default function Recipes({ navigation, route }) {
                             </Text>
                         </VStack>
                     </HStack>
-                </Box> 
+                </Box>
             </TouchableOpacity>
         );
     };
@@ -101,13 +104,16 @@ export default function Recipes({ navigation, route }) {
       }
     return (
         <NativeBaseProvider>
-            <Box safeArea flex={1} py="3" w="95%" mx="auto">
-                <FlatList
-                data={recipes.results}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderRecipes}
-                numColumns={2}
-                ></FlatList>
+            <Box flex={1}>
+                <Box safeArea w="95%" mx="auto">
+                    <FlatList
+                    data={recipes.results}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderRecipes}
+                    numColumns={2}
+                    ></FlatList>
+                </Box>
+                
             </Box>
         </NativeBaseProvider>
     )
@@ -126,14 +132,16 @@ const styles = StyleSheet.create({
         flex: 1/2,
         marginRight: 5,
         marginLeft: 5,
-        marginTop: 1,
-        marginBottom: 10,
+        marginTop: 10,
+        marginBottom: 0,
         borderRadius: 20,
 
+        shadowColor: "black",
+        shadowOpacity: 0.3,
         backgroundColor: 'white',
         /*
-        borderWidth: 2,
-        borderColor: 'white',
+        borderWidth: 1,
+        borderColor: 'grey',
         borderRadius: 7,*/
     },
 });

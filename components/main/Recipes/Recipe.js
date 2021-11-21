@@ -84,7 +84,7 @@ export default function Recipe({ navigation, route }) {
 
     return (
         <NativeBaseProvider>
-            <ScrollView>
+            <ScrollView backgroundColor='white'>
                 <Image
                     style={styles.image}
                     source={{uri: recipe.image}}
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
 
     image: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height/3,
+        height: Dimensions.get('window').height/2.5,
     }, 
 
     item: {

@@ -65,8 +65,8 @@ export default function App({ navigation }) {
     };
 
     return (
-        <NativeBaseProvider backgroundColor= 'black'>
-            <Box safeArea flex={1} p="2" py="4" w="95%" mx="auto" >
+        <NativeBaseProvider>
+            <Box safeArea flex={1} p="2" py="4" w="95%" mx="auto">
                 <Heading size='xl' mb='3' textAlign='center'>
                     What's in my fridge?
                 </Heading>
