@@ -57,7 +57,7 @@ export const INGREDIENTS = [
         name: 'Cheese',
         slug: 'cheese',
         image: require('./ingredients_images/cheese.png'),
-        category: 'dairies, animal',
+        category: 'dairies',
     },
     {
         name: 'Spaghetti',
@@ -69,7 +69,7 @@ export const INGREDIENTS = [
         name: 'Sausage',
         slug: 'sausage',
         image: require('./ingredients_images/sausage.png'),
-        category: 'meat, animal',
+        category: 'meat',
     },
     {
         name: 'Onion',
@@ -81,7 +81,7 @@ export const INGREDIENTS = [
         name: 'Milk',
         slug: 'milk',
         image: require('./ingredients_images/milk.png'),
-        category: 'dairies, animal',
+        category: 'dairies',
     },
     {
         name: 'Flour',
@@ -93,7 +93,7 @@ export const INGREDIENTS = [
         name: 'Butter',
         slug: 'butter',
         image: require('./ingredients_images/butter.png'),
-        category: 'dairies, animal',
+        category: 'dairies',
     },
     {
         name: 'Baking powder',
@@ -129,13 +129,13 @@ export const INGREDIENTS = [
         name: 'Chicken',
         slug: 'chicken',
         image: require('./ingredients_images/chicken.png'),
-        category: 'meat, animal',
+        category: 'meat',
     },
     {
         name: 'Bacon',
         slug: 'bacon',
         image: require('./ingredients_images/bacon.png'),
-        category: 'meat, animal',
+        category: 'meat',
     },
 
 ];

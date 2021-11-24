@@ -8,17 +8,15 @@ import {
     Dimensions,
   } from 'react-native';
 import {
-    NativeBaseProvider,
     Box,
     Text,
     Heading,
-    Button,
     FlatList,
     HStack,
     VStack,
-    Input,
     Image,
     Center,
+    Spinner,
 } from 'native-base';
 
 
@@ -46,8 +44,7 @@ export default function Recipes({ navigation, route }) {
                 .catch(() => {
                     console.log("error");
                 });
-        }
-        
+        } 
     },[]);
 
     const renderRecipes = ({ item, index }) => {
@@ -97,25 +94,22 @@ export default function Recipes({ navigation, route }) {
     };
     if (!loading) {
         return (
-          <View style={{ flex: 1, justifyContent: 'center'}}>
-            <ActivityIndicator size="large" />
-          </View>
+            <Center flex={1}>
+                <Spinner/>
+            </Center>
         )
       }
     return (
-        <NativeBaseProvider>
-            <Box flex={1}>
-                <Box safeArea w="95%" mx="auto">
-                    <FlatList
-                    data={recipes.results}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={renderRecipes}
-                    numColumns={2}
-                    ></FlatList>
-                </Box>
-                
+        <Center flex={1}>
+            <Box w="95%" mx="auto">
+                <FlatList
+                data={recipes.results}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderRecipes}
+                numColumns={2}
+                ></FlatList>
             </Box>
-        </NativeBaseProvider>
+        </Center>
     )
 }
 
@@ -136,9 +130,7 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         borderRadius: 20,
 
-        shadowColor: "black",
-        shadowOpacity: 0.3,
-        backgroundColor: 'white',
+        backgroundColor: '#f5f5f4',
         /*
         borderWidth: 1,
         borderColor: 'grey',

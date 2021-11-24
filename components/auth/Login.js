@@ -1,22 +1,15 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, TextInput } from 'react-native'
 
 import { getAuth, signInWithEmailAndPassword }  from 'firebase/auth'
 
 import {
-    NativeBaseProvider,
     Box,
-    Text,
     Heading,
     VStack,
     FormControl,
     Input,
-    Link,
     Button,
-    Icon,
-    IconButton,
-    HStack,
-    Divider,
+    Center,
 } from 'native-base';
 
 export class Login extends Component {
@@ -47,8 +40,8 @@ export class Login extends Component {
 
     render() {
         return (
-            <NativeBaseProvider>
-                <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
+            <Center flex={1}>
+                <Box w="90%" >
                     <Heading size='xl'>
                         Welcome
                     </Heading>
@@ -61,6 +54,7 @@ export class Login extends Component {
                                 Email
                             </FormControl.Label>
                             <Input 
+                                size="lg"
                                 onChangeText={(email) => this.setState({ email })}
                             />
                         </FormControl>
@@ -69,6 +63,7 @@ export class Login extends Component {
                                 Password
                             </FormControl.Label>
                             <Input 
+                                size="lg"
                                 type="password"
                                 onChangeText={(password) => this.setState({ password })}
                             />
@@ -78,18 +73,9 @@ export class Login extends Component {
                         </Button>
                     </VStack>
                 </Box>
-            </NativeBaseProvider>
+            </Center>
         )
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    
-  });
 
 export default Login
