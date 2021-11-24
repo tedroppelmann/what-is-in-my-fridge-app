@@ -74,6 +74,10 @@ export default function App({ navigation }) {
 
     const renderCategories = ({ item, index }) => {
         const isSelected = selectedCategory.filter((i) => i === item.name.toLowerCase()).length > 0;
+        let color = 'gray.500';
+        if (isSelected){
+            color = '#f5f5f4';
+        }
 
         return (
         <TouchableOpacity
@@ -83,12 +87,12 @@ export default function App({ navigation }) {
             if (isSelected) {
                 setSelectedCategory((prev) => prev.filter((i) => i !== item.name.toLowerCase()));
             } else {
-                setSelectedCategory(prev => [item.name.toLowerCase()])
+                setSelectedCategory(prev => [item.name.toLowerCase()]);
             }
             }}
-            style={[styles.category, isSelected && { borderColor: 'gold' }]}
+            style={[styles.category, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
         >
-            <Heading size='sm' textAlign='center' color='gray.500'>
+            <Heading size='sm' textAlign='center' color={color}>
                 {item.name}
             </Heading>
         </TouchableOpacity>
@@ -122,15 +126,17 @@ export default function App({ navigation }) {
                 />
                 <Box mb='3'>
                     <FlatList
+                        showsHorizontalScrollIndicator={false}
                         horizontal
                         data={categories}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderCategories}
-                        height= '60'
+                        height= '50'
                     >
                     </FlatList>
                 </Box>
                 <FlatList
+                    showsVerticalScrollIndicator={false}
                     data={filteredData}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderIngredients}
@@ -148,7 +154,9 @@ export default function App({ navigation }) {
                         })
                     }
                 >
-                    Find recipes
+                    <Heading size='sm' textAlign='center' color='white'>
+                        Find recipes
+                    </Heading>
                 </Button>
             </Box>
         </Center>
@@ -178,8 +186,8 @@ const styles = StyleSheet.create({
     category: {
         marginRight: 5,
         marginLeft: 5,
-        marginTop: 5,
-        marginBottom: 5,
+
+        width: 110,
 
         backgroundColor: '#f5f5f4',
 

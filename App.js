@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { StatusBar } from 'react-native'
 import {
   Spinner,
   Center,
@@ -86,7 +87,7 @@ export class App extends Component {
         Spinner: {
           defaultProps: {
             size: 'lg',
-            color: 'emerald.500',
+            color: 'emerald',
           },
         },
       },
@@ -105,6 +106,9 @@ export class App extends Component {
     if (!loggedIn) {
       return (
         <NativeBaseProvider theme={theme}>
+          <StatusBar
+            barStyle="dark-content"
+          />
           <NavigationContainer>
             <Stack.Navigator initialRouteName='Landing'>
               <Stack.Screen name ='Landing' component={LandingScreen} options={{headerShown: false}}/>
