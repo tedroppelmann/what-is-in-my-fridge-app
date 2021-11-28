@@ -51,14 +51,16 @@ export default function Recipe({ navigation, route }) {
 
     const renderStep = ({ item, index }) => {
         return(
-            <HStack mb='3' space={3} w="90%">
-                <Heading size='lg'>
-                    {item.number}
-                </Heading>
-                <Text>
-                    {item.step}
-                </Text>
-            </HStack>
+            <Box w="90%" mx='auto'>
+                <HStack mb='3' space={3} w="90%">
+                    <Heading size='lg'>
+                        {item.number}
+                    </Heading>
+                    <Text>
+                        {item.step}
+                    </Text>
+                </HStack>
+            </Box>
         );
     };
 
@@ -84,61 +86,63 @@ export default function Recipe({ navigation, route }) {
     };
 
     return (
-        <ScrollView backgroundColor='white'>
-            <Image
-                style={styles.image}
-                source={{uri: recipe.image}}
-                alt={recipe.id}
-            />
-            <Box flex={1} py="6" w="90%" mx="auto" alignItems="center">
-                <Heading size='xl' mb='3' textAlign='center'>
-                    {recipe.title}
-                </Heading>
-                <HStack space={3}>
-                    <Center h="20" w="20" rounded="md">
-                        <MaterialCommunityIcons name='clock-outline' size={26} />
-                        <Text bold={true}>
-                            {recipe.readyInMinutes}'
-                        </Text>
-                    </Center>
-                    <Center h="20" w="20" rounded="md">
-                        <MaterialCommunityIcons name='account-group-outline' size={26} />
-                        <Text bold={true}>
-                            {recipe.servings}
-                        </Text>
-                    </Center>
-                    <Center h="20" w="20" rounded="md">
-                        <MaterialCommunityIcons name='star-outline' size={26} />
-                    </Center>
-                </HStack>
-            </Box>
-            <Box flex={1} w="90%" mx="auto">
-                <Heading size='lg' mb='3'>
-                    Ingredients
-                </Heading>
+        <Center flex={1}>
                 <FlatList
-                    contentContainerStyle={{justifyContent: 'center'}}
-                    scrollEnabled={false}
-                    data={recipe.extendedIngredients}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={renderIngredient}
-                    numColumns={3}
-                ></FlatList>
-                <Heading size='lg' mb='3'mt='3'>
-                    Steps
-                </Heading>
-                <FlatList
-                    scrollEnabled={false}
+                    ListHeaderComponent={
+                        <Box>
+                            <Image
+                                style={styles.image}
+                                source={{uri: recipe.image}}
+                                alt={recipe.id}
+                            />
+                            <Box flex={1} py="6" w="90%" mx="auto" alignItems="center">
+                                <Heading size='xl' mb='3' textAlign='center'>
+                                    {recipe.title}
+                                </Heading>
+                                <HStack space={3}>
+                                    <Center h="20" w="20" rounded="md">
+                                        <MaterialCommunityIcons name='clock-outline' size={26} />
+                                        <Text bold={true}>
+                                            {recipe.readyInMinutes}'
+                                        </Text>
+                                    </Center>
+                                    <Center h="20" w="20" rounded="md">
+                                        <MaterialCommunityIcons name='account-group-outline' size={26} />
+                                        <Text bold={true}>
+                                            {recipe.servings}
+                                        </Text>
+                                    </Center>
+                                    <Center h="20" w="20" rounded="md">
+                                        <MaterialCommunityIcons name='star-outline' size={26} />
+                                    </Center>
+                                </HStack>
+                            </Box>
+                            <Box w="90%" mx='auto'>
+                                <Heading size='lg' mb='3'>
+                                    Ingredients
+                                </Heading>
+                                <FlatList
+                                    contentContainerStyle={{justifyContent: 'center'}}
+                                    scrollEnabled={false}
+                                    data={recipe.extendedIngredients}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={renderIngredient}
+                                    numColumns={3}
+                                />
+                                <Heading size='lg' mb='3'mt='3'>
+                                    Steps
+                                </Heading>
+                            </Box>
+                        </Box>
+                    }
                     data={recipe.analyzedInstructions[0].steps}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderStep}
                     numColumns={1}
-                ></FlatList>
-            </Box>
-        </ScrollView>
+                />
+        </Center>
     )
 }
-
 
 
 const styles = StyleSheet.create({

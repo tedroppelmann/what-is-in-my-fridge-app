@@ -127,39 +127,41 @@ export default function Recipes({ navigation, route }) {
       }
     
     return (
-        <ScrollView backgroundColor='white'>
+        <Center flex={1}>
                 <Box w="95%" mx="auto" mb='5'>
-                    <HStack>
-                    <TouchableOpacity
-                        delayPressIn={0}
-                        activeOpacity={1}
-                        onPress={() => {setSeleted(true)}}
-                        style={[styles.category_left, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
-                    >
-                        <Heading size='sm' textAlign='center' color={color_left}>
-                            Less missed
-                        </Heading>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        delayPressIn={0}
-                        activeOpacity={1}
-                        onPress={() => {setSeleted(false)}}
-                        style={[styles.category_right, !isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
-                    >
-                        <Heading size='sm' textAlign='center' color={color_right}>
-                            More used
-                        </Heading>
-                    </TouchableOpacity>
-                    </HStack>
                     <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={ isSelected ? recipes_min.results : recipes_max.results}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={renderRecipes}
-                    numColumns={2}
-                    ></FlatList>
+                        ListHeaderComponent={
+                            <HStack>
+                                <TouchableOpacity
+                                    delayPressIn={0}
+                                    activeOpacity={1}
+                                    onPress={() => {setSeleted(true)}}
+                                    style={[styles.category_left, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                >
+                                    <Heading size='sm' textAlign='center' color={color_left}>
+                                        Less missed
+                                    </Heading>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    delayPressIn={0}
+                                    activeOpacity={1}
+                                    onPress={() => {setSeleted(false)}}
+                                    style={[styles.category_right, !isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                >
+                                    <Heading size='sm' textAlign='center' color={color_right}>
+                                        More used
+                                    </Heading>
+                                </TouchableOpacity>
+                            </HStack>
+                        }
+                        showsVerticalScrollIndicator={false}
+                        data={ isSelected ? recipes_min.results : recipes_max.results}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={renderRecipes}
+                        numColumns={2}
+                    />
                 </Box>
-        </ScrollView>
+        </Center>
     )
 }
 
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         height: 40,
         marginTop: 20,
-        marginBottom: 15,
+        marginBottom: 10,
 
         backgroundColor: '#f5f5f4',
 
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
         height: 40,
         marginTop: 20,
-        marginBottom: 15,
+        marginBottom: 10,
 
         backgroundColor: '#f5f5f4',
 
