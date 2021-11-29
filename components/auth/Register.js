@@ -42,6 +42,7 @@ export class Register extends Component {
                 setDoc(doc(db, 'Users', auth.currentUser.uid), {
                     name: name,
                     email: email,
+                    favorites: [],
                   });
                 console.log(result)
             })

@@ -41,7 +41,6 @@ export default function Recipes({ navigation, route }) {
             )
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     setRecipesMin(data);
                     setLoading(true);
                 })
@@ -53,7 +52,6 @@ export default function Recipes({ navigation, route }) {
             )
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     setRecipesMax(data);
                     setLoading(true);
                 })

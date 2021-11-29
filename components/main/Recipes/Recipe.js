@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { ActivityIndicator} from 'react-native'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import {
-    View,
     StyleSheet,
-    TouchableOpacity,
     Dimensions,
+    TouchableOpacity,
+    ImageBackground,
   } from 'react-native';
 import {
-    NativeBaseProvider,
     Box,
     Text,
     Heading,
@@ -19,18 +17,24 @@ import {
     Input,
     Image,
     Center,
-    ScrollView,
     Spinner,
 } from 'native-base';
+
+import { getAuth }  from 'firebase/auth'
+import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 
 export default function Recipe({ navigation, route }) {
     const [recipe, setRecipe] = useState('');
     const [loading, setLoading] = useState(false);
+    const [favorite, setFavorite] = useState(false);
+    const [favorites, setFavorites] = useState([]);
 
     const recipe_id = route.params.recipe_id;
     const missed_ingredients = route.params.missed_ingredients;
-    console.log(missed_ingredients);
 
+    const auth = getAuth();
+    const db = getFirestore();
+    
     useEffect(() => {
         if (recipe == '') {
             fetch(
@@ -38,7 +42,6 @@ export default function Recipe({ navigation, route }) {
             )
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data)
                     setRecipe(data);
                     setLoading(true);
                 })
@@ -46,8 +49,18 @@ export default function Recipe({ navigation, route }) {
                     console.log("error");
                 });
         }
-        
-    },[]);
+        getDoc(doc(db, 'Users', getAuth().currentUser.uid))
+            .then((snapshot) => {
+                if (favorites.length == 0) {
+                    setFavorites(snapshot.data().favorites)
+                };
+                if (favorites.filter(e => e.recipe_id === recipe_id).length > 0) {
+                    setFavorite(true);
+                };
+                console.log(favorites);
+                
+            }) 
+    },[favorites]);
 
     const renderStep = ({ item, index }) => {
         return(
@@ -90,11 +103,39 @@ export default function Recipe({ navigation, route }) {
                 <FlatList
                     ListHeaderComponent={
                         <Box>
-                            <Image
+                            <ImageBackground
                                 style={styles.image}
                                 source={{uri: recipe.image}}
                                 alt={recipe.id}
-                            />
+                            >
+                                <Box 
+                                    bg='white'
+                                    position="absolute"
+                                    roundedTopLeft="lg"
+                                    bottom="0"
+                                    right='0'
+                                >
+                                    <TouchableOpacity
+                                        delayPressIn={0}
+                                        onPress={() => {
+                                            if (!favorite) {
+                                                setFavorite(true);
+                                                updateDoc(doc(db, 'Users', auth.currentUser.uid), {
+                                                    favorites: arrayUnion({recipe_id}),
+                                                  });
+                                            } else {
+                                                setFavorite(false);
+                                                updateDoc(doc(db, 'Users', auth.currentUser.uid), {
+                                                    favorites: arrayRemove({recipe_id}),
+                                                  });
+                                            }
+                                            
+                                        }}
+                                    >
+                                        <MaterialCommunityIcons name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
+                                    </TouchableOpacity>
+                                </Box>
+                            </ImageBackground>
                             <Box flex={1} py="6" w="90%" mx="auto" alignItems="center">
                                 <Heading size='xl' mb='3' textAlign='center'>
                                     {recipe.title}
@@ -113,7 +154,7 @@ export default function Recipe({ navigation, route }) {
                                         </Text>
                                     </Center>
                                     <Center h="20" w="20" rounded="md">
-                                        <MaterialCommunityIcons name='star-outline' size={26} />
+                                    
                                     </Center>
                                 </HStack>
                             </Box>
@@ -122,6 +163,7 @@ export default function Recipe({ navigation, route }) {
                                     Ingredients
                                 </Heading>
                                 <FlatList
+                                    showsVerticalScrollIndicator={false}
                                     contentContainerStyle={{justifyContent: 'center'}}
                                     scrollEnabled={false}
                                     data={recipe.extendedIngredients}
@@ -135,6 +177,7 @@ export default function Recipe({ navigation, route }) {
                             </Box>
                         </Box>
                     }
+                    showsVerticalScrollIndicator={false}
                     data={recipe.analyzedInstructions[0].steps}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderStep}
@@ -143,7 +186,6 @@ export default function Recipe({ navigation, route }) {
         </Center>
     )
 }
-
 
 const styles = StyleSheet.create({
 
