@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import {
-    Text,
-    View,
     StyleSheet,
     TouchableOpacity,
     Dimensions,
   } from 'react-native';
 
 import {
-    NativeBaseProvider,
+    Center,
     Box,
     Heading,
     Button,
@@ -16,161 +15,192 @@ import {
     VStack,
     Input,
     Image,
+    Icon,
+    useToast,
 } from 'native-base';
 
-import { Title } from 'react-native-paper';
-import Constants from 'expo-constants';
-  
-const { width } = Dimensions.get('window');
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import { INGREDIENTS } from '../../storage/ingredients';
+import { CATEGORIES } from '../../storage/ingredients_categories';
 
 export default function App({ navigation }) {
-    const INGREDIENTS = [
-        {
-            name: 'Bananas',
-            slug: 'bananas',
-            url: 'https://image.freepik.com/vector-gratis/racimo-platano-amarillo-maduro-vector-aislado-sobre-fondo-blanco_1284-45456.jpg',
-        },
-        {
-            name: 'Tomatoes',
-            slug: 'tomatoes',
-            url: 'https://www.maxpixel.net/static/photo/1x/Tomatoes-Vegetables-Ripe-Healthy-Vegetarian-Food-5412517.png',
-        },
-        {
-            name: 'Bread',
-            slug: 'bread',
-            url: 'https://www.terhuneorchards.com/wp-content/uploads/2020/06/products-white_loaf__82103.1586278247.1000.1200.png',
-        },
-        {
-            name: 'Potatoes',
-            slug: 'potatoes',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/23457/3824efde0a7073a68ad4287e0186a4f3_large.png&width=256&type=webp&quality=80',
-        },
-        {
-            name: 'Garlic',
-            slug: 'garlic',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/1564405684704157570/b7387d856c21481fe4a0c9f144bed827_large.png&width=256&type=webp&quality=80'
-        },
-        {
-            name: 'Meat',
-            slug: 'meat',
-            url: 'https://ipcdn.freshop.com/resize?url=https://images.freshop.com/00203311000008/13f8e65a2fb10d445e11a3e5c770c3c6_large.png&width=256&type=webp&quality=80',
-        },
-        {
-            name: 'Eggs',
-            slug: 'eggs',
-            url: 'https://dtgxwmigmg3gc.cloudfront.net/imagery/assets/derivations/icon/256/256/true/eyJpZCI6ImU4YjczODAzMjEyMjliZTFmMjBiYzJkNDI4MDE5YzdlIiwic3RvcmFnZSI6InB1YmxpY19zdG9yZSJ9?signature=8c3c8f0a93cce35c05696ab0c0db432ba37b7374216183cd56ebfaa4796c1262',
-        },
-        {
-            name: 'Sugar',
-            slug: 'sugar',
-            url: 'https://st.depositphotos.com/1034300/1353/i/600/depositphotos_13534388-stock-photo-sugar-cubes-sweet-food.jpg',
-        },
-    ];
-    const [ingredients, setIngredients] = useState(INGREDIENTS);
+    const ingredients = INGREDIENTS;
+    const categories = CATEGORIES;
+
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState([]);
     const [searchText, setSearchText] = useState('');
 
+    const toast = useToast()
+
+    const filteredCategoryData = selectedCategory ? ingredients.filter(x => x.category.toLowerCase().includes(selectedCategory)) 
+    : ingredients;
+
     const filteredData = searchText
-      ? ingredients.filter(x =>
-          x.slug.toLowerCase().includes(searchText.toLowerCase())
-        ) : ingredients;
+      ? filteredCategoryData.filter(x =>
+          (x.slug.toLowerCase().includes(searchText.toLowerCase()))
+        ) : (selectedCategory ? ingredients.filter(x => x.category.toLowerCase().includes(selectedCategory)) 
+        : ingredients);
     
     const renderIngredients = ({ item, index }) => {
-        const { name, slug, url } = item;
-        const isSelected = selectedIngredients.filter((i) => i === slug).length > 0;
-    
+        const isSelected = selectedIngredients.filter((i) => i === item.slug).length > 0;
+
         return (
         <TouchableOpacity
-        delayPressIn={0}
-        activeOpacity={1}
-        onPress={() => {
-        if (isSelected) {
-            setSelectedIngredients((prev) => prev.filter((i) => i !== slug));
-        } else {
-            setSelectedIngredients(prev => [...prev, slug])
-        }
-        }}
-        style={[styles.item, isSelected && { borderColor: 'gold'}]}>
+            delayPressIn={0}
+            activeOpacity={1}
+            onPress={() => {
+            if (isSelected) {
+                setSelectedIngredients((prev) => prev.filter((i) => i !== item.slug));
+            } else {
+                setSelectedIngredients(prev => [...prev, item.slug])
+            }
+            }}
+            style={[styles.item, isSelected && { borderColor: 'gold'}, 
+            {marginRight: (filteredData.length == index + 1 && filteredData.length % 3 == 1) ? 40 : 
+                (filteredData.length == index + 1 && filteredData.length % 3 == 2) ? 20 : 5}]}
+        >
             <Image
                 style={styles.image}
-                source={{uri: url}}
+                key={item.slug}
+                alt={item.slug}
+                source={item.image}
             />
-            <Text style={{ color: isSelected ? "black" : "black"}}>{name}</Text>
+            <Heading size='sm' mt='3' textAlign='center' color='gray.500'>
+                {item.name}
+            </Heading>
+        </TouchableOpacity>
+        );
+    };
+
+    const renderCategories = ({ item, index }) => {
+        const isSelected = selectedCategory.filter((i) => i === item.name.toLowerCase()).length > 0;
+        let color = 'gray.500';
+        if (isSelected){
+            color = '#f5f5f4';
+        }
+
+        return (
+        <TouchableOpacity
+            delayPressIn={0}
+            activeOpacity={1}
+            onPress={() => {
+            if (isSelected) {
+                setSelectedCategory((prev) => prev.filter((i) => i !== item.name.toLowerCase()));
+            } else {
+                setSelectedCategory(prev => [item.name.toLowerCase()]);
+            }
+            }}
+            style={[styles.category, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+        >
+            <Heading size='sm' textAlign='center' color={color}>
+                {item.name}
+            </Heading>
         </TouchableOpacity>
         );
     };
 
     return (
-        <NativeBaseProvider>
-            <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
-                <Heading size='xl' mb='3'>
-                    What ingredients do you have?
+        <Center flex={1}>
+            <Box safeAreaTop flex={1} pt="3" w="95%" mx="auto">
+                <Heading size='xl' textAlign='center'>
+                    What's in my fridge?
                 </Heading>
-                <Input 
-                style={styles.filterInfo}
-                placeholder='Filter'
-                onChangeText= {(text) => setSearchText(text)}
-                value={searchText}
+                <Input
+                    placeholder='Search by name'
+                    onChangeText= {(searchText) => setSearchText(searchText)}
+                    value={searchText}
+                    m='3'
+                    size='xl'
+                    bg="gray.500"
+                    borderRadius="10"
+                    placeholderTextColor="gray.500"
+                    borderWidth="0"
+                    InputLeftElement={
+                        <Icon
+                        ml="2"
+                        size="8"
+                        color="gray.500"
+                        as={<MaterialCommunityIcons name='magnify'/>}
+                        />
+                    }
                 />
+                <Box mb='3'>
+                    <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        horizontal
+                        data={categories}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={renderCategories}
+                        height= '50'
+                    >
+                    </FlatList>
+                </Box>
                 <FlatList
-                data={filteredData}
-                renderItem={renderIngredients}
-                numColumns={2}
+                    showsVerticalScrollIndicator={false}
+                    data={filteredData}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderIngredients}
+                    numColumns={3}
                 >
                 </FlatList>
-                <VStack mt="4">
-                    <Button
-                    onPress={() => navigation.navigate('Recipes', { selected: selectedIngredients })}>
+                <Button
+                    size = 'lg'
+                    m = '3'
+                    onPress={selectedIngredients.length != 0 ? () => navigation.navigate('Recipes', { selected: selectedIngredients }) : 
+                    () => toast.show({
+                        title: "Invalid set of ingredients",
+                        status: "warning",
+                        description: "Please select at least one ingredient.",
+                        })
+                    }
+                >
+                    <Heading size='sm' textAlign='center' color='white'>
                         Find recipes
-                    </Button>
-                </VStack>
+                    </Heading>
+                </Button>
             </Box>
-        </NativeBaseProvider>
+        </Center>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: '#fff',
-        padding: 8,
-    },
 
     item: {
-        flex: 1/2,
-        marginRight: 10,
-        marginLeft: 10,
-        marginTop: 10,
-        marginBottom: 10,
+        flex: 1/3,
+        marginRight: 5,
+        marginLeft: 5,
+        marginTop: 5,
+        marginBottom: 5,
 
-        backgroundColor: 'white',
+        backgroundColor: '#f5f5f4',
 
         borderWidth: 3,
-        borderColor: 'white',
+        borderColor: '#f5f5f4',
         borderRadius: 7,
         
         alignItems: 'center',
         justifyContent: 'center',
-        height: windowHeight/5,
+        height: Dimensions.get('window').height/6,
     },
 
-    titleInfo: {
-        alignSelf: 'center',
-        marginTop: 20,
-        marginBottom: 25
-    }, 
+    category: {
+        marginRight: 5,
+        marginLeft: 5,
 
-    filterInfo: {
-        marginBottom: 10
+        width: 110,
+
+        backgroundColor: '#f5f5f4',
+
+        borderWidth: 3,
+        borderColor: '#f5f5f4',
+        borderRadius: 7,
+
+        justifyContent: 'center',
     },
 
     image: {
         width: Dimensions.get('window').width,
-        height: windowHeight/7,
+        height: Dimensions.get('window').height/10,
         resizeMode: 'contain'
     }, 
 });

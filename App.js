@@ -1,13 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react'
-import { ActivityIndicator, View, Text } from 'react-native'
+import { StatusBar } from 'react-native'
+import {
+  Spinner,
+  Center,
+  NativeBaseProvider,
+  extendTheme,
+} from "native-base"
 
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import rootReducer from './redux/reducers'
 import thunk from 'redux-thunk'
 const store = createStore(rootReducer, applyMiddleware(thunk))
-
 
 import { initializeApp } from "firebase/app";
 const firebaseConfig = {
@@ -28,8 +32,6 @@ import LandingScreen from './components/auth/Landing';
 import RegisterScreen from './components/auth/Register';
 import LoginScreen from './components/auth/Login';
 import MainScreen from  './components/Main';
-import FindScreen from  './components/main/Find';
-import RecipesScreen from  './components/main/Recipes/Recipes';
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -62,34 +64,72 @@ export class App extends Component {
 
   render() {
     const { loggedIn, loaded } = this.state;
+
+    const theme = extendTheme({
+      components: {
+        Button: {
+          defaultProps: {
+            colorScheme: 'emerald',
+            borderRadius: 10,
+          },
+        },
+        Center: {
+          defaultProps: {
+            backgroundColor: 'white',
+          },
+        },
+        Input: {
+          defaultProps: {
+            rounded: '3xl',
+            backgroundColor: '#f5f5f4',
+          },
+        },
+        Spinner: {
+          defaultProps: {
+            size: 'lg',
+            color: 'emerald',
+          },
+        },
+      },
+    });
+
     if (!loaded) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center'}}>
-          <ActivityIndicator size="large" />
-        </View>
+        <NativeBaseProvider theme={theme}>
+          <Center flex={1}>
+            <Spinner/>
+          </Center>
+        </NativeBaseProvider>
       )
     }
+
     if (!loggedIn) {
       return (
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName='Landing'>
-            <Stack.Screen name ='Landing' component={LandingScreen} options={{headerShown: false}}/>
-            <Stack.Screen name ='Register' component={RegisterScreen}/>
-            <Stack.Screen name="Login" component={LoginScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <NativeBaseProvider theme={theme}>
+          <StatusBar
+            barStyle="dark-content"
+          />
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName='Landing'>
+              <Stack.Screen name ='Landing' component={LandingScreen} options={{headerShown: false}}/>
+              <Stack.Screen name ='Register' component={RegisterScreen}/>
+              <Stack.Screen name="Login" component={LoginScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </NativeBaseProvider>
       )
     }
+
     return (
-      <Provider store={store}>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName='Main'>
-            <Stack.Screen name="Main" component={MainScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Find" component={FindScreen}/>
-            <Stack.Screen name="Recipes" component={RecipesScreen}/>
-          </Stack.Navigator>
-        </NavigationContainer>
-      </Provider>
+      <NativeBaseProvider theme={theme}>
+        <Provider store={store}>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName='Main'>
+              <Stack.Screen name="Main" component={MainScreen} options={{headerShown: false}}/>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </Provider>
+      </NativeBaseProvider>
     )
   }
 }

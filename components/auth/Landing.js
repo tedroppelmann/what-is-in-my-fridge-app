@@ -1,30 +1,31 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native'
-import { Title } from 'react-native-paper';
+
+import {
+    Box,
+    Text,
+    Heading,
+    Button,
+    FlatList,
+    HStack,
+    VStack,
+    Input,
+    Image,
+    Center,
+    ScrollView,
+} from 'native-base';
 
 export default function Landing({ navigation }) {
     return (
-        <View style={{ flex: 1, justifyContent: 'center'}}>
-            <Title style={styles.titleInfo}>Welcome!</Title>
-            <Button title='Register'
-            onPress={() => navigation.navigate('Register')}
-            />
-            <Button title='Login'
-            onPress={() => navigation.navigate('Login')}
-            />
-        </View>
+        <Center flex={1}>
+            <Heading>
+                Welcome!
+            </Heading>
+            <Button onPress={() => navigation.navigate('Register')} mb='3'>
+                Register
+            </Button>
+            <Button onPress={() => navigation.navigate('Login')}>
+                Login
+            </Button>
+        </Center>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    containerInfo: {
-        marginTop: 80,
-        margin: 25
-    },
-    titleInfo: {
-        alignSelf: 'center',
-    }
-})
