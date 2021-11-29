@@ -13,34 +13,39 @@ import FindRecipesScreen from './main/Find_recipes'
 const Tab = createBottomTabNavigator();
 
 export class Main extends Component {
+    _isMounted = false;
+
     componentDidMount() {
+        this._isMounted = true;
         this.props.fetchUser();
     }
+    
     render() {
         return (
             <Tab.Navigator 
                 initialRouteName='Find' 
                 screenOptions={{
                     tabBarShowLabel: false,
+                    tabBarActiveTintColor: '#50C878',
                 }}
             > 
                 <Tab.Screen name='Feed' component={FeedScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='star-outline' color={color} size={26} />
+                            <MaterialCommunityIcons name='star' color={color} size={30} />
                         ),
                     }} />
                 <Tab.Screen name='Find' component={FindRecipesScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='plus-box' color={color} size={48} />
+                            <MaterialCommunityIcons name='plus-box' color={color} size={55} />
                         ),
                         headerShown: false
                     }} />
                 <Tab.Screen name='Profile' component={ProfileScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='account-circle' color={color} size={26} />
+                            <MaterialCommunityIcons name='account-circle' color={color} size={30} />
                         ),
                     }} />
             </Tab.Navigator>

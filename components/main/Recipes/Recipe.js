@@ -10,12 +10,8 @@ import {
     Box,
     Text,
     Heading,
-    Button,
     FlatList,
     HStack,
-    VStack,
-    Input,
-    Image,
     Center,
     Spinner,
 } from 'native-base';
@@ -27,7 +23,6 @@ export default function Recipe({ navigation, route }) {
     const [recipe, setRecipe] = useState('');
     const [loading, setLoading] = useState(false);
     const [favorite, setFavorite] = useState(false);
-    const [favorites, setFavorites] = useState([]);
 
     const recipe_id = route.params.recipe_id;
     const missed_ingredients = route.params.missed_ingredients;
@@ -36,6 +31,12 @@ export default function Recipe({ navigation, route }) {
     const db = getFirestore();
     
     useEffect(() => {
+        getDoc(doc(db, 'Users', getAuth().currentUser.uid))
+            .then((snapshot) => {
+                if (snapshot.data().favorites.filter(e => e.recipe_id === recipe_id).length > 0) {
+                    setFavorite(true);
+                };
+            });
         if (recipe == '') {
             fetch(
                 `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=80256361caf04b358f4cd2de7f094dc6&includeNutrition=true`
@@ -49,18 +50,7 @@ export default function Recipe({ navigation, route }) {
                     console.log("error");
                 });
         }
-        getDoc(doc(db, 'Users', getAuth().currentUser.uid))
-            .then((snapshot) => {
-                if (favorites.length == 0) {
-                    setFavorites(snapshot.data().favorites)
-                };
-                if (favorites.filter(e => e.recipe_id === recipe_id).length > 0) {
-                    setFavorite(true);
-                };
-                console.log(favorites);
-                
-            }) 
-    },[favorites]);
+    },[]);
 
     const renderStep = ({ item, index }) => {
         return(

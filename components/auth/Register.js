@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { View, TextInput } from 'react-native'
 
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, doc } from "firebase/firestore";

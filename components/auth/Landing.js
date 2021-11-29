@@ -1,6 +1,4 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Title } from 'react-native-paper';
 
 import {
     Box,
@@ -22,7 +20,7 @@ export default function Landing({ navigation }) {
             <Heading>
                 Welcome!
             </Heading>
-            <Button onPress={() => navigation.navigate('Register')}>
+            <Button onPress={() => navigation.navigate('Register')} mb='3'>
                 Register
             </Button>
             <Button onPress={() => navigation.navigate('Login')}>
@@ -31,16 +29,3 @@ export default function Landing({ navigation }) {
         </Center>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    containerInfo: {
-        marginTop: 80,
-        margin: 25
-    },
-    titleInfo: {
-        alignSelf: 'center',
-    }
-})
