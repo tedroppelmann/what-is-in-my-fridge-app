@@ -1,12 +1,3 @@
-import React, { useState, useEffect, Component } from 'react'
-import { StyleSheet, View, Switch } from 'react-native'
-import { NativeBaseProvider, Button, VStack, Box, HStack, Text } from 'native-base'
-import { Title } from 'react-native-paper'
-import { connect } from 'react-redux'
-import { render } from 'react-dom'
-import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
-import { getFirestore, setDoc, getDoc, getDocs, doc, updateDoc, collection, query, where } from "firebase/firestore";
-
 /*
 
 UI Pending tasks: 
@@ -18,106 +9,212 @@ Logic Pending tasks:
 -Setup a function that reads the restrictions field from firestore and initialize a restriction object array with at least the following attributes: name, toggle.
 
 */
+import React, { Component } from 'react'
+import { StyleSheet, Alert } from 'react-native'
+import { NativeBaseProvider, View, Switch, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
+import { connect } from 'react-redux'
+import FirebaseDb from './Support/FirebaseDb'
+import ArrayTransform from './Support/ArrayTransform'
+import { v4 as uuidv4 } from 'uuid';
 
 export class IntoleranceRestrictions extends Component{
     
+    /*
+    Method description: https://es.reactjs.org/docs/react-component.html#constructor
+    */
     constructor(props) {
         super(props);
         this.state = {
-            toggledGlutenFree : false,
-            toggledVegan: false,
-
+            user: props.currentUser, // initialize user attribute with the currentUser from redux
+            intolerances: [], 
+            uiIsLoading: true,
+            savingIntolerances: false, 
         }
 
-        this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
-        this.setDiet = this.setDiet.bind(this)
+        this.saveIntoleraForLoggedUser = this.saveIntoleraForLoggedUser.bind(this)
+        this.toggleSwitch = this.toggleSwitch.bind(this)
     }
 
-    setDiet(){
-        // First create an array with all the diet restrictions depending on the enabled switches
-        var diets = [];
-        if(this.state.toggledGlutenFree === true){
-            diets.push("Gluten Free");
-        }else{
-            console.log("Gluten Free switch not selected");
-        }
-        if(this.state.toggledVegan === true){
-            diets.push("Vegan");
-        }else{
-            console.log("Vegan switch not selected");
-        }
-
-        // Second, returns a string separated by commas depending on the values added to the array
-        var dietsToString = diets.toString();
-        console.log("DietsToString: ", dietsToString);
-        return dietsToString;
+    /*
+    Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
+    */
+    async componentDidMount(){
+        //console.log("componentDidMount intolerances previous state: ", this.state.intolerances)        
+        var intolerances = await this.setIntoleranceRestrictions()
+        // Call an extra render of the UI after the setting of the intolerance restriction in the previous line
+        this.setState({intolerances: intolerances})
+        //console.log("componentDidMount intolerances after initialization state", this.state.intolerances)
     }
 
-    async saveDietForLoggedUser(){
-        try{
-            var userDocId = "";
-            const db = getFirestore();
-            //Get the firestore db
-            const usersDb = collection(db, "Users");
-            //Query the logged user from the firestore db
-            const queryResult = query(usersDb, where("email", "==", "mellon1786@gmail.com")); // HOW DO YOU GET THE EMAIL FROM THE LOGGED ON USER?
-            const querySnapshot = await getDocs(queryResult);
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data())
-                userDocId = doc.id
-            });
-            
-            var diets = this.setDiet();
-            console.log(diets);
-            if (userDocId != "") {
-                //Insert Diet for logged in user
-                const userDoc = doc(db, 'Users', userDocId);
-                await updateDoc(userDoc, { diets: diets }); // { fieldOnFirestore : reactVariable }
-                console.log("Document updated: ", userDocId);
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("Empty Document ID. Update was not performed.");
+    /* 
+    Method description: Parse to string the intolerances selected on the UI and save them on the users collection on firestore
+    */
+    async identifySelectedIntolerances(){
+        var selectedIntolerances = [];
+        var i=0;
+        this.state.intolerances.forEach(() => {
+            if(this.state.intolerances[i].toggle){
+                selectedIntolerances.push(this.state.intolerances[i].name);
+                //console.log(this.state.intolerances[i].name," was selected.");
+            }else{
+                //console.log(this.state.intolerances[i].name," was not selected.");
             }
-        }catch(error){
-            console.log(error)
+            i++;
+        })
+        var selectedIntolerancesToString = selectedIntolerances.toString();
+        //console.log("Intolerances parsed to string: ", selectedIntolerancesToString);
+        return selectedIntolerancesToString; 
+    }
+
+    /*
+    Method Description: used on pressed button from UI to save a selected intolerance restriction from a user into a firestore database 
+    */
+    async saveIntoleraForLoggedUser(){
+        try{
+            // In order to show the spinner while the execution of this method, set first savingIntolerances to true
+            this.setState({ savingIntolerances: true })
+            //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
+
+            // Create a new object from the class FirebaseDb to be able to query (select, insert and update) the Firestore NoSQL database
+            const fdb = new FirebaseDb()
+            
+            // Instantiate a Firebase database collection with the database name passed on the parameters
+            const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            //console.log("Initialized users collection")
+            
+            // Query the ID of a user from an already initialized firestore collection given an email
+            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            //console.log("User document ID obtained", userDocId)
+            
+            // Identify which intolerances were selected and create a string separated by commas.
+            const intolerances = await this.identifySelectedIntolerances()
+            //console.log("intolerances selected: ", intolerances)
+            
+            // Update (or insert if the field intolerances does not exist) the intolerances of a specified user in the Users firestore collection
+            const initFdb = await fdb.initFirestoreDb()
+            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "intolerances", intolerances)
+
+            // In order to stop showing the spinner when the execution of this method finishes, set savingIntolerances to false
+            this.setState({ savingIntolerances: false })
+            //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
+
+            if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!") }
+        
+        }catch(e){
+            console.log(e) // An exception could be thrown if there is no connection to Firestore.
+            this.showAlert("Intolerance Restrictions", "Intolerances not saved!")
+        }
+    }
+    
+    /*
+    Method Description: initialize an array of objects that contains all intolerance restrictions that should appear on the UI for the user to select or deselect them. 
+    */
+    async setIntoleranceRestrictions(){
+        try{
+            // Connect to firebase and query the intolerances document from the Restrictions collection database 
+            const fdb = new FirebaseDb()
+            const connFdb = await fdb.initFirestoreDb()
+            const field = await fdb.queryDocFromFdb(connFdb, "Restrictions", "intolerances")
+            //console.log("Queried field from a document: ", field.intolerances)
+            
+            // Query the intolerances field from the user document
+            const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            const field2 = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
+            //console.log("Queried field from a intolerance document: ", field.intolerances)
+            //console.log("Queried field2 from a user document: ", field2.intolerances)
+            
+            // Update the intolerances state with all a intolerances object array 
+            const arrTrn = new ArrayTransform()
+            const stringTurnedIntoArray = await arrTrn.stringToArray(field.intolerances, field2.intolerances)
+            
+            // In order to stop showing the spinner in the UI, if updating intolerances state finish executing then set uiIsLoading to false  
+            //console.log("UI is Loading? ", this.state.uiIsLoading)
+            this.setState({ uiIsLoading: false })
+            //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
+            
+            return stringTurnedIntoArray
+            
+        }catch(e){
+            console.log(e)
         }
     }
 
-    toggleSwitchGlutenFree = (value) => {
-        this.setState({toggledGlutenFree : value})
-        console.log("toggleSwitchGlutenFreeValue", value)
-    }
-    toggleSwitchVegan = (value) => {
-        this.setState({toggledVegan : value})
-        console.log("toggleSwitchVeganValue", value)
+    toggleSwitch = (i) => (event) => {
+        this.setState((state, props) => {
+          state.intolerances[i].toggle = !state.intolerances[i].toggle;
+          //console.log(state.intolerances[i].name, " toggled.")
+          return {
+            intolerances: state.intolerances
+          }
+        })
     }
 
+    showAlert(title, message) {  
+        Alert.alert(
+            title,
+            message,
+            [
+              {
+                text: "Ok",
+                //onPress: () => console.log("Ok Pressed"),
+                style: "default",
+              },
+            ],
+            {
+              cancelable: true,
+              //onDismiss: () => console.log("Dismissed alert by tapping outside of the alert dialog")
+            }
+        )        
+    }  
+    
     render(){
+        const { intolerances } = this.state
+        //console.log("Array of intolerances: ", intolerances)
+        const dietJSX = []
+        var switchKey=0;
+        if (intolerances != undefined){
+            intolerances.forEach((intolerance) => {
+                dietJSX.push(
+                    <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
+                        <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
+                            <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
+                        </View>
+                        <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                            <Switch
+                                key={switchKey}
+                                style={{justifyContent: 'flex-end', flex:1}}
+                                onToggle={this.toggleSwitch(switchKey)}
+                                isChecked={intolerance.toggle}
+                            />  
+                        </View>
+                    </View>
+                )
+                switchKey++;
+            })
+        }
+
         return (
             <NativeBaseProvider>
-                <Box>
-                    <VStack style={styles.containerInfo}>
-                        <HStack style={styles.containerInfo} alignItems="center" space={8}>
-                            <Text>{this.state.toggledGlutenFree? "Gluten Free (ON)" : "Gluten Free (OFF)"}</Text>
-                            <Switch 
-                                onValueChange={this.toggleSwitchGlutenFree}
-                                value={this.state.toggledGlutenFree}
-                            />
-                        </HStack>
-                        <HStack style={styles.containerInfo} alignItems="center" space={8}>
-                            <Text>{this.state.toggledVegan? "Vegan (ON)" : "Vegan (OFF)"}</Text>
-                            <Switch 
-                                onValueChange={this.toggleSwitchVegan}
-                                value={this.state.toggledVegan}
-                            />
-                        </HStack>
-                        <HStack>
-                            <Button mt='2' onPress={() => this.saveDietForLoggedUser()}>
-                                Save Diets
-                            </Button>
-                        </HStack>
+                <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+                    <ScrollView>
+                        <VStack style={styles.containerInfoUp}>
+                            {this.state.uiIsLoading? <Spinner size="lg" /> : null}
+                            {dietJSX}
+                        </VStack>
+                    </ScrollView>
+                    <VStack mt='4' style={styles.containerInfoDown}>
+                        {
+                            //If you are not saving intolerances (savingIntolerances=false) then show the button. Otherwise, show the spinner
+                            !this.state.savingIntolerances? // if you are not saving intolerances show the button
+                                <Button onPress={() => this.saveIntoleraForLoggedUser()}> 
+                                    Save Intolerances
+                                </Button>
+                            : // otherwise show spinner
+                            <Spinner size="sm" />
+                        }
                     </VStack>
+                    
                 </Box>
             </NativeBaseProvider>
         )
@@ -128,8 +225,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    containerInfo: {
+    containerInfoUp: {
         margin: 20,
+        position: 'relative',
+        justifyContent: 'flex-start',
+    },
+    containerInfoDown: {
+        margin: 20,
+        position: 'relative',
+        justifyContent: 'flex-end',
+    },
+    filterInfo: {
+        marginBottom: 10
     },
     footPage: {
         width: '100%',
