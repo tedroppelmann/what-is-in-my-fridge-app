@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
-import { NativeBaseProvider, View, Switch, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
+import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
 import { connect } from 'react-redux'
 import FirebaseDb from './Support/FirebaseDb'
 import ArrayTransform from './Support/ArrayTransform'
@@ -18,10 +18,12 @@ export class DietRestrictions extends Component{
             diets: [], 
             uiIsLoading: true,
             savingDiets: false, 
+            searchTerm: "", // this is required for the search input 
         }
 
         this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
         this.toggleSwitch = this.toggleSwitch.bind(this)
+        this.setSearchTerm = this.setSearchTerm.bind(this)
     }
 
     /*
@@ -139,6 +141,19 @@ export class DietRestrictions extends Component{
         })
     }
 
+    /* 
+    Method description: This method is required for the search input filter
+    */
+    setSearchTerm(text){
+        this.setState((state) => {
+            state.searchTerm = text 
+            //console.log(state.searchTerm)
+            return {
+                searchTerm: state.searchTerm 
+            }
+        })
+    }
+
     showAlert(title, message) {  
         Alert.alert(
             title,
@@ -158,27 +173,29 @@ export class DietRestrictions extends Component{
     }  
     
     render(){
-        const { diets } = this.state
+        const { diets, searchTerm } = this.state
         //console.log("Array of Diets: ", diets)
         const dietJSX = []
         var switchKey=0;
         if (diets != undefined){
             diets.forEach((diet) => {
-                dietJSX.push(
-                    <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
-                        <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                            <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {diet.name} </Text>
+                if (diet.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
+                    dietJSX.push(
+                        <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
+                            <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
+                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {diet.name} </Text>
+                            </View>
+                            <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                                <Switch
+                                    key={switchKey}
+                                    style={{justifyContent: 'flex-end', flex:1}}
+                                    onToggle={this.toggleSwitch(switchKey)}
+                                    isChecked={diet.toggle}
+                                />  
+                            </View>
                         </View>
-                        <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
-                            <Switch
-                                key={switchKey}
-                                style={{justifyContent: 'flex-end', flex:1}}
-                                onToggle={this.toggleSwitch(switchKey)}
-                                isChecked={diet.toggle}
-                            />  
-                        </View>
-                    </View>
-                )
+                    )
+                }
                 switchKey++;
             })
         }
@@ -186,6 +203,14 @@ export class DietRestrictions extends Component{
         return (
             <NativeBaseProvider>
                 <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+                    <VStack>
+                        <Input 
+                            style={styles.filterInfo} 
+                            type="text" 
+                            placeholder='Search dietary restrictions...' 
+                            onChangeText={(text) => this.setSearchTerm(text)}
+                        />
+                    </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
                             {this.state.uiIsLoading? <Spinner size="lg" /> : null}

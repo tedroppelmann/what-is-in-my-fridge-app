@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { NativeBaseProvider, Button, VStack, Box, Image } from 'native-base'
+import { NativeBaseProvider, Button, VStack, Box } from 'native-base'
 import { Title } from 'react-native-paper'
 import { getAuth }  from 'firebase/auth'
 import { connect } from 'react-redux'
-import { render } from 'react-dom'
 
 function Profile(props) {
     const navigation = props.navigation;
@@ -33,21 +32,15 @@ function Profile(props) {
                 </View>
                 <VStack style={styles.containerInfo}>
                     
-                    <Button mt='2' onPress={() => navigation.navigate('DietRestrictions')}>
+                    <Button mt='2' onPress={() => navigation.navigate('Dietary Restrictions')}>
                         Dietary Restrictions
                     </Button>
-                    {/*
-                    <Image source={{uri: <img src="https://img.icons8.com/external-becris-flat-becris/64/000000/external-diet-literary-genres-becris-flat-becris.png"/>}} style={{width: 30, height: 30}} />
-                    */}
-                    <Button mt='2' onPress={() => navigation.navigate('IntoleranceRestrictions')}>
+                    <Button mt='2' onPress={() => navigation.navigate('Intolerance Restrictions')}>
                         Intolerance Restrictions
                     </Button>
-                    <Button mt='2' onPress={() => navigation.navigate('IngredientsExclusion')}>
+                    <Button mt='2' onPress={() => navigation.navigate('Ingredients Exclusion')}>
                         Ingredients Exclusion
                     </Button>
-                    {/*
-                    <Image source={{uri: "https://img.icons8.com/external-sbts2018-flat-sbts2018/50/000000/external-logout-social-media-sbts2018-flat-sbts2018.png"}} style={{width: 30, height: 30}}/>
-                    */}
                     <Button mt='2' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
                         Logout
                     </Button>

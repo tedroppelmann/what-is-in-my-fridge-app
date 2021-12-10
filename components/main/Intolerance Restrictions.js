@@ -1,17 +1,6 @@
-/*
-
-UI Pending tasks: 
--Set an icon for each button in the settings shown in the profile screen.
--Set an icon for each setting shown for each restriction screen.
--Organize the list of restrictions in a grid manually and then set it dinamically.
-
-Logic Pending tasks:
--Setup a function that reads the restrictions field from firestore and initialize a restriction object array with at least the following attributes: name, toggle.
-
-*/
 import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
-import { NativeBaseProvider, View, Switch, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
+import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
 import { connect } from 'react-redux'
 import FirebaseDb from './Support/FirebaseDb'
 import ArrayTransform from './Support/ArrayTransform'
@@ -29,10 +18,12 @@ export class IntoleranceRestrictions extends Component{
             intolerances: [], 
             uiIsLoading: true,
             savingIntolerances: false, 
+            searchTerm: "", // this is required for the search input 
         }
 
         this.saveIntoleraForLoggedUser = this.saveIntoleraForLoggedUser.bind(this)
         this.toggleSwitch = this.toggleSwitch.bind(this)
+        this.setSearchTerm = this.setSearchTerm.bind(this)
     }
 
     /*
@@ -150,6 +141,19 @@ export class IntoleranceRestrictions extends Component{
         })
     }
 
+    /* 
+    Method description: This method is required for the search input filter
+    */
+    setSearchTerm(text){
+        this.setState((state) => {
+            state.searchTerm = text 
+            console.log(state.searchTerm)
+            return {
+                searchTerm: state.searchTerm 
+            }
+        })
+    }
+
     showAlert(title, message) {  
         Alert.alert(
             title,
@@ -169,27 +173,32 @@ export class IntoleranceRestrictions extends Component{
     }  
     
     render(){
-        const { intolerances } = this.state
+        const { intolerances, searchTerm } = this.state
         //console.log("Array of intolerances: ", intolerances)
-        const dietJSX = []
+        const JSX = []
         var switchKey=0;
         if (intolerances != undefined){
+            // this is required to enable the search input filtering
+
             intolerances.forEach((intolerance) => {
-                dietJSX.push(
-                    <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
-                        <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                            <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
+                if (intolerance.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
+                    JSX.push(
+                        <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
+                            <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
+                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
+                            </View>
+                            <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                                <Switch
+                                    key={switchKey}
+                                    style={{justifyContent: 'flex-end', flex:1}}
+                                    onToggle={this.toggleSwitch(switchKey)}
+                                    isChecked={intolerance.toggle}
+                                />  
+                            </View>
                         </View>
-                        <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
-                            <Switch
-                                key={switchKey}
-                                style={{justifyContent: 'flex-end', flex:1}}
-                                onToggle={this.toggleSwitch(switchKey)}
-                                isChecked={intolerance.toggle}
-                            />  
-                        </View>
-                    </View>
-                )
+                    )
+                }
+            
                 switchKey++;
             })
         }
@@ -197,10 +206,18 @@ export class IntoleranceRestrictions extends Component{
         return (
             <NativeBaseProvider>
                 <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+                    <VStack>
+                        <Input 
+                            style={styles.filterInfo} 
+                            type="text" 
+                            placeholder='Search intolerance restrictions...' 
+                            onChangeText={(text) => this.setSearchTerm(text)}
+                        />
+                    </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
                             {this.state.uiIsLoading? <Spinner size="lg" /> : null}
-                            {dietJSX}
+                            {JSX}
                         </VStack>
                     </ScrollView>
                     <VStack mt='4' style={styles.containerInfoDown}>

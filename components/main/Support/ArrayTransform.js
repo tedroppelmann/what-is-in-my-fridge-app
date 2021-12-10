@@ -43,6 +43,7 @@ export default class ArrayTransform{
 
             //console.log("Counter final value from the stringToArray method:", i)
             //console.log("Array to print in the settings is: ", arrayValue)
+            
             return arrayValue
         }catch(e){
             //console.log(e)

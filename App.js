@@ -95,9 +95,9 @@ export class App extends Component {
             <Stack.Screen name="Recipes" component={RecipesScreen}/>
             {/* AL Modifications */}
             <Stack.Screen name="Profile" component={ProfileScreen}/>
-            <Stack.Screen name="DietRestrictions" component={DietRestrictionsScreen}/>
-            <Stack.Screen name="IntoleranceRestrictions" component={IntoleranceRestrictionsScreen}/>
-            <Stack.Screen name="IngredientsExclusion" component={IngredientsExclusionScreen}/>
+            <Stack.Screen name="Dietary Restrictions" component={DietRestrictionsScreen}/>
+            <Stack.Screen name="Intolerance Restrictions" component={IntoleranceRestrictionsScreen}/>
+            <Stack.Screen name="Ingredients Exclusion" component={IngredientsExclusionScreen}/>
             {/* AL Modifications Finish */}
           </Stack.Navigator>
         </NavigationContainer>
