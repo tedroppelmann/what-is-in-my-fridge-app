@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { View, TextInput } from 'react-native'
 
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 import {
-    NativeBaseProvider,
     Box,
     Text,
     Heading,
@@ -18,6 +16,7 @@ import {
     IconButton,
     HStack,
     Divider,
+    Center,
 } from 'native-base';
 
 export class Register extends Component {
@@ -42,6 +41,7 @@ export class Register extends Component {
                 setDoc(doc(db, 'Users', auth.currentUser.uid), {
                     name: name,
                     email: email,
+                    favorites: [],
                   });
                 console.log(result)
             })
@@ -52,7 +52,7 @@ export class Register extends Component {
 
     render() {
         return (
-            <NativeBaseProvider>
+            <Center flex={1}>
                 <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
                     <Heading size='xl'>
                         Welcome
@@ -91,7 +91,7 @@ export class Register extends Component {
                         </Button>
                     </VStack>
                 </Box>
-            </NativeBaseProvider>
+            </Center>
         )
     }
 }
