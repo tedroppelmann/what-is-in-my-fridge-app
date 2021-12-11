@@ -7,8 +7,8 @@ import { bindActionCreators } from 'redux'
 import { fetchUser } from '../redux/actions/index'
 
 import FeedScreen from './main/Feed'
-import ProfileScreen from './main/Profile'
-import FindRecipesScreen from './main/Find_recipes'
+import ProfileStackScreen from './main/Profile_stack'
+import FindRecipesScreen from './main/Find_stack'
 
 const Tab = createBottomTabNavigator();
 
@@ -42,11 +42,12 @@ export class Main extends Component {
                         ),
                         headerShown: false
                     }} />
-                <Tab.Screen name='Profile' component={ProfileScreen}
+                <Tab.Screen name='Profile' component={ProfileStackScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name='account-circle' color={color} size={30} />
                         ),
+                        headerShown: false
                     }} />
             </Tab.Navigator>
         )
