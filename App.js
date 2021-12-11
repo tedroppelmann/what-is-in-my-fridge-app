@@ -32,9 +32,9 @@ import FindScreen from  './components/main/Find';
 import RecipesScreen from  './components/main/Recipes/Recipes';
 /* AL Modifications */
 import ProfileScreen from  './components/main/Profile';
-import DietRestrictionsScreen from  './components/main/Diet Restrictions';
-import IntoleranceRestrictionsScreen from  './components/main/Intolerance Restrictions';
-import IngredientsExclusionScreen from  './components/main/Ingredients Exclusion';
+import DietRestrictionsScreen from  './components/main/Profile/Diet Restrictions';
+import IntoleranceRestrictionsScreen from  './components/main/Profile/Intolerance Restrictions';
+import IngredientsExclusionScreen from  './components/main/Profile/Ingredients Exclusion';
 /* AL Modifications Finish */
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";

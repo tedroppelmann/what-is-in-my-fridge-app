@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
 import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
 import { connect } from 'react-redux'
-import FirebaseDb from './Support/FirebaseDb'
-import ArrayTransform from './Support/ArrayTransform'
+import FirebaseDb from '../Support/FirebaseDb'
+import ArrayTransform from '../Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid';
 
-export class IngredientsExclusion extends Component{
+export class DietRestrictions extends Component{
     
     /*
     Method description: https://es.reactjs.org/docs/react-component.html#constructor
@@ -15,13 +15,13 @@ export class IngredientsExclusion extends Component{
         super(props);
         this.state = {
             user: props.currentUser, // initialize user attribute with the currentUser from redux
-            exclusions: [], 
+            diets: [], 
             uiIsLoading: true,
-            savingExclusions: false, 
+            savingDiets: false, 
             searchTerm: "", // this is required for the search input 
         }
 
-        this.saveExclusionForLoggedUser = this.saveExclusionForLoggedUser.bind(this)
+        this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
         this.toggleSwitch = this.toggleSwitch.bind(this)
         this.setSearchTerm = this.setSearchTerm.bind(this)
     }
@@ -30,41 +30,41 @@ export class IngredientsExclusion extends Component{
     Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
     */
     async componentDidMount(){
-        //console.log("componentDidMount exclusions previous state: ", this.state.exclusions)        
-        var exclusions = await this.setExclusionRestrictions()
-        // Call an extra render of the UI after the setting of the exclusion restriction in the previous line
-        this.setState({exclusions: exclusions})
-        //console.log("componentDidMount exclusions after initialization state", this.state.exclusions)
+        //console.log("componentDidMount diets previous state: ", this.state.diets)        
+        var diets = await this.setDietRestrictions()
+        // Call an extra render of the UI after the setting of the diet restriction in the previous line
+        this.setState({diets: diets})
+        //console.log("componentDidMount diets after initialization state", this.state.diets)
     }
 
     /* 
-    Method description: Parse to string the exclusions selected on the UI and save them on the users collection on firestore
+    Method description: Parse to string the diets selected on the UI and save them on the users collection on firestore
     */
-    async identifySelectedExclusions(){
-        var selectedExclusions = [];
+    async identifySelectedDiets(){
+        var selectedDiets = [];
         var i=0;
-        this.state.exclusions.forEach(() => {
-            if(this.state.exclusions[i].toggle){
-                selectedExclusions.push(this.state.exclusions[i].name);
-                //console.log(this.state.exclusions[i].name," was selected.");
+        this.state.diets.forEach(() => {
+            if(this.state.diets[i].toggle){
+                selectedDiets.push(this.state.diets[i].name);
+                //console.log(this.state.diets[i].name," was selected.");
             }else{
-                //console.log(this.state.exclusions[i].name," was not selected.");
+                //console.log(this.state.diets[i].name," was not selected.");
             }
             i++;
         })
-        var selectedExclusionsToString = selectedExclusions.toString();
-        //console.log("exclusions parsed to string: ", selectedExclusionsToString);
-        return selectedExclusionsToString; 
+        var selectedDietsToString = selectedDiets.toString();
+        //console.log("Diets parsed to string: ", selectedDietsToString);
+        return selectedDietsToString; 
     }
 
     /*
-    Method Description: used on pressed button from UI to save a selected exclusion restriction from a user into a firestore database 
+    Method Description: used on pressed button from UI to save a selected diet restriction from a user into a firestore database 
     */
-    async saveExclusionForLoggedUser(){
+    async saveDietForLoggedUser(){
         try{
-            // In order to show the spinner while the execution of this method, set first savingExclusions to true
-            this.setState({ savingExclusions: true })
-            //console.log("Saving exclusions? (After update) ", this.state.savingExclusions)
+            // In order to show the spinner while the execution of this method, set first savingDiets to true
+            this.setState({ savingDiets: true })
+            //console.log("Saving Diets? (After update) ", this.state.savingDiets)
 
             // Create a new object from the class FirebaseDb to be able to query (select, insert and update) the Firestore NoSQL database
             const fdb = new FirebaseDb()
@@ -77,49 +77,49 @@ export class IngredientsExclusion extends Component{
             const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
             //console.log("User document ID obtained", userDocId)
             
-            // Identify which exclusions were selected and create a string separated by commas.
-            const exclusions = await this.identifySelectedExclusions()
-            //console.log("exclusions selected: ", exclusions)
+            // Identify which diets were selected and create a string separated by commas.
+            const diets = await this.identifySelectedDiets()
+            //console.log("Diets selected: ", diets)
             
-            // Update (or insert if the field exclusions does not exist) the exclusions of a specified user in the Users firestore collection
+            // Update (or insert if the field diets does not exist) the diets of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
-            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "exclusions", exclusions)
+            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "diets", diets)
 
-            // In order to stop showing the spinner when the execution of this method finishes, set savingExclusions to false
-            this.setState({ savingExclusions: false })
-            //console.log("Saving exclusions? (After update) ", this.state.savingExclusions)
+            // In order to stop showing the spinner when the execution of this method finishes, set savingDiets to false
+            this.setState({ savingDiets: false })
+            //console.log("Saving Diets? (After update) ", this.state.savingDiets)
 
-            if (updatedRegistry){ this.showAlert("Ingredients Exclusion", "Exclusions Saved Successfully!") } else { this.showAlert("Ingredients Exclusion", "Exclusions not saved!") }
+            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diets Saved Successfully!") } else { this.showAlert("Diet Restrictions", "Diets not saved!") }
         
         }catch(e){
             console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Ingredients Exclusion", "Exclusions not saved!")
+            this.showAlert("Diet Restrictions", "Diets not saved!")
         }
     }
     
     /*
-    Method Description: initialize an array of objects that contains all exclusion restrictions that should appear on the UI for the user to select or deselect them. 
+    Method Description: initialize an array of objects that contains all diet restrictions that should appear on the UI for the user to select or deselect them. 
     */
-    async setExclusionRestrictions(){
+    async setDietRestrictions(){
         try{
-            // Connect to firebase and query the exclusions document from the Restrictions collection database 
+            // Connect to firebase and query the diets document from the Restrictions collection database 
             const fdb = new FirebaseDb()
             const connFdb = await fdb.initFirestoreDb()
-            const field = await fdb.queryDocFromFdb(connFdb, "Restrictions", "exclusions")
-            //console.log("Queried field from a document: ", field.exclusions)
+            const field = await fdb.queryDocFromFdb(connFdb, "Restrictions", "diets")
+            //console.log("Queried field from a document: ", field.diets)
             
-            // Query the exclusions field from the user document
+            // Query the diets field from the user document
             const usersCollectionFdb = await fdb.initCollectionDb("Users")
             const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
             const field2 = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
-            //console.log("Queried field from a exclusion document: ", field.exclusions)
-            //console.log("Queried field2 from a user document: ", field2.exclusions)
+            //console.log("Queried field from a diet document: ", field.diets)
+            //console.log("Queried field2 from a user document: ", field2.diets)
             
-            // Update the exclusions state with all a exclusions object array 
+            // Update the diets state with all a diets object array 
             const arrTrn = new ArrayTransform()
-            const stringTurnedIntoArray = await arrTrn.stringToArray(field.exclusions, field2.exclusions)
+            const stringTurnedIntoArray = await arrTrn.stringToArray(field.diets, field2.diets)
             
-            // In order to stop showing the spinner in the UI, if updating exclusions state finish executing then set uiIsLoading to false  
+            // In order to stop showing the spinner in the UI, if updating diets state finish executing then set uiIsLoading to false  
             //console.log("UI is Loading? ", this.state.uiIsLoading)
             this.setState({ uiIsLoading: false })
             //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
@@ -133,10 +133,10 @@ export class IngredientsExclusion extends Component{
 
     toggleSwitch = (i) => (event) => {
         this.setState((state, props) => {
-          state.exclusions[i].toggle = !state.exclusions[i].toggle;
-          //console.log(state.exclusions[i].name, " toggled.")
+          state.diets[i].toggle = !state.diets[i].toggle;
+          //console.log(state.diets[i].name, " toggled.")
           return {
-            exclusions: state.exclusions
+            diets: state.diets
           }
         })
     }
@@ -147,7 +147,7 @@ export class IngredientsExclusion extends Component{
     setSearchTerm(text){
         this.setState((state) => {
             state.searchTerm = text 
-            console.log(state.searchTerm)
+            //console.log(state.searchTerm)
             return {
                 searchTerm: state.searchTerm 
             }
@@ -169,34 +169,33 @@ export class IngredientsExclusion extends Component{
               cancelable: true,
               //onDismiss: () => console.log("Dismissed alert by tapping outside of the alert dialog")
             }
-        )
+        )        
     }  
     
     render(){
-        const { exclusions, searchTerm } = this.state
-        //console.log("Array of exclusions: ", exclusions)
-        const JSX = []
+        const { diets, searchTerm } = this.state
+        //console.log("Array of Diets: ", diets)
+        const dietJSX = []
         var switchKey=0;
-        if (exclusions != undefined){
-            exclusions.forEach((exclusion) => {
-                // this is required to enable the search input filtering
-                if (exclusion.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
-                    JSX.push(
+        if (diets != undefined){
+            diets.forEach((diet) => {
+                if (diet.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
+                    dietJSX.push(
                         <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
                             <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
+                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {diet.name} </Text>
                             </View>
-                            <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                            <View key={uuidv4()} style={{justifyContent: 'flex-end', flex:1}}>
                                 <Switch
                                     key={switchKey}
                                     style={{justifyContent: 'flex-end', flex:1}}
                                     onToggle={this.toggleSwitch(switchKey)}
-                                    isChecked={exclusion.toggle}
+                                    isChecked={diet.toggle}
                                 />  
                             </View>
                         </View>
                     )
-                } 
+                }
                 switchKey++;
             })
         }
@@ -208,22 +207,22 @@ export class IngredientsExclusion extends Component{
                         <Input 
                             style={styles.filterInfo} 
                             type="text" 
-                            placeholder='Search ingredients to exclude from recipies...' 
+                            placeholder='Search dietary restrictions...' 
                             onChangeText={(text) => this.setSearchTerm(text)}
                         />
                     </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
                             {this.state.uiIsLoading? <Spinner size="lg" /> : null}
-                            {JSX}
+                            {dietJSX}
                         </VStack>
                     </ScrollView>
                     <VStack mt='4' style={styles.containerInfoDown}>
                         {
-                            //If you are not saving exclusions (savingExclusions=false) then show the button. Otherwise, show the spinner
-                            !this.state.savingExclusions? // if you are not saving exclusions show the button
-                                <Button onPress={() => this.saveExclusionForLoggedUser()}> 
-                                    Save Exclusions
+                            //If you are not saving diets (savingDiets=false) then show the button. Otherwise, show the spinner
+                            !this.state.savingDiets? // if you are not saving diets show the button
+                                <Button onPress={() => this.saveDietForLoggedUser()}> 
+                                    Save Diets
                                 </Button>
                             : // otherwise show spinner
                             <Spinner size="sm" />
@@ -272,4 +271,4 @@ const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
 
-export default connect(mapStateToProps, null)(IngredientsExclusion);
+export default connect(mapStateToProps, null)(DietRestrictions);

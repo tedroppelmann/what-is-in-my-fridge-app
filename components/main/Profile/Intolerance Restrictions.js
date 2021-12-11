@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
 import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
 import { connect } from 'react-redux'
-import FirebaseDb from './Support/FirebaseDb'
-import ArrayTransform from './Support/ArrayTransform'
+import FirebaseDb from '../Support/FirebaseDb'
+import ArrayTransform from '../Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid';
 
 export class IntoleranceRestrictions extends Component{
