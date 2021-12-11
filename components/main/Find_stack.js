@@ -10,7 +10,7 @@ import RecipeScreen from  './Recipes/Recipe';
 
 const Stack2 = createStackNavigator();
 
-export default function Find_recipes() {
+export default function Find_stack() {
     return (
         <NavigationContainer independent={true}>
           <StatusBar barStyle="dark-content"/>

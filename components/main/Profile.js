@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { NativeBaseProvider, Button, VStack, Box } from 'native-base'
+import { 
+    Button, 
+    VStack, 
+    Box, 
+    Center
+} from 'native-base'
 import { Title } from 'react-native-paper'
 import { getAuth }  from 'firebase/auth'
 import { connect } from 'react-redux'
@@ -23,15 +28,14 @@ function Profile(props) {
         return <View></View>
     }
 
-    return (   
-        <NativeBaseProvider>
-            <Box style={styles.container}>
+    return (  
+        <Center flex={1}>
+            <Box flex={1} pt="3" w="95%" mx="auto">
                 <View style={styles.containerInfo}>
                     <Title style={styles.titleInfo}>{user.name}</Title>
                     <Title style={styles.subtitleInfo}>{user.email}</Title>
                 </View>
                 <VStack style={styles.containerInfo}>
-                    
                     <Button mt='2' onPress={() => navigation.navigate('Dietary Restrictions')}>
                         Dietary Restrictions
                     </Button>
@@ -41,12 +45,12 @@ function Profile(props) {
                     <Button mt='2' onPress={() => navigation.navigate('Ingredients Exclusion')}>
                         Ingredients Exclusion
                     </Button>
-                    <Button mt='2' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
+                    <Button safeAreaTop mt='2' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
                         Logout
                     </Button>
                 </VStack>
             </Box>
-        </NativeBaseProvider>
+        </Center> 
     )
 }
 

@@ -33,13 +33,6 @@ import RegisterScreen from './components/auth/Register';
 import LoginScreen from './components/auth/Login';
 import MainScreen from  './components/Main';
 
-/* AL Modifications */
-import ProfileScreen from  './components/main/Profile';
-import DietRestrictionsScreen from  './components/main/Profile/Diet Restrictions';
-import IntoleranceRestrictionsScreen from  './components/main/Profile/Intolerance Restrictions';
-import IngredientsExclusionScreen from  './components/main/Profile/Ingredients Exclusion';
-/* AL Modifications Finish */
-
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Stack = createStackNavigator();
@@ -133,12 +126,6 @@ export class App extends Component {
           <NavigationContainer>
             <Stack.Navigator initialRouteName='Main'>
               <Stack.Screen name="Main" component={MainScreen} options={{headerShown: false}}/>
-              {/* AL Modifications */}
-              <Stack.Screen name="Profile" component={ProfileScreen}/>
-              <Stack.Screen name="Dietary Restrictions" component={DietRestrictionsScreen}/>
-              <Stack.Screen name="Intolerance Restrictions" component={IntoleranceRestrictionsScreen}/>
-              <Stack.Screen name="Ingredients Exclusion" component={IngredientsExclusionScreen}/>
-              {/* AL Modifications Finish */}
             </Stack.Navigator>
           </NavigationContainer>
         </Provider>

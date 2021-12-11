@@ -1,6 +1,21 @@
 import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
-import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
+import { 
+    NativeBaseProvider, 
+    View, 
+    Switch, 
+    Input, 
+    Spinner, 
+    Button, 
+    VStack, 
+    Box, 
+    Text, 
+    ScrollView,
+    Center,
+    Heading,
+    Icon, 
+} from 'native-base'
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { connect } from 'react-redux'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
@@ -186,7 +201,7 @@ export class IngredientsExclusion extends Component{
                             <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
                                 <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
                             </View>
-                            <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                            <View key={uuidv4()} style={{alignItems: 'flex-end', flex:1}}>
                                 <Switch
                                     key={switchKey}
                                     style={{justifyContent: 'flex-end', flex:1}}
@@ -202,14 +217,26 @@ export class IngredientsExclusion extends Component{
         }
 
         return (
-            <NativeBaseProvider>
-                <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+            <Center flex={1}>
+                <Box flex={1} pt="3" w="95%" mx="auto">
                     <VStack>
-                        <Input 
-                            style={styles.filterInfo} 
-                            type="text" 
-                            placeholder='Search ingredients to exclude from recipies...' 
+                        <Input  
+                            placeholder='Search ingredients to exclude...' 
                             onChangeText={(text) => this.setSearchTerm(text)}
+                            m='3'
+                            size='xl'
+                            bg="gray.500"
+                            borderRadius="10"
+                            placeholderTextColor="gray.500"
+                            borderWidth="0"
+                            InputLeftElement={
+                                <Icon
+                                ml="2"
+                                size="8"
+                                color="gray.500"
+                                as={<MaterialCommunityIcons name='magnify'/>}
+                                />
+                            }
                         />
                     </VStack>
                     <ScrollView>
@@ -222,8 +249,14 @@ export class IngredientsExclusion extends Component{
                         {
                             //If you are not saving exclusions (savingExclusions=false) then show the button. Otherwise, show the spinner
                             !this.state.savingExclusions? // if you are not saving exclusions show the button
-                                <Button onPress={() => this.saveExclusionForLoggedUser()}> 
-                                    Save Exclusions
+                                <Button 
+                                    onPress={() => this.saveExclusionForLoggedUser()}
+                                    size = 'lg'
+                                    m = '3'
+                                > 
+                                    <Heading size='sm' textAlign='center' color='white'>
+                                        Save Exclusions
+                                    </Heading>
                                 </Button>
                             : // otherwise show spinner
                             <Spinner size="sm" />
@@ -231,7 +264,7 @@ export class IngredientsExclusion extends Component{
                     </VStack>
                     
                 </Box>
-            </NativeBaseProvider>
+            </Center>
         )
     }
 }

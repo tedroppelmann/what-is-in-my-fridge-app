@@ -1,6 +1,21 @@
 import React, { Component } from 'react'
 import { StyleSheet, Alert } from 'react-native'
-import { NativeBaseProvider, View, Switch, Input, Spinner, Button, VStack, Box, Text, ScrollView } from 'native-base'
+import { 
+    NativeBaseProvider, 
+    View, 
+    Switch, 
+    Input, 
+    Spinner, 
+    Button, 
+    VStack, 
+    Box, 
+    Text, 
+    ScrollView, 
+    Icon,
+    Center,
+    Heading
+} from 'native-base'
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { connect } from 'react-redux'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
@@ -187,10 +202,10 @@ export class IntoleranceRestrictions extends Component{
                             <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
                                 <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
                             </View>
-                            <View key={uuidv4()} style={{justifyContent: 'center', flex:1}}>
+                            <View key={uuidv4()} style={{alignItems: 'flex-end', flex:1}}>
                                 <Switch
                                     key={switchKey}
-                                    style={{justifyContent: 'flex-end', flex:1}}
+                                    onTrackColor = 'emerald'
                                     onToggle={this.toggleSwitch(switchKey)}
                                     isChecked={intolerance.toggle}
                                 />  
@@ -204,14 +219,26 @@ export class IntoleranceRestrictions extends Component{
         }
 
         return (
-            <NativeBaseProvider>
-                <Box safeArea flex={1} p="2" py="4" w="90%" mx="auto">
+            <Center flex={1}>
+                <Box flex={1} pt="3" w="95%" mx="auto">
                     <VStack>
                         <Input 
-                            style={styles.filterInfo} 
-                            type="text" 
                             placeholder='Search intolerance restrictions...' 
                             onChangeText={(text) => this.setSearchTerm(text)}
+                            m='3'
+                            size='xl'
+                            bg="gray.500"
+                            borderRadius="10"
+                            placeholderTextColor="gray.500"
+                            borderWidth="0"
+                            InputLeftElement={
+                                <Icon
+                                ml="2"
+                                size="8"
+                                color="gray.500"
+                                as={<MaterialCommunityIcons name='magnify'/>}
+                                />
+                            }
                         />
                     </VStack>
                     <ScrollView>
@@ -224,8 +251,14 @@ export class IntoleranceRestrictions extends Component{
                         {
                             //If you are not saving intolerances (savingIntolerances=false) then show the button. Otherwise, show the spinner
                             !this.state.savingIntolerances? // if you are not saving intolerances show the button
-                                <Button onPress={() => this.saveIntoleraForLoggedUser()}> 
-                                    Save Intolerances
+                                <Button 
+                                    onPress={() => this.saveIntoleraForLoggedUser()}
+                                    size = 'lg'
+                                    m = '3'
+                                > 
+                                    <Heading size='sm' textAlign='center' color='white'>
+                                        Save Intolerances
+                                    </Heading>
                                 </Button>
                             : // otherwise show spinner
                             <Spinner size="sm" />
@@ -233,7 +266,7 @@ export class IntoleranceRestrictions extends Component{
                     </VStack>
                     
                 </Box>
-            </NativeBaseProvider>
+            </Center>
         )
     }
 }
