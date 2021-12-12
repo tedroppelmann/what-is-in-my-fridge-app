@@ -162,7 +162,7 @@ export class IngredientsExclusion extends Component{
     setSearchTerm(text){
         this.setState((state) => {
             state.searchTerm = text 
-            console.log(state.searchTerm)
+            //console.log(state.searchTerm)
             return {
                 searchTerm: state.searchTerm 
             }
@@ -197,14 +197,14 @@ export class IngredientsExclusion extends Component{
                 // this is required to enable the search input filtering
                 if (exclusion.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
                     JSX.push(
-                        <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
+                        <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
                             <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
+                                <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
                             </View>
-                            <View key={uuidv4()} style={{alignItems: 'flex-end', flex:1}}>
+                            <View key={uuidv4()} style={{justifyContent: 'center'}}>
                                 <Switch
                                     key={switchKey}
-                                    style={{justifyContent: 'flex-end', flex:1}}
+                                    colorScheme='emerald'
                                     onToggle={this.toggleSwitch(switchKey)}
                                     isChecked={exclusion.toggle}
                                 />  
@@ -241,7 +241,7 @@ export class IngredientsExclusion extends Component{
                     </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
-                            {this.state.uiIsLoading? <Spinner size="lg" /> : null}
+                            {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
                             {JSX}
                         </VStack>
                     </ScrollView>
@@ -259,7 +259,7 @@ export class IngredientsExclusion extends Component{
                                     </Heading>
                                 </Button>
                             : // otherwise show spinner
-                            <Spinner size="sm" />
+                            <Spinner color="emerald" size="lg" />
                         }
                     </VStack>
                     

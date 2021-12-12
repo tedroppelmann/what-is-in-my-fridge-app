@@ -36,16 +36,16 @@ function Profile(props) {
                     <Title style={styles.subtitleInfo}>{user.email}</Title>
                 </View>
                 <VStack style={styles.containerInfo}>
-                    <Button mt='2' onPress={() => navigation.navigate('Dietary Restrictions')}>
+                    <Button size='lg' m='1' onPress={() => navigation.navigate('Dietary Restrictions')}>
                         Dietary Restrictions
                     </Button>
-                    <Button mt='2' onPress={() => navigation.navigate('Intolerance Restrictions')}>
+                    <Button size='lg' m='1' onPress={() => navigation.navigate('Intolerance Restrictions')}>
                         Intolerance Restrictions
                     </Button>
-                    <Button mt='2' onPress={() => navigation.navigate('Ingredients Exclusion')}>
+                    <Button size='lg' m='1' onPress={() => navigation.navigate('Ingredients Exclusion')}>
                         Ingredients Exclusion
                     </Button>
-                    <Button safeAreaTop mt='2' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
+                    <Button safeAreaTop size='lg' m='1' colorScheme="danger" _text={{color: "white",}} onPress={() => onLogout()} >
                         Logout
                     </Button>
                 </VStack>
