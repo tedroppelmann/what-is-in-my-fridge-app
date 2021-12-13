@@ -2,14 +2,10 @@ import React, { Component } from 'react'
 import { StyleSheet, Alert, TouchableOpacity, Dimensions, } from 'react-native'
 import { 
     Image,
-    View, 
-    Switch, 
     Input, 
-    Spinner, 
-    Button, 
+    Spinner,  
     VStack, 
-    Box, 
-    Text, 
+    Box,  
     ScrollView, 
     Icon, 
     Center,
@@ -47,8 +43,14 @@ export class Favorites extends Component{
         // Call an extra render of the UI after the setting of the diet restriction in the previous line
         this.setState({favoriteRecipes: favoriteRecipes})
         console.log("componentDidMount favorite recipes after initialization state", this.state.favoriteRecipes)
+
+        
+        this.props.navigation.addListener('useIsFocused', () => {
+            this.forceUpdate();
+        });
+      
     }
-    
+
     /*
     Method Description: initialize an array of objects that contains all favorite recipies that should appear on the UI. Just call this method from componentDidMount.
     */
@@ -81,10 +83,6 @@ export class Favorites extends Component{
     }
 
     /*
-    Method description: 
-    */
-    async 
-    /*
     Method description: Return recipe info (recipe image (sourceUrl), recipe name (title), and recipe time (readyInMinutes)) by recipe ID. Add this info to the favorites recipies array
     */
     async fetchRecipeInfo(recipeIdArray){
@@ -96,6 +94,8 @@ export class Favorites extends Component{
                 console.log("Iterating over the favorite recipes. Recipe ID:", recipe.recipe_id)
                 
                 if (recipe.recipe_id != undefined){
+                    //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
+                    //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
                     const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=4a53e799e6134b139ddc05f3d97f7136"
                     console.log("Api String: ", apiString)
                     
@@ -137,14 +137,15 @@ export class Favorites extends Component{
             favoriteRecipes.forEach((favoriteRecipe) => {
                 if (favoriteRecipe.title.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
                     JSX.push(
-                        <VStack>
-                             
+                        <VStack key={uuidv4()}>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: favoriteRecipe.recipe_id, missed_ingredients: 0 })}
+                                onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: favoriteRecipe.recipe_id, missed_ingredients: null })}
                                 style= {[ styles.item ]} 
-                                key={uuidv4()}>
-                                <Box key={uuidv4()} flex={1} >
+                                key={uuidv4()}
+                                justifyContent={"center"}>
+                                <Box key={uuidv4()} justifyContent={"center"} >
                                     <Image
+                                        borderRadius={300}
                                         style={styles.image}
                                         source={{uri: favoriteRecipe.sourceUrl}}
                                         alt={favoriteRecipe.title}
@@ -153,9 +154,8 @@ export class Favorites extends Component{
                                     <Heading key={uuidv4()} size='sm' mb='5' mt='2' textAlign='center'>
                                     {favoriteRecipe.title}
                                     </Heading>
-                                </Box> 
+                                </Box>
                             </TouchableOpacity>
-                                
                         </VStack>
                     )
                 }
@@ -187,11 +187,10 @@ export class Favorites extends Component{
                         />
                     </VStack>
                     <ScrollView>
-                        
                         {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
                         {JSX}
-                        
                     </ScrollView>
+                    
                 </Box>
             </Center>
         )
@@ -213,12 +212,16 @@ const styles = StyleSheet.create({
     image: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height/4,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        //borderTopLeftRadius: 20,
+        //borderTopRightRadius: 20,
     }, 
     container: {
         flex: 1,
     },
+    containerScroll: {
+        flexDirection: 'row',
+        flexWrap: 'wrap'
+      },    
     containerInfoUp: {
         margin: 20,
         position: 'relative',

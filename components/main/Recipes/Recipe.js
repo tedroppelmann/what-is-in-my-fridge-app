@@ -68,7 +68,12 @@ export default function Recipe({ navigation, route }) {
     };
 
     const renderIngredient = ({ item, index }) => {
-        const isMissed = missed_ingredients.filter((i) => i.name === item.name).length > 0;
+        // AL Modifications. This modifications is required for the Favorites feature.
+        var isMissed = false
+        if (missed_ingredients != null || missed_ingredients != undefined){
+            isMissed = missed_ingredients.filter((i) => i.name === item.name).length > 0;  
+        } 
+        // AL Modifications
         return(
             <Center style={ [styles.item, 
             {marginRight: (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 1) ? 25 : 
