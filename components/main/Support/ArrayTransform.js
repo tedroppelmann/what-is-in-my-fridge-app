@@ -63,6 +63,9 @@ export default class ArrayTransform{
         return toggleValue
     }
 
+    /*
+    Method Description: Used to push an element in an array used at the Diet, Intolerance Restrictions and Ingredients Exclusion Screens
+    */
     async pushArrayValue(arrayValue, i, element, toggleValue){
         var elementOfArray = {id:null, name:null, toggle:null}
         if (element != undefined){
@@ -74,6 +77,23 @@ export default class ArrayTransform{
             }
         }
         return arrayValue
+    }
+
+    /*
+    Method Description: Used to push value for favorite recipes at the Favorites Screen
+    */
+    async pushFavorite(favRecipesArray, recipeId, title, sourceUrl, readyInMinutes){
+        var favRecipeElement = {recipe_id:null, title:null, sourceUrl:null, readyInMinutes:null}
+        if (title != undefined){
+            favRecipeElement.recipe_id = recipeId
+            favRecipeElement.title = title
+            favRecipeElement.sourceUrl = sourceUrl
+            favRecipeElement.readyInMinutes = readyInMinutes
+
+            console.log("New element formed to push in the array: ", favRecipeElement)
+            favRecipesArray.push(favRecipeElement)
+        }
+        return favRecipesArray
     }
 
 }

@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { fetchUser } from '../redux/actions/index'
 
-import FeedScreen from './main/Feed'
+import FavoritesScreen from './main/Favorites'
 import ProfileStackScreen from './main/Profile_stack'
 import FindRecipesScreen from './main/Find_stack'
 
@@ -29,7 +29,7 @@ export class Main extends Component {
                     tabBarActiveTintColor: '#50C878',
                 }}
             > 
-                <Tab.Screen name='Feed' component={FeedScreen}
+                <Tab.Screen name='Favorites' component={FavoritesScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name='star' color={color} size={30} />
