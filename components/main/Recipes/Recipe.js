@@ -14,6 +14,7 @@ import {
     HStack,
     Center,
     Spinner,
+    VStack,
 } from 'native-base';
 
 import { getAuth }  from 'firebase/auth'
@@ -45,6 +46,7 @@ export default function Recipe({ navigation, route }) {
                 .then((data) => {
                     setRecipe(data);
                     setLoading(true);
+                    console.log(data);
                 })
                 .catch(() => {
                     console.log("error");
@@ -130,21 +132,37 @@ export default function Recipe({ navigation, route }) {
                                 <Heading size='xl' mb='3' textAlign='center'>
                                     {recipe.title}
                                 </Heading>
-                                <HStack space={3}>
-                                    <Center h="20" w="20" rounded="md">
-                                        <MaterialCommunityIcons name='clock-outline' size={26} />
+                                <HStack>
+                                    <Center h="20" w="20">
+                                        <MaterialCommunityIcons name='clock-outline' size={30} />
                                         <Text bold={true}>
                                             {recipe.readyInMinutes}'
                                         </Text>
                                     </Center>
-                                    <Center h="20" w="20" rounded="md">
-                                        <MaterialCommunityIcons name='account-group-outline' size={26} />
+                                    <Center h="20" w="20">
+                                        <MaterialCommunityIcons name='account-group-outline' size={30} />
                                         <Text bold={true}>
                                             {recipe.servings}
                                         </Text>
                                     </Center>
-                                    <Center h="20" w="20" rounded="md">
-                                    
+                                </HStack>
+                            </Box>
+                            <Box w="90%" mx='auto'>
+                                <Heading size='lg' mb='3'>
+                                    Restrictions
+                                </Heading>
+                                <HStack flex={1} mx="auto" mb='3'>
+                                    <Center  m='2' alignItems="center" borderRadius='7' >
+                                        <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                        <Text>Dairy Free</Text>
+                                    </Center>
+                                    <Center m='2' alignItems="center" borderRadius='7'>
+                                        <MaterialCommunityIcons name='barley' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                        <Text>Gluten Free</Text>
+                                    </Center>
+                                    <Center m='2' alignItems="center" borderRadius='7'>
+                                        <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
+                                        <Text>Vegetarian</Text>
                                     </Center>
                                 </HStack>
                             </Box>

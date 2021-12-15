@@ -18,6 +18,9 @@ import {
     Button,
 } from 'native-base';
 
+import { getAuth }  from 'firebase/auth'
+import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+
 
 export default function Recipes({ navigation, route }) {
     const [recipes, setRecipes] = useState("");
@@ -34,10 +37,26 @@ export default function Recipes({ navigation, route }) {
     }
     const ingredients = transformIngredients(route.params.selected)
 
+    const auth = getAuth();
+    const db = getFirestore();
+    const [dietRestriction, setDietRestriction] = useState('')
+    const [intoleranceRestriction, setIntoleranceRestriction] = useState('')
+
     useEffect(() => {
         if (recipes_min == '' && recipes_max == '') {
+            getDoc(doc(db, 'Users', getAuth().currentUser.uid))
+                .then((snapshot) => {
+                    if (snapshot.data().diets) {
+                        setDietRestriction(snapshot.data().diets);
+                        console.log(dietRestriction);
+                    };
+                    if (snapshot.data().intolerances) {
+                        setIntoleranceRestriction(snapshot.data().intolerances);
+                        console.log(intoleranceRestriction);
+                    };
+                });
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -48,7 +67,7 @@ export default function Recipes({ navigation, route }) {
                     console.log("error");
                 });
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -59,7 +78,7 @@ export default function Recipes({ navigation, route }) {
                     console.log("error");
                 });
         } 
-    },[]);
+    },[dietRestriction, intoleranceRestriction]);
 
     const renderRecipes = ({ item, index }) => {
         const { id, title, image, missedIngredients, usedIngredientCount, missedIngredientCount } = item;
@@ -125,7 +144,7 @@ export default function Recipes({ navigation, route }) {
       }
     
     return (
-        <Center flex={1}>
+        <Box flex={1} bg='white'>
                 <Box w="95%" mx="auto" mb='5'>
                     <FlatList
                         ListHeaderComponent={
@@ -159,7 +178,7 @@ export default function Recipes({ navigation, route }) {
                         numColumns={2}
                     />
                 </Box>
-        </Center>
+        </Box>
     )
 }
 
