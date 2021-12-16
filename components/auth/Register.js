@@ -12,11 +12,8 @@ import {
     Input,
     Link,
     Button,
-    Icon,
-    IconButton,
-    HStack,
-    Divider,
     Center,
+    Spinner,
 } from 'native-base';
 
 export class Register extends Component {
@@ -26,7 +23,9 @@ export class Register extends Component {
         this.state = {
             email: '',
             password: '',
-            name: ''
+            name: '',
+            credential_error: '',
+            try_sign_up: false,
         }
 
         this.onSignUp = this.onSignUp.bind(this)
@@ -46,21 +45,56 @@ export class Register extends Component {
                 console.log(result)
             })
             .catch((error) => {
-                console.log(error)
+                console.log(error.code)
+                if (error.code == 'auth/invalid-email') {
+                    this.setState({
+                        credential_error: 'email',
+                        try_sign_up: false,
+                      })
+                } else if (error.code == 'auth/weak-password') {
+                    this.setState({
+                        credential_error: 'weak-password',
+                        try_sign_up: false,
+                        })
+                } else if (error.code == 'auth/email-already-in-use') {
+                    this.setState({
+                        credential_error: 'used-email',
+                        try_sign_up: false,
+                        })}
+            });
+        this.setState({
+            try_sign_up: true,
             });
     }
 
     render() {
+        const { credential_error } = this.state;
+        const { try_sign_up } = this.state;
+
         return (
             <Center flex={1}>
                 <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
                     <Heading size='xl'>
                         Welcome
                     </Heading>
-                    <Heading size="xs">
+                    <Heading size="xs" mb='2'>
                         Sign up to continue!
                     </Heading>
-                    <VStack space={3} mt="5">
+                    {credential_error == 'email' ? (
+                        <Heading size="xs" color='error.700'>
+                        Invalidad email. Please insert valid credentials.
+                        </Heading>
+                    ) : credential_error == 'weak-password' ? (
+                        <Heading size="xs" color='error.700'>
+                        Password too short. Please change it for a new one.
+                        </Heading>
+                    ) : credential_error == 'used-email' ? (
+                        <Heading size="xs" color='error.700'>
+                        You already have an account with this email.
+                        </Heading>
+                    ) : ''
+                    }
+                    <VStack space={3} mt="2">
                         <FormControl>
                             <FormControl.Label>
                                 Name
@@ -87,7 +121,12 @@ export class Register extends Component {
                             />
                         </FormControl>
                         <Button onPress={() => this.onSignUp()}>
-                            Sign up
+                            {try_sign_up ? 
+                                <Spinner size='sm'color='white'/> :
+                                <Heading size='sm' textAlign='center' color='white'>
+                                    Sign in
+                                </Heading>
+                            }
                         </Button>
                     </VStack>
                 </Box>

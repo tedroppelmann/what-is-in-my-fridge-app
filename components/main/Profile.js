@@ -80,7 +80,7 @@ function Profile(props) {
                         </Button>
                     </HStack>
                     <HStack justifyContent='center'>
-                        <Button 
+                        {/*<Button 
                             m='2' 
                             height= {Dimensions.get('window').height/6}
                             flex= {1/2} 
@@ -89,7 +89,7 @@ function Profile(props) {
                             <Heading size='sm' textAlign='center' color='white'>
                                 Ingredients Exclusion
                             </Heading>
-                        </Button>
+                        </Button>*/}
                     </HStack>
                 </VStack>
             </Box>
