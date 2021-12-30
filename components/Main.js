@@ -34,6 +34,7 @@ export class Main extends Component {
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name='star' color={color} size={30} />
                         ),
+                        headerShown: false
                     }} />
                 <Tab.Screen name='Find' component={FindRecipesScreen}
                     options={{

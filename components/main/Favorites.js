@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert, TouchableOpacity, Dimensions, } from 'react-native'
+import { StyleSheet, TouchableOpacity, Dimensions, } from 'react-native'
 import { 
     Image,
     Input, 
@@ -15,7 +15,8 @@ import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { connect } from 'react-redux'
 import FirebaseDb from './Support/FirebaseDb'
 import ArrayTransform from './Support/ArrayTransform'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
+import { useIsFocused, useNavigationState } from '@react-navigation/native'
 
 export class Favorites extends Component{
     
@@ -29,6 +30,7 @@ export class Favorites extends Component{
             favoriteRecipes: [], 
             uiIsLoading: true,
             searchTerm: "", // this is required for the search input 
+            isFocused: props.isFocused,
         }
 
         this.setSearchTerm = this.setSearchTerm.bind(this)
@@ -40,15 +42,32 @@ export class Favorites extends Component{
     async componentDidMount(){
         //console.log("componentDidMount favoriteRecipies previous state: ", this.state.favoriteRecipies) 
         var favoriteRecipes = await this.setFavoriteRecipes()
-        // Call an extra render of the UI after the setting of the diet restriction in the previous line
+        // Call an extra render of the UI after the setting of the favorites in the previous line
         this.setState({favoriteRecipes: favoriteRecipes})
-        console.log("componentDidMount favorite recipes after initialization state", this.state.favoriteRecipes)
+        //console.log("componentDidMount favorite recipes after initialization state", this.state.favoriteRecipes)
 
+        console.log("Is Screen Focused at componentDidMount?", this.props.isFocused)
+    }
+
+    async componentDidUpdate(prevProps){
+
+        // This lines of code are to update the list of favorites when you delete one from the Recipe Screen and go back to the Favorites screen.
+        console.log("Current NavLength: ", this.props.routesLength)
+        console.log("Old NavLength: ", prevProps.routesLength)
+        if (this.props.routesLength < prevProps.routesLength) {
+            // Uncomment these lines to reload favorites when returning from the recipie screen
+            //var favoriteRecipes = await this.setFavoriteRecipes()
+            //this.setState({favoriteRecipes: favoriteRecipes})
+            console.log("Reloaded Favorites")
+        } 
         
-        this.props.navigation.addListener('useIsFocused', () => {
-            this.forceUpdate();
-        });
-      
+        // Another way to update the list when favorites screen is focused. For some reason when comming from another tab 
+        console.log("Current Is FOcused in componentDidUpdate? ", this.props.isFocused)
+        console.log("OLD Is FOcused in componentDidUpdate? ", prevProps.isFocused)
+        if (this.props.isFocused !== prevProps.isFocused){
+            //console.log("IS Focused?", this.props.isFocused)
+            console.log("Reloaded Favorites")
+        }
     }
 
     /*
@@ -62,7 +81,7 @@ export class Favorites extends Component{
             
             // Query the user document. To obtain a field from the user document, just call field.<field_name>
             const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", "mellon1786@gmail.com") // this.state.user.email) 
             const field = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
             console.log("Queried favorites field from a users document: ", field.favorites)
             
@@ -129,7 +148,14 @@ export class Favorites extends Component{
     } 
     
     render(){
-        const { favoriteRecipes, searchTerm } = this.state
+        
+        const { favoriteRecipes, searchTerm, isFocused } = this.state
+        
+        if (isFocused){
+            console.log("IS Focused?", isFocused)
+        }else{
+            console.log("Is Focused?", isFocused)
+        }
         //console.log("Array of Favorites Recipies: ", favoriteRecipies)
         const JSX = []
         
@@ -159,7 +185,7 @@ export class Favorites extends Component{
                         </VStack>
                     )
                 }
-                //switchKey++;
+                
             })
         }
 
@@ -196,6 +222,20 @@ export class Favorites extends Component{
         )
     }
 }
+
+export default function(props) {
+    const routesLength = useNavigationState(state => state.routes.length)
+    const isFocused = useIsFocused();
+    return <Favorites {...props} routesLength={routesLength} isFocused={isFocused} />
+}
+
+/*
+const mapStateToProps = (store) => ({
+    currentUser: store.userState.currentUser,
+})
+
+export default connect(mapStateToProps, null)(Favorites)
+*/
 
 const styles = StyleSheet.create({
     item: {
@@ -249,10 +289,3 @@ const styles = StyleSheet.create({
         fontSize: 14, 
     },
 })
-
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-
-
-export default connect(mapStateToProps, null)(Favorites);

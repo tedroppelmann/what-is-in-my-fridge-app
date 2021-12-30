@@ -51,6 +51,35 @@ export default class ArrayTransform{
         }
     }
 
+    /*
+    Method description: turns the string paramater into an array of strings.
+    Method parameters:
+        * stringValue is a string that contains string values separated by commas. 
+    Method return: an array of strings with the following attributes:
+    */
+    async stringToArrayOfStrings(stringValue){
+        try{
+            var arrayValue = []
+            var tmpArray = []
+            if(stringValue != undefined){
+                tmpArray = stringValue.split(",") // tmpArray contains each individual value from stringValue parameter.
+            } 
+            console.log("String to convert into an array:", stringValue)
+            
+            for(const element of tmpArray){
+                console.log("Element to push into the array: ", element)
+                arrayValue.push(element)
+            }
+
+            console.log("Array to print in the settings is: ", arrayValue)
+            
+            return arrayValue
+        }catch(e){
+            console.log(e)
+            return []
+        }
+    }
+
     async setToggleValue(tmpToggleArray, element){
         var toggleValue = false
         //console.log("Element that will defines the toggle value: ", element, ". Value before setting it is ", toggleValue)
