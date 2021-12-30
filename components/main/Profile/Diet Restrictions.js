@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { StyleSheet, Alert, TouchableOpacity, Image } from 'react-native'
 import { 
     View, 
-    Switch,
-    Radio, 
     Input, 
     Spinner, 
     Button, 
@@ -38,7 +36,6 @@ export class DietRestrictions extends Component{
         }
 
         this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
-        this.changeDietRadioGroup = this.changeDietRadioGroup.bind(this)
         this.setSearchTerm = this.setSearchTerm.bind(this)
     }
 
@@ -48,10 +45,8 @@ export class DietRestrictions extends Component{
     async componentDidMount(){
         //console.log("componentDidMount diets previous state: ", this.state.diets)        
         await this.setDietRestrictions()
-        // Call an extra render of the UI after the setting of the diet restriction in the previous line
-        //this.setState({diets: diets})
-        console.log("componentDidMount diets after initialization state", this.state.diets)
-        console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
+        //console.log("componentDidMount diets after initialization state", this.state.diets)
+        //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
     }
 
     /* 
@@ -109,7 +104,7 @@ export class DietRestrictions extends Component{
             if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!") } else { this.showAlert("Diet Restrictions", "Diet not saved!") }
         
         }catch(e){
-            console.log(e) // An exception could be thrown if there is no connection to Firestore.
+            //console.log(e) // An exception could be thrown if there is no connection to Firestore.
             this.showAlert("Diet Restrictions", "Diets not saved!")
         }
     }
@@ -130,7 +125,7 @@ export class DietRestrictions extends Component{
             const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
             const field2 = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
             //console.log("Queried field from a diet document: ", field.diets)
-            console.log("Queried field2 from a user document: ", field2.diets)
+            //console.log("Queried field2 from a user document: ", field2.diets)
             
             // Update the diets state with all a diets object array 
             const arrTrn = new ArrayTransform()
@@ -144,37 +139,8 @@ export class DietRestrictions extends Component{
             //return stringTurnedIntoArray
             
         }catch(e){
-            console.log(e)
+           //console.log(e)
         }
-    }
-/*
-    changeDietRadioGroup = (value) => () => {
-        this.setState((state) => {
-           
-            // Set all toggle values to false
-            for(const diet of state.diet){
-                console.log("Diet name: ", diet.name, ". Toggle value: ", diet.toggle)
-                diet.toggle = false
-                console.log("Diet name: ", diet.name, ". Toggle value AFTER SETTING IT UP: ", diet.toggle)
-                
-            } 
-            
-            console.log("Diet value after change:", value)
-            // Set toggle value to true only for the radio button selected
-            //state.diets[i].toggle = true
-
-          
-          //console.log(state.diets[i].name, " toggled.")
-          return {
-            diets: state.diets
-          }
-        })
-    }
-*/
-
-    changeDietRadioGroup(value) {
-        console.log("Selected Diet:", value)
-        this.setState( { selectedDiet: value } )
     }
 
     /* 
@@ -221,8 +187,8 @@ export class DietRestrictions extends Component{
                         dietJSX.push(
                             <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
                                 <TouchableOpacity key={uuidv4()} style={styles.btn}>
-                                    <Image key={uuidv4()} style={styles.radiobutton} source={require("../../../storage/radio_button_images/radioChecked.png")} />
-                                    <Text key={uuidv4()} fontSize={"md"}> {diet} </Text>
+                                        <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
+                                        <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioChecked.png")} />
                                 </TouchableOpacity>
                             </View>
                         )
@@ -230,8 +196,8 @@ export class DietRestrictions extends Component{
                         dietJSX.push(
                             <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
                                 <TouchableOpacity key={uuidv4()} style={styles.btn} onPress={()=>{this.setState({selectedDiet: diet})}}>
-                                    <Image key={uuidv4()} style={styles.radiobutton} source={require("../../../storage/radio_button_images/radioNotChecked.png")} />
-                                    <Text key={uuidv4()} fontSize={"md"}> {diet} </Text>
+                                    <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
+                                    <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioNotChecked.png")} />
                                 </TouchableOpacity>
                             </View>
                         )

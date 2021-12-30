@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert } from 'react-native'
-import { 
-    NativeBaseProvider, 
+import { StyleSheet, Alert, TouchableOpacity } from 'react-native'
+import {  
     View, 
     Switch, 
     Input, 
@@ -199,7 +198,9 @@ export class IngredientsExclusion extends Component{
                     JSX.push(
                         <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
                             <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
+                                <TouchableOpacity key={uuidv4()} style={styles.btn} onPress={this.toggleSwitch(switchKey)}>
+                                    <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {exclusion.name} </Text>
+                                </TouchableOpacity>
                             </View>
                             <View key={uuidv4()} style={{justifyContent: 'center'}}>
                                 <Switch
@@ -272,6 +273,11 @@ export class IngredientsExclusion extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    btn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     containerInfoUp: {
         margin: 20,

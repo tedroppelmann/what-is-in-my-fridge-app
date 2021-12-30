@@ -64,18 +64,18 @@ export default class ArrayTransform{
             if(stringValue != undefined){
                 tmpArray = stringValue.split(",") // tmpArray contains each individual value from stringValue parameter.
             } 
-            console.log("String to convert into an array:", stringValue)
+            //console.log("String to convert into an array:", stringValue)
             
             for(const element of tmpArray){
-                console.log("Element to push into the array: ", element)
+                //console.log("Element to push into the array: ", element)
                 arrayValue.push(element)
             }
 
-            console.log("Array to print in the settings is: ", arrayValue)
+            //console.log("Array to print in the settings is: ", arrayValue)
             
             return arrayValue
         }catch(e){
-            console.log(e)
+            //console.log(e)
             return []
         }
     }
@@ -119,7 +119,7 @@ export default class ArrayTransform{
             favRecipeElement.sourceUrl = sourceUrl
             favRecipeElement.readyInMinutes = readyInMinutes
 
-            console.log("New element formed to push in the array: ", favRecipeElement)
+            //console.log("New element formed to push in the array: ", favRecipeElement)
             favRecipesArray.push(favRecipeElement)
         }
         return favRecipesArray

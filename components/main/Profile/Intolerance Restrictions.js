@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert } from 'react-native'
-import { 
-    NativeBaseProvider, 
+import { StyleSheet, Alert, TouchableOpacity } from 'react-native'
+import {  
     View, 
     Switch, 
     Input, 
@@ -199,9 +198,11 @@ export class IntoleranceRestrictions extends Component{
                 if (intolerance.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
                     JSX.push(
                         <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
-                            <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
-                            </View>
+                            <TouchableOpacity key={uuidv4()} style={styles.btn} onPress={this.toggleSwitch(switchKey)}>
+                                <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
+                                    <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
+                                </View>
+                            </TouchableOpacity>
                             <View key={uuidv4()} style={{justifyContent: 'center'}}>
                                 <Switch
                                     key={switchKey}
@@ -274,6 +275,11 @@ export class IntoleranceRestrictions extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    btn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     containerInfoUp: {
         margin: 20,
