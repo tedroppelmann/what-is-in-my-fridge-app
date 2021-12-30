@@ -120,11 +120,14 @@ export class Register extends Component {
                                 onChangeText={(password) => this.setState({ password })}
                             />
                         </FormControl>
-                        <Button onPress={() => this.onSignUp()}>
+                        <Button 
+                            marginTop={3}
+                            onPress={() => this.onSignUp()}
+                        >
                             {try_sign_up ? 
                                 <Spinner size='sm'color='white'/> :
                                 <Heading size='sm' textAlign='center' color='white'>
-                                    Sign in
+                                    Sign up
                                 </Heading>
                             }
                         </Button>

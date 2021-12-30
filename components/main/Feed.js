@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 
 export default function Feed() {
+    
     return (
         <View style={styles.container}>
             <View style={styles.containerInfo}>

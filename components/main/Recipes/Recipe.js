@@ -46,13 +46,12 @@ export default function Recipe({ navigation, route }) {
                 .then((data) => {
                     setRecipe(data);
                     setLoading(true);
-                    console.log(data);
                 })
                 .catch(() => {
                     console.log("error");
                 });
         }
-    },[]);
+    });
 
     const renderStep = ({ item, index }) => {
         return(

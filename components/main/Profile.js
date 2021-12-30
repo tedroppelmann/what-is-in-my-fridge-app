@@ -20,7 +20,7 @@ function Profile(props) {
 
     useEffect(() => {
         const { currentUser } = props;
-        setUser(currentUser)
+        setUser(currentUser);
     })
 
     const onLogout = () => {

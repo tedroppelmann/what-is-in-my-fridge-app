@@ -48,6 +48,11 @@ export class Login extends Component {
                         credential_error: 'password',
                         try_login: false,
                       })
+                } else if (error.code == 'auth/user-not-found') {
+                    this.setState({
+                        credential_error: 'user-not-found',
+                        try_login: false,
+                      })
                 }
             });
         this.setState({
@@ -77,6 +82,10 @@ export class Login extends Component {
                         <Heading size="xs" color='error.700'>
                         Wrong password. Try again!
                         </Heading>
+                    ) : credential_error == 'user-not-found' ? (
+                        <Heading size="xs" color='error.700'>
+                        User not found. Try again!
+                        </Heading>
                     ) : ''
                     }
                     <VStack space={3} mt="2">
@@ -99,12 +108,14 @@ export class Login extends Component {
                                 onChangeText={(password) => this.setState({ password })}
                             />
                         </FormControl>
-                        <Button onPress={() => this.onSignUp()}
+                        <Button 
+                            marginTop={3}
+                            onPress={() => this.onSignUp()}
                         >
                             {try_login ? 
                                 <Spinner size='sm' color='white'/> :
                                 <Heading size='sm' textAlign='center' color='white'>
-                                    Sign in
+                                    Log in
                                 </Heading>
                             }
                         </Button>
