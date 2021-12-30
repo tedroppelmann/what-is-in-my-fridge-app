@@ -11,6 +11,7 @@ import {
     Button,
     Center,
     Toast,
+    Spinner,
 } from 'native-base';
 
 export class Login extends Component {
@@ -21,6 +22,7 @@ export class Login extends Component {
             email: '',
             password: '',
             credential_error: '',
+            try_login: false,
         }
 
         this.onSignUp = this.onSignUp.bind(this)
@@ -39,17 +41,28 @@ export class Login extends Component {
                 if (error.code == 'auth/invalid-email') {
                     this.setState({
                         credential_error: 'email',
+                        try_login: false,
                       })
                 } else if (error.code == 'auth/wrong-password') {
                     this.setState({
                         credential_error: 'password',
+                        try_login: false,
+                      })
+                } else if (error.code == 'auth/user-not-found') {
+                    this.setState({
+                        credential_error: 'user-not-found',
+                        try_login: false,
                       })
                 }
+            });
+        this.setState({
+            try_login: true,
             });
     }
 
     render() {
         const { credential_error } = this.state;
+        const { try_login } = this.state;
 
         return (
             <Center flex={1}>
@@ -68,6 +81,10 @@ export class Login extends Component {
                     ) : credential_error == 'password' ? (
                         <Heading size="xs" color='error.700'>
                         Wrong password. Try again!
+                        </Heading>
+                    ) : credential_error == 'user-not-found' ? (
+                        <Heading size="xs" color='error.700'>
+                        User not found. Try again!
                         </Heading>
                     ) : ''
                     }
@@ -91,9 +108,16 @@ export class Login extends Component {
                                 onChangeText={(password) => this.setState({ password })}
                             />
                         </FormControl>
-                        <Button onPress={() => this.onSignUp()}
+                        <Button 
+                            marginTop={3}
+                            onPress={() => this.onSignUp()}
                         >
-                            Sign in
+                            {try_login ? 
+                                <Spinner size='sm' color='white'/> :
+                                <Heading size='sm' textAlign='center' color='white'>
+                                    Log in
+                                </Heading>
+                            }
                         </Button>
                     </VStack>
                 </Box>
