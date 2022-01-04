@@ -14,10 +14,12 @@ import {
     Heading,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
-import { connect } from 'react-redux'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
+import { fetchUser } from '../../../redux/actions/index'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
 export class DietRestrictions extends Component{
     
@@ -47,6 +49,7 @@ export class DietRestrictions extends Component{
         await this.setDietRestrictions()
         //console.log("componentDidMount diets after initialization state", this.state.diets)
         //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
+        console.log("componentDidMount user is: ", this.state.user)
     }
 
     /* 
@@ -97,6 +100,10 @@ export class DietRestrictions extends Component{
             const initFdb = await fdb.initFirestoreDb()
             const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "diets", this.state.selectedDiet)
 
+            // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
+            await this.props.fetchUser()
+            console.log("REDUX Updated")
+
             // In order to stop showing the spinner when the execution of this method finishes, set savingDiets to false
             this.setState({ savingDiets: false })
             //console.log("Saving Diets? (After update) ", this.state.savingDiets)
@@ -105,7 +112,7 @@ export class DietRestrictions extends Component{
         
         }catch(e){
             //console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Diet Restrictions", "Diets not saved!")
+            this.showAlert("Diet Restrictions", "Diet not saved!")
         }
     }
     
@@ -195,14 +202,13 @@ export class DietRestrictions extends Component{
                     }else{
                         dietJSX.push(
                             <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
-                                <TouchableOpacity key={uuidv4()} style={styles.btn} onPress={()=>{this.setState({selectedDiet: diet})}}>
+                                <TouchableOpacity delayPressIn={0} activeOpacity={1} key={uuidv4()} style={styles.btn} onPress={()=>{this.setState({selectedDiet: diet})}}>
                                     <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
                                     <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioNotChecked.png")} />
                                 </TouchableOpacity>
                             </View>
                         )
                     }
-                    
                 }
                 //switchKey++;
             })
@@ -249,7 +255,7 @@ export class DietRestrictions extends Component{
                                     m = '3'
                                 > 
                                     <Heading size='sm' textAlign='center' color='white'>
-                                        Save Diets
+                                        Save Diet
                                     </Heading>
                                 </Button>
                             : // otherwise show spinner
@@ -308,4 +314,6 @@ const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
 
-export default connect(mapStateToProps, null)(DietRestrictions);
+const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchProps)(DietRestrictions);

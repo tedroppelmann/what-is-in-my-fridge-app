@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
     StyleSheet,
-    ScrollView,
     TouchableOpacity,
     Dimensions,
   } from 'react-native';
@@ -15,17 +14,13 @@ import {
     Image,
     Center,
     Spinner,
-    Button,
 } from 'native-base';
 
 
 export default function Recipes({ navigation, route }) {
-    const [recipes, setRecipes] = useState("");
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
-
     const [loading, setLoading] = useState(false);
-
     const [isSelected, setSeleted] = useState(true);
 
     function transformIngredients(array) {
@@ -37,7 +32,10 @@ export default function Recipes({ navigation, route }) {
     useEffect(() => {
         if (recipes_min == '' && recipes_max == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true`
+                //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
+                //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
+                //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=4a53e799e6134b139ddc05f3d97f7136&includeIngredients=${ingredients}&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -48,7 +46,7 @@ export default function Recipes({ navigation, route }) {
                     console.log("error");
                 });
             fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true`
+                `https://api.spoonacular.com/recipes/complexSearch?apiKey=4a53e799e6134b139ddc05f3d97f7136&includeIngredients=${ingredients}&number=6&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true`
             )
                 .then((response) => response.json())
                 .then((data) => {

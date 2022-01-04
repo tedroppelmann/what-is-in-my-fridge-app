@@ -12,11 +12,13 @@ import {
     Heading,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
-import { connect } from 'react-redux'
+import { useSelector  } from 'react-redux'
 import FirebaseDb from './Support/FirebaseDb'
 import ArrayTransform from './Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid'
 import { useIsFocused, useNavigationState } from '@react-navigation/native'
+import { fetchUser } from '../../redux/actions/index'
+import { useDispatch  } from 'react-redux'
 
 export class Favorites extends Component{
     
@@ -30,7 +32,7 @@ export class Favorites extends Component{
             favoriteRecipes: [], 
             uiIsLoading: true,
             searchTerm: "", // this is required for the search input 
-            isFocused: props.isFocused,
+            dispatch: props.dispatch,
         }
 
         this.setSearchTerm = this.setSearchTerm.bind(this)
@@ -41,37 +43,35 @@ export class Favorites extends Component{
     */
     async componentDidMount(){
         //console.log("componentDidMount favoriteRecipies previous state: ", this.state.favoriteRecipies) 
-        var favoriteRecipes = await this.setFavoriteRecipes()
+        //var favoriteRecipes = await this.setFavoriteRecipes()
+        this.props.dispatch(fetchUser());
+        var favoriteRecipes = await this.setFavoriteRecipesViaRedux()
         // Call an extra render of the UI after the setting of the favorites in the previous line
         this.setState({favoriteRecipes: favoriteRecipes})
         //console.log("componentDidMount favorite recipes after initialization state", this.state.favoriteRecipes)
-
-        console.log("Is Screen Focused at componentDidMount?", this.props.isFocused)
+        //console.log("componentDidMount user is: ", this.state.user)
+        //console.log("Is Screen Focused at componentDidMount?", this.props.isFocused)
     }
 
     async componentDidUpdate(prevProps){
-
-        // This lines of code are to update the list of favorites when you delete one from the Recipe Screen and go back to the Favorites screen.
-        console.log("Current NavLength: ", this.props.routesLength)
-        console.log("Old NavLength: ", prevProps.routesLength)
-        if (this.props.routesLength < prevProps.routesLength) {
-            // Uncomment these lines to reload favorites when returning from the recipie screen
+        // This lines of code are to update the list of favorites when you delete one from the Recipe Screen.
+        if (this.props.isFocused === true && prevProps.isFocused === false){ // When returning from the Recipe Screen, focus changes than update favorite recipies
+            //console.log("222 FAVORITES IS FOCUSED: Updating Favorites")
+            var favoriteRecipes = await this.setFavoriteRecipesViaRedux()
+            this.setState({favoriteRecipes: favoriteRecipes})
+        }
+        if (this.props.currentUser.favorites !== prevProps.currentUser.favorites){ // When currentUser changes on the Find Screen Stack, thehn update favorite recipies
+            //console.log("222 CURRENT USER CHANGED: Updating Favorites")
+            var favoriteRecipes = await this.setFavoriteRecipesViaRedux() 
             //var favoriteRecipes = await this.setFavoriteRecipes()
-            //this.setState({favoriteRecipes: favoriteRecipes})
-            console.log("Reloaded Favorites")
-        } 
-        
-        // Another way to update the list when favorites screen is focused. For some reason when comming from another tab 
-        console.log("Current Is FOcused in componentDidUpdate? ", this.props.isFocused)
-        console.log("OLD Is FOcused in componentDidUpdate? ", prevProps.isFocused)
-        if (this.props.isFocused !== prevProps.isFocused){
-            //console.log("IS Focused?", this.props.isFocused)
-            console.log("Reloaded Favorites")
+            this.setState({favoriteRecipes: favoriteRecipes})
+            //console.log("222 Current and previous user are different! Updating state of user and favorite recipes...")
+            this.setState({ user: this.props.currentUser })
         }
     }
 
     /*
-    Method Description: initialize an array of objects that contains all favorite recipies that should appear on the UI. Just call this method from componentDidMount.
+    Method Description: Using firestore, we initialize an array of objects that contains all favorite recipies that should appear on the UI. Just call this method from componentDidMount.
     */
     async setFavoriteRecipes(){
         try{
@@ -81,9 +81,9 @@ export class Favorites extends Component{
             
             // Query the user document. To obtain a field from the user document, just call field.<field_name>
             const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", "mellon1786@gmail.com") // this.state.user.email) 
+            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email) //"mellon1786@gmail.com")
             const field = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
-            console.log("Queried favorites field from a users document: ", field.favorites)
+           //console.log("Queried favorites field from a users document: ", field.favorites)
             
             // Make a connection to the Spoonacular API to get Recipie info
             const favoriteRecipes = await this.fetchRecipeInfo(field.favorites)
@@ -91,13 +91,38 @@ export class Favorites extends Component{
             // In order to update the state of the favorite recipes, set favorite recipies with new data. Also, in order to stop showing the spinner in the UI, set uiIsLoading to false  
             //console.log("UI is Loading? ", this.state.uiIsLoading)
             this.setState({ uiIsLoading: false })
-            //this.setState({ uiIsLoading: false })
             //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
             
             return favoriteRecipes
             
         }catch(e){
-            console.log(e)
+           //console.log(e)
+        }
+    }
+
+    /*
+    Method Description: Using local redux store, we initialize an array of objects that contains all favorite recipies that should appear on the UI. Just call this method from componentDidMount.
+    */
+    async setFavoriteRecipesViaRedux(){
+        try{
+            this.setState({ uiIsLoading: true })
+
+            // Get all favorite recipes object
+            var favoriteRecipeArray = this.state.user.favorites
+           //console.log("User.Favorites: ", favoriteRecipeArray)
+            
+            // Make a connection to the Spoonacular API to get Recipie info
+            const favoriteRecipes = await this.fetchRecipeInfo(favoriteRecipeArray)
+
+            // In order to update the state of the favorite recipes, set favorite recipies with new data. Also, in order to stop showing the spinner in the UI, set uiIsLoading to false  
+            //console.log("UI is Loading? ", this.state.uiIsLoading)
+            this.setState({ uiIsLoading: false })
+            //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
+            
+            return favoriteRecipes
+            
+        }catch(e){
+           //console.log(e)
         }
     }
 
@@ -106,30 +131,30 @@ export class Favorites extends Component{
     */
     async fetchRecipeInfo(recipeIdArray){
         try{
-            console.log("Favorite Recipes from Firestore: ", recipeIdArray)
+            //console.log("Favorite Recipes from Firestore or Redux: ", recipeIdArray)
             
             var favRecipesArray = []
             for(const recipe of recipeIdArray){
-                console.log("Iterating over the favorite recipes. Recipe ID:", recipe.recipe_id)
+                //console.log("Iterating over the favorite recipes. Recipe ID:", recipe.recipe_id)
                 
                 if (recipe.recipe_id != undefined){
                     //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                     //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
+                    //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
                     const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=4a53e799e6134b139ddc05f3d97f7136"
-                    console.log("Api String: ", apiString)
+                    //console.log("Api String: ", apiString)
                     
                     const apiRes = await fetch(apiString)
                     const apiResJson = await apiRes.json()
 
                     var arrTrn = new ArrayTransform()
-                    console.log("API Response (Just the recipe_id, title, image, readyInMinutes): ", recipe.recipe_id, apiResJson.title, apiResJson.sourceUrl, apiResJson.readyInMinutes)
+                   //console.log("Spoonacular API Response (Just the recipe_id, title, image, readyInMinutes): ", recipe.recipe_id, apiResJson.title, apiResJson.sourceUrl, apiResJson.readyInMinutes)
                     favRecipesArray = await arrTrn.pushFavorite(favRecipesArray, recipe.recipe_id, apiResJson.title, apiResJson.image, apiResJson.readyInMinutes)
-
                 }
             }
             return favRecipesArray
         }catch(e){
-            console.log(e)
+           //console.log(e)
             return []
         }
     }
@@ -149,13 +174,7 @@ export class Favorites extends Component{
     
     render(){
         
-        const { favoriteRecipes, searchTerm, isFocused } = this.state
-        
-        if (isFocused){
-            console.log("IS Focused?", isFocused)
-        }else{
-            console.log("Is Focused?", isFocused)
-        }
+        const { favoriteRecipes, searchTerm } = this.state
         //console.log("Array of Favorites Recipies: ", favoriteRecipies)
         const JSX = []
         
@@ -213,8 +232,8 @@ export class Favorites extends Component{
                         />
                     </VStack>
                     <ScrollView>
-                        {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
-                        {JSX}
+                        {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : JSX}
+                        
                     </ScrollView>
                     
                 </Box>
@@ -226,16 +245,10 @@ export class Favorites extends Component{
 export default function(props) {
     const routesLength = useNavigationState(state => state.routes.length)
     const isFocused = useIsFocused();
-    return <Favorites {...props} routesLength={routesLength} isFocused={isFocused} />
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.userState.currentUser); // Replaces mapStateToProps method. Also, the connect method will not be required because currentUser taken from redux is wrapped and inserted as additional props in the next line of code.
+    return <Favorites {...props} dispatch={dispatch} routesLength={routesLength} isFocused={isFocused} currentUser={user} /> // Here additional props are wraped and inserted to the Favorites component
 }
-
-/*
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-})
-
-export default connect(mapStateToProps, null)(Favorites)
-*/
 
 const styles = StyleSheet.create({
     item: {

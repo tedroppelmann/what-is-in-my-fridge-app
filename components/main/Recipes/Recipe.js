@@ -18,12 +18,14 @@ import {
 
 import { getAuth }  from 'firebase/auth'
 import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { fetchUser } from '../../../redux/actions/index'
+import { useDispatch  } from 'react-redux'
 
-export default function Recipe({ navigation, route }) {
+export default function Recipe({ route }) {
     const [recipe, setRecipe] = useState('');
     const [loading, setLoading] = useState(false);
     const [favorite, setFavorite] = useState(false);
-
+    const dispatch = useDispatch(); // To dispatch an action in order to update local redux store with new favorites.
     const recipe_id = route.params.recipe_id;
     const missed_ingredients = route.params.missed_ingredients;
 
@@ -39,7 +41,10 @@ export default function Recipe({ navigation, route }) {
             });
         if (recipe == '') {
             fetch(
-                `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=80256361caf04b358f4cd2de7f094dc6&includeNutrition=true`
+                //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
+                //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
+                //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
+                `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=4a53e799e6134b139ddc05f3d97f7136&includeNutrition=true`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -117,12 +122,17 @@ export default function Recipe({ navigation, route }) {
                                                 setFavorite(true);
                                                 updateDoc(doc(db, 'Users', auth.currentUser.uid), {
                                                     favorites: arrayUnion({recipe_id}),
-                                                  });
+                                                }).then(()=> {
+                                                    dispatch(fetchUser()); // AL Modifications: Update the local redux store with new favorites.
+                                                });
                                             } else {
                                                 setFavorite(false);
                                                 updateDoc(doc(db, 'Users', auth.currentUser.uid), {
                                                     favorites: arrayRemove({recipe_id}),
-                                                  });
+                                                }).then(()=> {
+                                                      dispatch(fetchUser()); // AL Modifications: Update the local redux store with new favorites. 
+                                                });
+                                                
                                             }
                                             
                                         }}
