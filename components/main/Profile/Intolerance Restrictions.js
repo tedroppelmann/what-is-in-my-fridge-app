@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert } from 'react-native'
-import { 
-    NativeBaseProvider, 
+import { StyleSheet, Alert, TouchableOpacity } from 'react-native'
+import {  
     View, 
     Switch, 
     Input, 
@@ -162,7 +161,7 @@ export class IntoleranceRestrictions extends Component{
     setSearchTerm(text){
         this.setState((state) => {
             state.searchTerm = text 
-            console.log(state.searchTerm)
+            //console.log(state.searchTerm)
             return {
                 searchTerm: state.searchTerm 
             }
@@ -198,14 +197,16 @@ export class IntoleranceRestrictions extends Component{
             intolerances.forEach((intolerance) => {
                 if (intolerance.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
                     JSX.push(
-                        <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
-                            <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
-                            </View>
-                            <View key={uuidv4()} style={{alignItems: 'flex-end', flex:1}}>
+                        <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
+                            <TouchableOpacity delayPressIn={0} activeOpacity={1} key={uuidv4()} style={styles.btn} onPress={this.toggleSwitch(switchKey)}>
+                                <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
+                                    <Text fontSize={"md"} key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {intolerance.name} </Text>
+                                </View>
+                            </TouchableOpacity>
+                            <View key={uuidv4()} style={{justifyContent: 'center'}}>
                                 <Switch
                                     key={switchKey}
-                                    onTrackColor = 'emerald'
+                                    colorScheme='emerald'
                                     onToggle={this.toggleSwitch(switchKey)}
                                     isChecked={intolerance.toggle}
                                 />  
@@ -243,7 +244,7 @@ export class IntoleranceRestrictions extends Component{
                     </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
-                            {this.state.uiIsLoading? <Spinner size="lg" /> : null}
+                            {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
                             {JSX}
                         </VStack>
                     </ScrollView>
@@ -261,7 +262,7 @@ export class IntoleranceRestrictions extends Component{
                                     </Heading>
                                 </Button>
                             : // otherwise show spinner
-                            <Spinner size="sm" />
+                            <Spinner color="emerald" size="lg" />
                         }
                     </VStack>
                     
@@ -274,6 +275,11 @@ export class IntoleranceRestrictions extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    btn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     containerInfoUp: {
         margin: 20,

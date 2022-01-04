@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useIsFocused } from "@react-navigation/native";
 import {
     StyleSheet,
-    ScrollView,
     TouchableOpacity,
     Dimensions,
   } from 'react-native';
@@ -16,7 +15,6 @@ import {
     Image,
     Center,
     Spinner,
-    Button,
 } from 'native-base';
 
 import { getAuth }  from 'firebase/auth'
@@ -24,12 +22,9 @@ import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "f
 
 
 export default function Recipes({ navigation, route }) {
-    const [recipes, setRecipes] = useState("");
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
-
     const [loading, setLoading] = useState(false);
-
     const [isSelected, setSeleted] = useState(true);
 
     function transformIngredients(array) {

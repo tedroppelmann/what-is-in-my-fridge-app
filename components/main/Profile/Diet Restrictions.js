@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert } from 'react-native'
+import { StyleSheet, Alert, TouchableOpacity, Image } from 'react-native'
 import { 
     View, 
-    Switch, 
     Input, 
     Spinner, 
     Button, 
@@ -15,10 +14,12 @@ import {
     Heading,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
-import { connect } from 'react-redux'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
+import { fetchUser } from '../../../redux/actions/index'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 
 export class DietRestrictions extends Component{
     
@@ -33,10 +34,10 @@ export class DietRestrictions extends Component{
             uiIsLoading: true,
             savingDiets: false, 
             searchTerm: "", // this is required for the search input 
+            selectedDiet: "Vegan",
         }
 
         this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
-        this.toggleSwitch = this.toggleSwitch.bind(this)
         this.setSearchTerm = this.setSearchTerm.bind(this)
     }
 
@@ -45,10 +46,10 @@ export class DietRestrictions extends Component{
     */
     async componentDidMount(){
         //console.log("componentDidMount diets previous state: ", this.state.diets)        
-        var diets = await this.setDietRestrictions()
-        // Call an extra render of the UI after the setting of the diet restriction in the previous line
-        this.setState({diets: diets})
+        await this.setDietRestrictions()
         //console.log("componentDidMount diets after initialization state", this.state.diets)
+        //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
+        console.log("componentDidMount user is: ", this.state.user)
     }
 
     /* 
@@ -92,22 +93,26 @@ export class DietRestrictions extends Component{
             //console.log("User document ID obtained", userDocId)
             
             // Identify which diets were selected and create a string separated by commas.
-            const diets = await this.identifySelectedDiets()
+            //const diets = await this.identifySelectedDiets()
             //console.log("Diets selected: ", diets)
             
             // Update (or insert if the field diets does not exist) the diets of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
-            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "diets", diets)
+            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "diets", this.state.selectedDiet)
+
+            // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
+            await this.props.fetchUser()
+            console.log("REDUX Updated")
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingDiets to false
             this.setState({ savingDiets: false })
             //console.log("Saving Diets? (After update) ", this.state.savingDiets)
 
-            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diets Saved Successfully!") } else { this.showAlert("Diet Restrictions", "Diets not saved!") }
+            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!") } else { this.showAlert("Diet Restrictions", "Diet not saved!") }
         
         }catch(e){
-            console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Diet Restrictions", "Diets not saved!")
+            //console.log(e) // An exception could be thrown if there is no connection to Firestore.
+            this.showAlert("Diet Restrictions", "Diet not saved!")
         }
     }
     
@@ -131,28 +136,18 @@ export class DietRestrictions extends Component{
             
             // Update the diets state with all a diets object array 
             const arrTrn = new ArrayTransform()
-            const stringTurnedIntoArray = await arrTrn.stringToArray(field.diets, field2.diets)
+            const stringTurnedIntoArray = await arrTrn.stringToArrayOfStrings(field.diets)
             
             // In order to stop showing the spinner in the UI, if updating diets state finish executing then set uiIsLoading to false  
             //console.log("UI is Loading? ", this.state.uiIsLoading)
-            this.setState({ uiIsLoading: false })
+            this.setState({ uiIsLoading: false, diets: stringTurnedIntoArray, selectedDiet: field2.diets })
             //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
             
-            return stringTurnedIntoArray
+            //return stringTurnedIntoArray
             
         }catch(e){
-            console.log(e)
+           //console.log(e)
         }
-    }
-
-    toggleSwitch = (i) => (event) => {
-        this.setState((state, props) => {
-          state.diets[i].toggle = !state.diets[i].toggle;
-          //console.log(state.diets[i].name, " toggled.")
-          return {
-            diets: state.diets
-          }
-        })
     }
 
     /* 
@@ -187,30 +182,35 @@ export class DietRestrictions extends Component{
     }  
     
     render(){
-        const { diets, searchTerm } = this.state
+        const { diets, searchTerm, selectedDiet } = this.state
         //console.log("Array of Diets: ", diets)
+        
         const dietJSX = []
-        var switchKey=0;
+        //var switchKey=0;
         if (diets != undefined){
             diets.forEach((diet) => {
-                if (diet.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
-                    dietJSX.push(
-                        <View key={uuidv4()} style={{flexDirection:"row", height:20, marginBottom:50, flex:1}}>
-                            <View key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}}>
-                                <Text key={uuidv4()} style={{justifyContent: 'flex-start', flex:1}} > {diet.name} </Text>
+                if (diet.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
+                    if (diet == selectedDiet){
+                        dietJSX.push(
+                            <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
+                                <TouchableOpacity key={uuidv4()} style={styles.btn}>
+                                        <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
+                                        <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioChecked.png")} />
+                                </TouchableOpacity>
                             </View>
-                            <View key={uuidv4()} style={{alignItems: 'flex-end', flex:1}}>
-                                <Switch
-                                    key={switchKey}
-                                    onTrackColor = 'emerald'
-                                    onToggle={this.toggleSwitch(switchKey)}
-                                    isChecked={diet.toggle}
-                                />  
+                        )
+                    }else{
+                        dietJSX.push(
+                            <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
+                                <TouchableOpacity delayPressIn={0} activeOpacity={1} key={uuidv4()} style={styles.btn} onPress={()=>{this.setState({selectedDiet: diet})}}>
+                                    <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
+                                    <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioNotChecked.png")} />
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                    )
+                        )
+                    }
                 }
-                switchKey++;
+                //switchKey++;
             })
         }
 
@@ -239,8 +239,10 @@ export class DietRestrictions extends Component{
                     </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
-                            {this.state.uiIsLoading? <Spinner size="lg" /> : null}
+                            {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
+                            
                             {dietJSX}
+                            
                         </VStack>
                     </ScrollView>
                     <VStack mt='4' style={styles.containerInfoDown}>
@@ -253,11 +255,11 @@ export class DietRestrictions extends Component{
                                     m = '3'
                                 > 
                                     <Heading size='sm' textAlign='center' color='white'>
-                                        Save Diets
+                                        Save Diet
                                     </Heading>
                                 </Button>
                             : // otherwise show spinner
-                            <Spinner size="sm" />
+                            <Spinner color="emerald" size="lg" />
                         }
                     </VStack>
                     
@@ -270,6 +272,15 @@ export class DietRestrictions extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    btn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    radiobutton: {
+        height: 30,
+        width: 30,
     },
     containerInfoUp: {
         margin: 20,
@@ -303,4 +314,6 @@ const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
 
-export default connect(mapStateToProps, null)(DietRestrictions);
+const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchProps)(DietRestrictions);

@@ -51,6 +51,35 @@ export default class ArrayTransform{
         }
     }
 
+    /*
+    Method description: turns the string paramater into an array of strings.
+    Method parameters:
+        * stringValue is a string that contains string values separated by commas. 
+    Method return: an array of strings with the following attributes:
+    */
+    async stringToArrayOfStrings(stringValue){
+        try{
+            var arrayValue = []
+            var tmpArray = []
+            if(stringValue != undefined){
+                tmpArray = stringValue.split(",") // tmpArray contains each individual value from stringValue parameter.
+            } 
+            //console.log("String to convert into an array:", stringValue)
+            
+            for(const element of tmpArray){
+                //console.log("Element to push into the array: ", element)
+                arrayValue.push(element)
+            }
+
+            //console.log("Array to print in the settings is: ", arrayValue)
+            
+            return arrayValue
+        }catch(e){
+            //console.log(e)
+            return []
+        }
+    }
+
     async setToggleValue(tmpToggleArray, element){
         var toggleValue = false
         //console.log("Element that will defines the toggle value: ", element, ". Value before setting it is ", toggleValue)
@@ -63,6 +92,9 @@ export default class ArrayTransform{
         return toggleValue
     }
 
+    /*
+    Method Description: Used to push an element in an array used at the Diet, Intolerance Restrictions and Ingredients Exclusion Screens
+    */
     async pushArrayValue(arrayValue, i, element, toggleValue){
         var elementOfArray = {id:null, name:null, toggle:null}
         if (element != undefined){
@@ -74,6 +106,23 @@ export default class ArrayTransform{
             }
         }
         return arrayValue
+    }
+
+    /*
+    Method Description: Used to push value for favorite recipes at the Favorites Screen
+    */
+    async pushFavorite(favRecipesArray, recipeId, title, sourceUrl, readyInMinutes){
+        var favRecipeElement = {recipe_id:null, title:null, sourceUrl:null, readyInMinutes:null}
+        if (title != undefined){
+            favRecipeElement.recipe_id = recipeId
+            favRecipeElement.title = title
+            favRecipeElement.sourceUrl = sourceUrl
+            favRecipeElement.readyInMinutes = readyInMinutes
+
+            //console.log("New element formed to push in the array: ", favRecipeElement)
+            favRecipesArray.push(favRecipeElement)
+        }
+        return favRecipesArray
     }
 
 }
