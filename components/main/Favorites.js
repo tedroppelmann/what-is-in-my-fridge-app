@@ -61,12 +61,12 @@ export class Favorites extends Component{
             this.setState({favoriteRecipes: favoriteRecipes})
         }
         if (this.props.currentUser.favorites !== prevProps.currentUser.favorites){ // When currentUser changes on the Find Screen Stack, thehn update favorite recipies
+            //console.log("222 Current and previous user are different! Updating state of user and favorite recipes...")
+            this.setState({ user: this.props.currentUser })
             //console.log("222 CURRENT USER CHANGED: Updating Favorites")
             var favoriteRecipes = await this.setFavoriteRecipesViaRedux() 
             //var favoriteRecipes = await this.setFavoriteRecipes()
             this.setState({favoriteRecipes: favoriteRecipes})
-            //console.log("222 Current and previous user are different! Updating state of user and favorite recipes...")
-            this.setState({ user: this.props.currentUser })
         }
     }
 
