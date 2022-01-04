@@ -31,21 +31,6 @@ export class Main extends Component {
         //console.log("000. componentDidMount Route name", this.props.routeName)
         
     }
-
-    componentDidUpdate(prevProps){
-        //console.log("000 MAIN componentDidUpdate was triggered: isFocused value: ", this.state.isFocused)
-        //console.log("000. Current routesLength: ", this.props.routesLength)
-        //console.log("000. Previous routesLength: ", prevProps.routesLength)
-        //console.log("000. Current route name", this.props.routeName)
-        //console.log("000. Previous route name", prevProps.routeName)
-        
-        //if (this.props.routesLength < prevProps.routesLength) {
-            // Uncomment these lines to reload favorites when returning from the recipie screen
-            //var favoriteRecipes = await this.setFavoriteRecipes()
-            //this.setState({favoriteRecipes: favoriteRecipes})
-            //console.log("000 MAIN: Reloading REDUX Store")
-        //}
-    }
     
     render() {
         return (
