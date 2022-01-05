@@ -141,7 +141,7 @@ export class Favorites extends Component{
                     //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                     //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
                     //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
-                    const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=4a53e799e6134b139ddc05f3d97f7136"
+                    const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=80256361caf04b358f4cd2de7f094dc6"
                     //console.log("Api String: ", apiString)
                     
                     const apiRes = await fetch(apiString)

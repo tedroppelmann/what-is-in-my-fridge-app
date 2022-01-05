@@ -45,7 +45,7 @@ export default function Recipe({ route }) {
                 //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                 //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
                 //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
-                `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=4a53e799e6134b139ddc05f3d97f7136&includeNutrition=true`
+                `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=80256361caf04b358f4cd2de7f094dc6&includeNutrition=true`
             )
                 .then((response) => response.json())
                 .then((data) => {
