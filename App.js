@@ -87,7 +87,7 @@ export class App extends Component {
         Spinner: {
           defaultProps: {
             size: 'lg',
-            color: 'emerald',
+            color: '#10b981',
           },
         },
       },
@@ -112,8 +112,8 @@ export class App extends Component {
           <NavigationContainer>
             <Stack.Navigator initialRouteName='Landing'>
               <Stack.Screen name ='Landing' component={LandingScreen} options={{headerShown: false}}/>
-              <Stack.Screen name ='Register' component={RegisterScreen}/>
-              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name ='Register' component={RegisterScreen}options={{headerTintColor: '#10b981'}}/>
+              <Stack.Screen name="Login" component={LoginScreen} options={{headerTintColor: '#10b981'}}/>
             </Stack.Navigator>
           </NavigationContainer>
         </NativeBaseProvider>

@@ -154,7 +154,7 @@ export default function Recipes({ navigation, route }) {
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(true)}}
-                                    style={[styles.category_left, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                    style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
                                     <Heading size='sm' textAlign='center' color={color_left}>
                                         Less missed
@@ -164,7 +164,7 @@ export default function Recipes({ navigation, route }) {
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(false)}}
-                                    style={[styles.category_right, !isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                    style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
                                     <Heading size='sm' textAlign='center' color={color_right}>
                                         More used

@@ -242,28 +242,29 @@ export class IntoleranceRestrictions extends Component{
                             }
                         />
                     </VStack>
-                    <ScrollView>
-                        <VStack style={styles.containerInfoUp}>
-                            {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
-                            {JSX}
-                        </VStack>
-                    </ScrollView>
+                    {this.state.uiIsLoading? 
+                        <Center flex={1}>
+                            <Spinner/>
+                        </Center> : 
+                        <ScrollView>
+                            <VStack style={styles.containerInfoUp}>
+                                {JSX}
+                            </VStack>
+                        </ScrollView>
+                    }
                     <VStack mt='4' style={styles.containerInfoDown}>
-                        {
-                            //If you are not saving intolerances (savingIntolerances=false) then show the button. Otherwise, show the spinner
-                            !this.state.savingIntolerances? // if you are not saving intolerances show the button
-                                <Button 
-                                    onPress={() => this.saveIntoleraForLoggedUser()}
-                                    size = 'lg'
-                                    m = '3'
-                                > 
-                                    <Heading size='sm' textAlign='center' color='white'>
-                                        Save Intolerances
-                                    </Heading>
-                                </Button>
-                            : // otherwise show spinner
-                            <Spinner color="emerald" size="lg" />
-                        }
+                        <Button 
+                            onPress={() => this.saveIntoleraForLoggedUser()}
+                            size = 'lg'
+                            m = '3'
+                        > 
+                            {!this.state.savingIntolerances?
+                                <Heading size='sm' textAlign='center' color='white'>
+                                Save Intolerances
+                                </Heading>:
+                                <Spinner size='sm' color='white'/>
+                            }
+                        </Button>
                     </VStack>
                     
                 </Box>

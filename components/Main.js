@@ -38,7 +38,7 @@ export class Main extends Component {
                 initialRouteName='Find' 
                 screenOptions={{
                     tabBarShowLabel: false,
-                    tabBarActiveTintColor: '#50C878',
+                    tabBarActiveTintColor: '#10b981',
                 }}
             > 
                 <Tab.Screen name='Favorites' component={FavoritesStackScreen}
