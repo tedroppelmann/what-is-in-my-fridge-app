@@ -245,4 +245,58 @@ export const INGREDIENTS = [
         image: require('./ingredients_images/peach.png'),
         category: 'fruits',
     },
+    {
+        name: 'Pear',
+        slug: 'pear',
+        image: require('./ingredients_images/pear.png'),
+        category: 'fruits',
+    },
+    {
+        name: 'Almond',
+        slug: 'almond',
+        image: require('./ingredients_images/almond.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Peanut',
+        slug: 'peanut',
+        image: require('./ingredients_images/peanut.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Walnut',
+        slug: 'walnut',
+        image: require('./ingredients_images/walnut.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Rice',
+        slug: 'rice',
+        image: require('./ingredients_images/rice.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Cous cous',
+        slug: 'cous cous',
+        image: require('./ingredients_images/couscous.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Oats',
+        slug: 'oats',
+        image: require('./ingredients_images/oats.png'),
+        category: 'grains',
+    },
+    {
+        name: 'Yoghurt',
+        slug: 'yoghurt',
+        image: require('./ingredients_images/yoghurt.png'),
+        category: 'dairies',
+    },
+    {
+        name: 'Cream',
+        slug: 'cream',
+        image: require('./ingredients_images/cream.png'),
+        category: 'dairies',
+    },
 ];

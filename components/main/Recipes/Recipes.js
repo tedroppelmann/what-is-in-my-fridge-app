@@ -54,28 +54,28 @@ export default function Recipes({ navigation, route }) {
                             setIntoleranceRestriction(snapshot.data().intolerances);
                             console.log(intoleranceRestriction);
                         };
-                    });
-                fetch(
-                    `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                )
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setRecipesMin(data);
-                        setLoading(true);
-                    })
-                    .catch(() => {
-                        console.log("error");
-                    });
-                fetch(
-                    `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                )
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setRecipesMax(data);
-                        setLoading(true);
-                    })
-                    .catch(() => {
-                        console.log("error");
+                        fetch(
+                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
+                        )
+                            .then((response) => response.json())
+                            .then((data) => {
+                                setRecipesMin(data);
+                                setLoading(true);
+                            })
+                            .catch(() => {
+                                console.log("error");
+                            });
+                        fetch(
+                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
+                        )
+                            .then((response) => response.json())
+                            .then((data) => {
+                                setRecipesMax(data);
+                                setLoading(true);
+                            })
+                            .catch(() => {
+                                console.log("error");
+                            });
                     });
             } 
         }
