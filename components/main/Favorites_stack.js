@@ -26,8 +26,8 @@ export default function Favorites_stack() {
         <NavigationContainer independent={true}>
           <StatusBar barStyle="dark-content"/>
           <Stack4.Navigator initialRouteName='Favorites'>
-            <Stack4.Screen name="Favorites" component={FavoritesScreen} />
-            <Stack4.Screen name="Recipe" component={RecipeScreen}  />
+            <Stack4.Screen name="Favorites" component={FavoritesScreen} options={{headerTintColor: '#10b981'}}/>
+            <Stack4.Screen name="Recipe" component={RecipeScreen}  options={{headerTintColor: '#10b981'}}/>
           </Stack4.Navigator>
         </NavigationContainer>
     )

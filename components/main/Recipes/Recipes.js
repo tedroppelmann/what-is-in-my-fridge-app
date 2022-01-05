@@ -54,28 +54,28 @@ export default function Recipes({ navigation, route }) {
                             setIntoleranceRestriction(snapshot.data().intolerances);
                             console.log(intoleranceRestriction);
                         };
-                    });
-                fetch(
-                    `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                )
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setRecipesMin(data);
-                        setLoading(true);
-                    })
-                    .catch(() => {
-                        console.log("error");
-                    });
-                fetch(
-                    `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                )
-                    .then((response) => response.json())
-                    .then((data) => {
-                        setRecipesMax(data);
-                        setLoading(true);
-                    })
-                    .catch(() => {
-                        console.log("error");
+                        fetch(
+                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
+                        )
+                            .then((response) => response.json())
+                            .then((data) => {
+                                setRecipesMin(data);
+                                setLoading(true);
+                            })
+                            .catch(() => {
+                                console.log("error");
+                            });
+                        fetch(
+                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
+                        )
+                            .then((response) => response.json())
+                            .then((data) => {
+                                setRecipesMax(data);
+                                setLoading(true);
+                            })
+                            .catch(() => {
+                                console.log("error");
+                            });
                     });
             } 
         }
@@ -154,7 +154,7 @@ export default function Recipes({ navigation, route }) {
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(true)}}
-                                    style={[styles.category_left, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                    style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
                                     <Heading size='sm' textAlign='center' color={color_left}>
                                         Less missed
@@ -164,7 +164,7 @@ export default function Recipes({ navigation, route }) {
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(false)}}
-                                    style={[styles.category_right, !isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+                                    style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
                                     <Heading size='sm' textAlign='center' color={color_right}>
                                         More used

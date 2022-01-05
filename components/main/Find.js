@@ -90,7 +90,7 @@ export default function App({ navigation }) {
                 setSelectedCategory(prev => [item.name.toLowerCase()]);
             }
             }}
-            style={[styles.category, isSelected && { backgroundColor: '#50C878', borderColor: '#50C878'}]}
+            style={[styles.category, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
         >
             <Heading size='sm' textAlign='center' color={color}>
                 {item.name}

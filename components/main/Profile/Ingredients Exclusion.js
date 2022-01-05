@@ -242,7 +242,7 @@ export class IngredientsExclusion extends Component{
                     </VStack>
                     <ScrollView>
                         <VStack style={styles.containerInfoUp}>
-                            {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : null}
+                            {this.state.uiIsLoading? <Spinner/> : null}
                             {JSX}
                         </VStack>
                     </ScrollView>
@@ -260,7 +260,7 @@ export class IngredientsExclusion extends Component{
                                     </Heading>
                                 </Button>
                             : // otherwise show spinner
-                            <Spinner color="emerald" size="lg" />
+                            <Spinner/>
                         }
                     </VStack>
                     

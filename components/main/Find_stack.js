@@ -16,8 +16,8 @@ export default function Find_stack() {
           <StatusBar barStyle="dark-content"/>
           <Stack2.Navigator initialRouteName='Find'>
             <Stack2.Screen name="Find" component={FindScreen} options={{headerShown: false}}/>
-            <Stack2.Screen name="Recipes" component={RecipesScreen}/>
-            <Stack2.Screen name="Recipe" component={RecipeScreen}/>
+            <Stack2.Screen name="Recipes" component={RecipesScreen} options={{headerTintColor: '#10b981'}}/>
+            <Stack2.Screen name="Recipe" component={RecipeScreen} options={{headerTintColor: '#10b981'}}/>
           </Stack2.Navigator>
         </NavigationContainer>
     )
