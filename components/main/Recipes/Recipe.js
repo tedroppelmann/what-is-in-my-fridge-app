@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'  // AL Modification: useRef
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import {
     StyleSheet,
@@ -14,33 +14,40 @@ import {
     HStack,
     Center,
     Spinner,
-    VStack,
 } from 'native-base';
-
 import { getAuth }  from 'firebase/auth'
 import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
-import { fetchUser } from '../../../redux/actions/index'
-import { useDispatch  } from 'react-redux'
+import { fetchUser } from '../../../redux/actions/index'  // AL Modification: 
+import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
 
-export default function Recipe({ route }) {
-    const [recipe, setRecipe] = useState('');
+export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
+    const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(false);
     const [favorite, setFavorite] = useState(false);
     const dispatch = useDispatch(); // To dispatch an action in order to update local redux store with new favorites.
-    const recipe_id = route.params.recipe_id;
-    const missed_ingredients = route.params.missed_ingredients;
-
+    const recipe_id = props.route.params.recipe_id; // AL Modifications: Changed route to props
+    const missed_ingredients = props.route.params.missed_ingredients; // AL Modifications: Changed route to props
     const auth = getAuth();
     const db = getFirestore();
-    
-    useEffect(() => {
+    const prevFavoritesRef = useRef();  // AL Modification: 
+    const prevFavorites = prevFavoritesRef.current;  // AL Modification: Set previous favorite state from the saved state in useEffect hook. 
+    const user = useSelector(state => state.userState.currentUser); // AL Modification: Get the current user from the context
+
+    useEffect(() => { 
+        prevFavoritesRef.current = user.favorites // AL Modification: Saving previous favorite recipes
+        
+        /*
         getDoc(doc(db, 'Users', getAuth().currentUser.uid))
             .then((snapshot) => {
                 if (snapshot.data().favorites.filter(e => e.recipe_id === recipe_id).length > 0) {
                     setFavorite(true);
+                    console.log("RECIPE ERROR. Getting data from Firestore and setting favorite to true")
                 };
             });
-        if (recipe == '') {
+        */
+        
+        if (recipe === null) {
+            //console.log("RECIPE SCREEN. 1 Recipe is empty? Checking GlutenFree to see if recipe is empty: ", recipe.glutenFree)
             fetch(
                 //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                 //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
@@ -49,12 +56,35 @@ export default function Recipe({ route }) {
             )
                 .then((response) => response.json())
                 .then((data) => {
+                    //console.log("RECIPE SCREEN. Setting recipe with data from Spoonacular API...")
                     setRecipe(data);
                     setLoading(true);
+                }).then(() =>{
+                    if(user.favorites.filter(e => e.recipe_id === recipe_id).length > 0){
+                        //console.log("RECIPE SCREEN. Set Favorite to TRUE")
+                        setFavorite(true);
+                    } else {
+                        //console.log("RECIPE SCREEN. Set Favorite to FALSE")
+                        setFavorite(false);
+                    }
                 })
                 .catch(() => {
-                    console.log("error");
+                    console.log("RECIPE SCREEN. Error");
                 });
+        } else{
+            //console.log("RECIPE SCREEN. 2 Recipe is empty? Checking GlutenFree to see if recipe is empty: ", recipe.glutenFree)
+            // Check if favorites have changed. 
+            if(JSON.stringify(user.favorites) !== JSON.stringify(prevFavorites)){
+                //console.log("RECIPE SCREEN. Favorites are different.", user.favorites)
+                // If the recipe is still a favorite one, then set favorite to true and re-render automatically the favorite STAR ICON
+                if(user.favorites.filter(e => e.recipe_id === recipe_id).length > 0){
+                    //console.log("RECIPE SCREEN. Set Favorite to TRUE")
+                    setFavorite(true);
+                } else {
+                    //console.log("RECIPE SCREEN. Set Favorite to FALSE")
+                    setFavorite(false);
+                }
+            }
         }
     });
 

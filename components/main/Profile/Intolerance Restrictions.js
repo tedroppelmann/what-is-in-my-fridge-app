@@ -12,13 +12,17 @@ import {
     ScrollView, 
     Icon,
     Center,
-    Heading
+    Heading,
+    useToast,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
-import { connect } from 'react-redux'
+//import { connect } from 'react-redux'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid';
+import { fetchUser } from '../../../redux/actions/index'
+import { useSelector, useDispatch } from 'react-redux'
+import { getAuth }  from 'firebase/auth'
 
 export class IntoleranceRestrictions extends Component{
     
@@ -29,6 +33,7 @@ export class IntoleranceRestrictions extends Component{
         super(props);
         this.state = {
             user: props.currentUser, // initialize user attribute with the currentUser from redux
+            userId: props.userId, // initialize user id from Firebase getAuth() method
             intolerances: [], 
             uiIsLoading: true,
             savingIntolerances: false, 
@@ -84,11 +89,11 @@ export class IntoleranceRestrictions extends Component{
             const fdb = new FirebaseDb()
             
             // Instantiate a Firebase database collection with the database name passed on the parameters
-            const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            //const usersCollectionFdb = await fdb.initCollectionDb("Users")
             //console.log("Initialized users collection")
             
             // Query the ID of a user from an already initialized firestore collection given an email
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
             //console.log("User document ID obtained", userDocId)
             
             // Identify which intolerances were selected and create a string separated by commas.
@@ -97,17 +102,21 @@ export class IntoleranceRestrictions extends Component{
             
             // Update (or insert if the field intolerances does not exist) the intolerances of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
-            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "intolerances", intolerances)
+            const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "intolerances", intolerances)
+
+            // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
+            //await this.props.dispatch(fetchUser())
+            //console.log("REDUX Updated")
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingIntolerances to false
             this.setState({ savingIntolerances: false })
             //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
 
-            if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!") }
+            if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!", "message") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!", "warning") }
         
         }catch(e){
             console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Intolerance Restrictions", "Intolerances not saved!")
+            this.showAlert("Intolerance Restrictions", "An error has ocurred. Intolerances might not be saved!", "warning")
         }
     }
     
@@ -122,10 +131,12 @@ export class IntoleranceRestrictions extends Component{
             const field = await fdb.queryDocFromFdb(connFdb, "Restrictions", "intolerances")
             //console.log("Queried field from a document: ", field.intolerances)
             
-            // Query the intolerances field from the user document
-            const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
-            const field2 = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
+            // Query userId from the user document in Firestore
+            //const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            
+            // Query the intolerances field 
+            const field2 = await fdb.queryDocFromFdb(connFdb, "Users", this.state.userId)
             //console.log("Queried field from a intolerance document: ", field.intolerances)
             //console.log("Queried field2 from a user document: ", field2.intolerances)
             
@@ -168,22 +179,12 @@ export class IntoleranceRestrictions extends Component{
         })
     }
 
-    showAlert(title, message) {  
-        Alert.alert(
-            title,
-            message,
-            [
-              {
-                text: "Ok",
-                //onPress: () => console.log("Ok Pressed"),
-                style: "default",
-              },
-            ],
-            {
-              cancelable: true,
-              //onDismiss: () => console.log("Dismissed alert by tapping outside of the alert dialog")
-            }
-        )        
+    showAlert(title, message, status) {     
+        this.props.toast.show({
+            title: title,
+            status: status,
+            description: message,
+        })    
     }  
     
     render(){
@@ -273,6 +274,22 @@ export class IntoleranceRestrictions extends Component{
     }
 }
 
+export default function(props) {
+    const toast = useToast()
+    const dispatch = useDispatch()
+    const auth = getAuth();
+    const user = useSelector(state => state.userState.currentUser); // Replaces mapStateToProps method. Also, the connect method will not be required because currentUser taken from redux is wrapped and inserted as additional props in the next line of code.
+    return <IntoleranceRestrictions {...props} currentUser={user} toast={toast} dispatch={dispatch} userId={auth.currentUser.uid} /> // Here additional props are wraped and inserted to the Favorites component
+}
+
+/*
+const mapStateToProps = (store) => ({
+    currentUser: store.userState.currentUser
+})
+
+export default connect(mapStateToProps, null)(IntoleranceRestrictions);
+*/
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -309,9 +326,3 @@ const styles = StyleSheet.create({
         fontSize: 14, 
     },
 })
-
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-
-export default connect(mapStateToProps, null)(IntoleranceRestrictions);

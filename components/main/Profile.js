@@ -19,6 +19,7 @@ function Profile(props) {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
+        //console.log("PROFILE SCREEN. Props is: ", props)
         const { currentUser } = props;
         setUser(currentUser);
     })

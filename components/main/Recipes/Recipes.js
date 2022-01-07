@@ -16,12 +16,11 @@ import {
     Center,
     Spinner,
 } from 'native-base';
-
 import { getAuth }  from 'firebase/auth'
-import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 
-export default function Recipes({ navigation, route }) {
+export default function Recipes(props) {
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
     const [loading, setLoading] = useState(false);
@@ -31,19 +30,19 @@ export default function Recipes({ navigation, route }) {
         let query = array.join();
         return query;
     }
-    const ingredients = transformIngredients(route.params.selected)
+    const ingredients = transformIngredients(props.route.params.selected)
 
     const db = getFirestore();
     const [dietRestriction, setDietRestriction] = useState('')
     const [intoleranceRestriction, setIntoleranceRestriction] = useState('')
 
     const isFocused = useIsFocused();
-
+    
     useEffect(() => {
         if (isFocused) {
-            console.log(isFocused);
+            //console.log("RECIPESSS SCREEN: Props value here is: ", props);
             if (recipes_min == '' && recipes_max == '') {
-                console.log('hola')
+                //console.log('hola')
                 getDoc(doc(db, 'Users', getAuth().currentUser.uid))
                     .then((snapshot) => {
                         if (snapshot.data().diets) {
@@ -86,7 +85,7 @@ export default function Recipes({ navigation, route }) {
 
         return (
             <TouchableOpacity
-            onPress={() => navigation.navigate('Recipe', { recipe_id: id, missed_ingredients: missedIngredients })}
+            onPress={() => props.navigation.navigate('Recipe', { recipe_id: id, missed_ingredients: missedIngredients })}
             style= {[ styles.item ]}
             >
                 <Box flex={1} >
