@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { StatusBar } from 'react-native'
-import { useNavigation, useIsFocused, CommonActions, StackActions } from '@react-navigation/native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useDispatch  } from 'react-redux'
 import { fetchUser } from '../../redux/actions/index'
@@ -12,14 +11,18 @@ const Stack4 = createStackNavigator();
 
 export default function Favorites_stack() {
   const isFocused = useIsFocused();
-  // To get previous isFocus value
   const dispatch = useDispatch();
+  const prevFocusRef = useRef();
+  const prevIsFocus = prevFocusRef.current;
   
   useEffect(() => {
-    //console.log("111 Is Focused?", isFocused))
-    //console.log("111 Updating currentUser")
-    dispatch(fetchUser());
-    
+    //console.log("Favorites Stack Is Focused?", isFocused)
+    //console.log("Favorites Stack was Previously Focused?", prevIsFocus)
+    if(isFocused){
+      //console.log("Favorites Stack Updating currentUser")
+      dispatch(fetchUser());
+    }
+    prevFocusRef.current = isFocused
   }, [isFocused]);
 
   return (

@@ -16,7 +16,7 @@ import { useSelector  } from 'react-redux'
 import FirebaseDb from './Support/FirebaseDb'
 import ArrayTransform from './Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid'
-import { useIsFocused, useNavigationState } from '@react-navigation/native'
+import { useIsFocused } from '@react-navigation/native'
 import { fetchUser } from '../../redux/actions/index'
 import { useDispatch  } from 'react-redux'
 
@@ -42,31 +42,32 @@ export class Favorites extends Component{
     Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
     */
     async componentDidMount(){
-        //console.log("componentDidMount favoriteRecipies previous state: ", this.state.favoriteRecipies) 
-        //var favoriteRecipes = await this.setFavoriteRecipes()
-        this.props.dispatch(fetchUser());
+        //console.log("FAVORITES SCREEN: Props: ", this.props)
+        this.setState({user: this.props.currentUser})
         var favoriteRecipes = await this.setFavoriteRecipesViaRedux()
         // Call an extra render of the UI after the setting of the favorites in the previous line
         this.setState({favoriteRecipes: favoriteRecipes})
-        //console.log("componentDidMount favorite recipes after initialization state", this.state.favoriteRecipes)
-        //console.log("componentDidMount user is: ", this.state.user)
-        //console.log("Is Screen Focused at componentDidMount?", this.props.isFocused)
+        //console.log("componentDidMount favoriteRecipies: ", this.state.favoriteRecipes) 
     }
 
-    async componentDidUpdate(prevProps){
-        // This lines of code are to update the list of favorites when you delete one from the Recipe Screen.
-        if (this.props.isFocused === true && prevProps.isFocused === false){ // When returning from the Recipe Screen, focus changes than update favorite recipies
-            //console.log("222 FAVORITES IS FOCUSED: Updating Favorites")
+    /*
+    Method description: https://es.reactjs.org/docs/react-component.html#componentdidupdate
+    */
+    async componentDidUpdate(prevProps, prevState){
+        
+        // The following lines of code are to update the list of favorites when you delete one from either from the Recipe Screen (from the same TAB and Stack) or from another TAB.
+        if (JSON.stringify(this.state.user.favorites) !== JSON.stringify(prevState.user.favorites)){
+            //console.log("222 FAVORITES SCREEN User state is different than its previous state. Current User State: ", JSON.stringify(this.state.user.favorites), " vs Previous User State: ", JSON.stringify(prevState.user.favorites))
+            this.props.dispatch(fetchUser());
+            this.setState({user: this.state.user})
             var favoriteRecipes = await this.setFavoriteRecipesViaRedux()
             this.setState({favoriteRecipes: favoriteRecipes})
         }
-        if (this.props.currentUser.favorites !== prevProps.currentUser.favorites){ // When currentUser changes on the Find Screen Stack, thehn update favorite recipies
-            //console.log("222 Current and previous user are different! Updating state of user and favorite recipes...")
+        
+        // The following lines are executed when comming from a different TAB. When currentUser changes (or is updated) on another TAB (i.e. the Find Screen Stack), then update the state of the user. After changing the state of the user, its favorite recipes could have changed as well. Now, if the favorite recipes have changed, then the lines of code above will be triggered, thus the state of favoriteRecipes will be updated.
+        if (this.props.currentUser.favorites !== prevProps.currentUser.favorites){ 
+            //console.log("222 Favorites Screen CURRENT USER CHANGED: Updating Favorites")
             this.setState({ user: this.props.currentUser })
-            //console.log("222 CURRENT USER CHANGED: Updating Favorites")
-            var favoriteRecipes = await this.setFavoriteRecipesViaRedux() 
-            //var favoriteRecipes = await this.setFavoriteRecipes()
-            this.setState({favoriteRecipes: favoriteRecipes})
         }
     }
 
@@ -96,7 +97,7 @@ export class Favorites extends Component{
             return favoriteRecipes
             
         }catch(e){
-           //console.log(e)
+           console.log(e)
         }
     }
 
@@ -109,7 +110,7 @@ export class Favorites extends Component{
 
             // Get all favorite recipes object
             var favoriteRecipeArray = this.state.user.favorites
-           //console.log("User.Favorites: ", favoriteRecipeArray)
+            //console.log("User.Favorites: ", favoriteRecipeArray)
             
             // Make a connection to the Spoonacular API to get Recipie info
             const favoriteRecipes = await this.fetchRecipeInfo(favoriteRecipeArray)
@@ -122,7 +123,7 @@ export class Favorites extends Component{
             return favoriteRecipes
             
         }catch(e){
-           //console.log(e)
+           console.log(e)
         }
     }
 
@@ -141,7 +142,7 @@ export class Favorites extends Component{
                     //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                     //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
                     //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
-                    const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=4a53e799e6134b139ddc05f3d97f7136"
+                    const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=80256361caf04b358f4cd2de7f094dc6"
                     //console.log("Api String: ", apiString)
                     
                     const apiRes = await fetch(apiString)
@@ -154,7 +155,7 @@ export class Favorites extends Component{
             }
             return favRecipesArray
         }catch(e){
-           //console.log(e)
+            console.log(e)
             return []
         }
     }
@@ -243,11 +244,10 @@ export class Favorites extends Component{
 }
 
 export default function(props) {
-    const routesLength = useNavigationState(state => state.routes.length)
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const user = useSelector(state => state.userState.currentUser); // Replaces mapStateToProps method. Also, the connect method will not be required because currentUser taken from redux is wrapped and inserted as additional props in the next line of code.
-    return <Favorites {...props} dispatch={dispatch} routesLength={routesLength} isFocused={isFocused} currentUser={user} /> // Here additional props are wraped and inserted to the Favorites component
+    return <Favorites {...props} dispatch={dispatch} isFocused={isFocused} currentUser={user} /> // Here additional props are wraped and inserted to the Favorites component
 }
 
 const styles = StyleSheet.create({

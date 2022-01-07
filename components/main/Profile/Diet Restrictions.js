@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { 
     View, 
     Input, 
@@ -12,14 +12,15 @@ import {
     Icon, 
     Center,
     Heading,
+    useToast,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import FirebaseDb from '../Support/FirebaseDb'
 import ArrayTransform from '../Support/ArrayTransform'
 import { v4 as uuidv4 } from 'uuid'
 import { fetchUser } from '../../../redux/actions/index'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { getAuth }  from 'firebase/auth'
 
 export class DietRestrictions extends Component{
     
@@ -30,6 +31,7 @@ export class DietRestrictions extends Component{
         super(props);
         this.state = {
             user: props.currentUser, // initialize user attribute with the currentUser from redux
+            userId: props.userId,
             diets: [], 
             uiIsLoading: true,
             savingDiets: false, 
@@ -45,11 +47,11 @@ export class DietRestrictions extends Component{
     Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
     */
     async componentDidMount(){
-        //console.log("componentDidMount diets previous state: ", this.state.diets)        
+        //console.log("componentDidMount diets previous state: ", this.state.userId)        
         await this.setDietRestrictions()
         //console.log("componentDidMount diets after initialization state", this.state.diets)
         //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
-        console.log("componentDidMount user is: ", this.state.user)
+        //console.log("componentDidMount user is: ", this.state.user)
     }
 
     /* 
@@ -85,34 +87,30 @@ export class DietRestrictions extends Component{
             const fdb = new FirebaseDb()
             
             // Instantiate a Firebase database collection with the database name passed on the parameters
-            const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            //const usersCollectionFdb = await fdb.initCollectionDb("Users")
             //console.log("Initialized users collection")
             
             // Query the ID of a user from an already initialized firestore collection given an email
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
             //console.log("User document ID obtained", userDocId)
-            
-            // Identify which diets were selected and create a string separated by commas.
-            //const diets = await this.identifySelectedDiets()
-            //console.log("Diets selected: ", diets)
             
             // Update (or insert if the field diets does not exist) the diets of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
-            const updatedRegistry = await fdb.updateRegistryDb(initFdb, userDocId, "Users", "diets", this.state.selectedDiet)
+            const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "diets", this.state.selectedDiet)
 
             // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
-            await this.props.fetchUser()
-            console.log("REDUX Updated")
+            //await this.props.dispatch(fetchUser())
+            //console.log("REDUX Updated")
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingDiets to false
             this.setState({ savingDiets: false })
             //console.log("Saving Diets? (After update) ", this.state.savingDiets)
 
-            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!") } else { this.showAlert("Diet Restrictions", "Diet not saved!") }
+            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!", "message") } else { this.showAlert("Diet Restrictions", "Diet not saved!", "warning") }
         
         }catch(e){
-            //console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Diet Restrictions", "Diet not saved!")
+            console.log(e) // An exception could be thrown if there is no connection to Firestore.
+            this.showAlert("Diet Restrictions", "An error has ocurred. Diet might not be saved!", "warning")
         }
     }
     
@@ -128,9 +126,11 @@ export class DietRestrictions extends Component{
             //console.log("Queried field from a document: ", field.diets)
             
             // Query the diets field from the user document
-            const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
-            const field2 = await fdb.queryDocFromFdb(connFdb, "Users", userDocId)
+            //const usersCollectionFdb = await fdb.initCollectionDb("Users")
+            //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
+            
+            // Query the diets field from a user document
+            const field2 = await fdb.queryDocFromFdb(connFdb, "Users", this.state.userId)//userDocId)
             //console.log("Queried field from a diet document: ", field.diets)
             //console.log("Queried field2 from a user document: ", field2.diets)
             
@@ -163,23 +163,13 @@ export class DietRestrictions extends Component{
         })
     }
 
-    showAlert(title, message) {  
-        Alert.alert(
-            title,
-            message,
-            [
-              {
-                text: "Ok",
-                //onPress: () => console.log("Ok Pressed"),
-                style: "default",
-              },
-            ],
-            {
-              cancelable: true,
-              //onDismiss: () => console.log("Dismissed alert by tapping outside of the alert dialog")
-            }
-        )        
-    }  
+    showAlert(title, message, status) {
+        this.props.toast.show({
+            title: title,
+            status: status,
+            description: message,
+        })    
+    }
     
     render(){
         const { diets, searchTerm, selectedDiet } = this.state
@@ -269,6 +259,24 @@ export class DietRestrictions extends Component{
     }
 }
 
+export default function(props) {
+    const toast = useToast()
+    const dispatch = useDispatch()
+    const auth = getAuth();
+    const user = useSelector(state => state.userState.currentUser); // Replaces mapStateToProps method. Also, the connect method will not be required because currentUser taken from redux is wrapped and inserted as additional props in the next line of code.
+    return <DietRestrictions {...props} currentUser={user} toast={toast} dispatch={dispatch} userId={auth.currentUser.uid} /> // Here additional props are wraped and inserted to the Favorites component
+}
+
+/*
+const mapStateToProps = (store) => ({
+    currentUser: store.userState.currentUser
+})
+
+const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchProps)(DietRestrictions);
+*/
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -309,11 +317,3 @@ const styles = StyleSheet.create({
         fontSize: 14, 
     },
 })
-
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-
-const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser }, dispatch)
-
-export default connect(mapStateToProps, mapDispatchProps)(DietRestrictions);
