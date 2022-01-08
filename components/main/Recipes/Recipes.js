@@ -33,24 +33,24 @@ export default function Recipes(props) {
     const ingredients = transformIngredients(props.route.params.selected)
 
     const db = getFirestore();
-    const [dietRestriction, setDietRestriction] = useState('')
-    const [intoleranceRestriction, setIntoleranceRestriction] = useState('')
+    
+    let dietRestriction = '';
+    let intoleranceRestriction = '';
 
     const isFocused = useIsFocused();
     
     useEffect(() => {
         if (isFocused) {
-            //console.log("RECIPESSS SCREEN: Props value here is: ", props);
+            console.log(ingredients);
             if (recipes_min == '' && recipes_max == '') {
-                //console.log('hola')
                 getDoc(doc(db, 'Users', getAuth().currentUser.uid))
                     .then((snapshot) => {
                         if (snapshot.data().diets) {
-                            setDietRestriction(snapshot.data().diets);
+                            dietRestriction = snapshot.data().diets;
                             console.log(dietRestriction);
                         };
                         if (snapshot.data().intolerances) {
-                            setIntoleranceRestriction(snapshot.data().intolerances);
+                            intoleranceRestriction = snapshot.data().intolerances;
                             console.log(intoleranceRestriction);
                         };
                         fetch(
@@ -158,6 +158,9 @@ export default function Recipes(props) {
                                     <Heading size='sm' textAlign='center' color={color_left}>
                                         Less missed
                                     </Heading>
+                                    <Heading size='sm' textAlign='center' color={color_left}>
+                                        ingredients
+                                    </Heading>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     delayPressIn={0}
@@ -167,6 +170,9 @@ export default function Recipes(props) {
                                 >
                                     <Heading size='sm' textAlign='center' color={color_right}>
                                         More used
+                                    </Heading>
+                                    <Heading size='sm' textAlign='center' color={color_right}>
+                                        ingredients
                                     </Heading>
                                 </TouchableOpacity>
                             </HStack>

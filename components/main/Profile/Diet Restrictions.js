@@ -166,8 +166,9 @@ export class DietRestrictions extends Component{
     showAlert(title, message, status) {
         this.props.toast.show({
             title: title,
-            status: status,
+            status: 'success',
             description: message,
+            duration: 1000,
         })    
     }
     
@@ -206,7 +207,7 @@ export class DietRestrictions extends Component{
 
         return (
             <Center flex={1}>
-                <Box flex={1} pt="3" w="95%" mx="auto">
+                <Box flex={1} pt="1" w="95%" mx="auto">
                     <VStack>
                         <Input  
                             placeholder='Search dietary restrictions...' 
@@ -237,20 +238,18 @@ export class DietRestrictions extends Component{
                             </VStack>
                         </ScrollView>
                     }
-                    <VStack mt='4' style={styles.containerInfoDown}>
-                        <Button 
-                            onPress={() => this.saveDietForLoggedUser()}
-                            size = 'lg'
-                            m = '3'
-                        > 
-                            {!this.state.savingDiets? 
-                                <Heading size='sm' textAlign='center' color='white'>
-                                Save Diet
-                                </Heading>:
-                                <Spinner size='sm' color='white'/>
-                            }
-                        </Button>
-                    </VStack>
+                    <Button 
+                        onPress={() => this.saveDietForLoggedUser()}
+                        size = 'lg'
+                        m= '3'
+                    > 
+                        {!this.state.savingDiets? 
+                            <Heading size='sm' textAlign='center' color='white'>
+                            Save Diet
+                            </Heading>:
+                            <Spinner size='sm' color='white'/>
+                        }
+                    </Button>
                 </Box>
             </Center>
         )

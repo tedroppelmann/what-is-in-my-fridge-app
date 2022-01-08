@@ -211,10 +211,10 @@ export class Favorites extends Component{
 
         return (
             <Center flex={1}>
-                <Box flex={1} pt="3" w="95%" mx="auto">
+                <Box flex={1} pt="1" w="95%" mx="auto">
                     <VStack>
                         <Input  
-                            placeholder='Search favorite recipie...' 
+                            placeholder='Search by name' 
                             onChangeText={(text) => this.setSearchTerm(text)}
                             m='3'
                             size='xl'
@@ -232,11 +232,15 @@ export class Favorites extends Component{
                             }
                         />
                     </VStack>
-                    <ScrollView>
-                        {this.state.uiIsLoading? <Spinner color="emerald" size="lg" /> : JSX}
-                        
-                    </ScrollView>
-                    
+                    {this.state.uiIsLoading? 
+                        <Center flex={1}>
+                            <Spinner/>
+                        </Center>
+                    :   
+                        <ScrollView>
+                            {JSX}
+                        </ScrollView>
+                    }
                 </Box>
             </Center>
         )

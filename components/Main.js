@@ -42,7 +42,7 @@ export class Main extends Component {
                 <Tab.Screen name='Find' component={FindRecipesScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='plus-box' color={color} size={55} />
+                            <MaterialCommunityIcons name='fridge' color={color} size={55} />
                         ),
                         headerShown: false
                     }} />
