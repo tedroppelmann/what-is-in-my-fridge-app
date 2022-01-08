@@ -36,7 +36,7 @@ export class DietRestrictions extends Component{
             uiIsLoading: true,
             savingDiets: false, 
             searchTerm: "", // this is required for the search input 
-            selectedDiet: "Vegan",
+            selectedDiet: "",
         }
 
         this.saveDietForLoggedUser = this.saveDietForLoggedUser.bind(this)
@@ -183,7 +183,7 @@ export class DietRestrictions extends Component{
                     if (diet == selectedDiet){
                         dietJSX.push(
                             <View key={uuidv4()} style={{flexDirection:"row", height:25, marginBottom:50, flex:1}}>
-                                <TouchableOpacity key={uuidv4()} style={styles.btn}>
+                                <TouchableOpacity key={uuidv4()} style={styles.btn} onPress={()=>{this.setState({selectedDiet: ""})}}>
                                         <Text key={uuidv4()} fontSize={"md"} style={{justifyContent: 'flex-start', flex:1}}> {diet} </Text>
                                         <Image key={uuidv4()} style={{height:30, width:30, justifyContent: 'center'}} source={require("../../../storage/radio_button_images/radioChecked.png")} />
                                 </TouchableOpacity>
