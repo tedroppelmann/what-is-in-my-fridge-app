@@ -6,7 +6,8 @@ import {
     Box, 
     Center,
     Heading,
-    HStack
+    HStack,
+    Image,
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 
@@ -41,7 +42,7 @@ function Profile(props) {
                     <MaterialCommunityIcons name='logout' size={30} color='white'/>
                 </Button>
             </Box>
-            <Box flex={1/2} w="100%" mx="auto" bg='emerald.500' justifyContent='center'>
+            <Box flex={2/3} w="100%" mx="auto" bg='emerald.500' justifyContent='center'>
                 <Heading size='xl' textAlign='center' color='white'>
                     {user.name}
                 </Heading>
@@ -49,7 +50,13 @@ function Profile(props) {
                     {user.email}
                 </Heading>
             </Box>
-            <Box flex={1} w="100%" mx="auto" bg='white' borderTopRadius='60'>
+            <Image
+                key={'profile'}
+                alt={'profile'}
+                style={styles.image}
+                source={require('../../storage/profile_image.png')}
+            />
+            <Box flex={1/2} w="100%" mx="auto" bg='white' borderTopRadius='60'>
                 <VStack w="80%" mx="auto" mt='10'>
                     <HStack justifyContent='center'>
                         <Button 
@@ -80,18 +87,6 @@ function Profile(props) {
                             </Box>
                         </Button>
                     </HStack>
-                    <HStack justifyContent='center'>
-                        {/*<Button 
-                            m='2' 
-                            height= {Dimensions.get('window').height/6}
-                            flex= {1/2} 
-                            onPress={() => navigation.navigate('Ingredients Exclusion')}
-                        >
-                            <Heading size='sm' textAlign='center' color='white'>
-                                Ingredients Exclusion
-                            </Heading>
-                        </Button>*/}
-                    </HStack>
                 </VStack>
             </Box>
         </Center> 
@@ -120,6 +115,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: 14, 
     },
+    image: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height/5,
+        resizeMode: 'contain'
+    }, 
 })
 
 const mapStateToProps = (store) => ({
