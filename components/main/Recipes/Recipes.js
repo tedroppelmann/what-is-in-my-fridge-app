@@ -19,7 +19,7 @@ import {
 import { getAuth }  from 'firebase/auth'
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid'
-import { createComplexSearchApiQuery } from '../../Spoonacular';
+import { createComplexSearchApiQuery } from '../Support/Spoonacular';
 
 
 export default function Recipes(props) {

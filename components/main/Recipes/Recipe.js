@@ -20,7 +20,7 @@ import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "f
 import { fetchUser } from '../../../redux/actions/index'  // AL Modification: 
 import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
 
-import { createRecipeApiQuery } from '../../Spoonacular';
+import { createRecipeApiQuery } from '../Support/Spoonacular';
 
 export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
     const [recipe, setRecipe] = useState(null);
