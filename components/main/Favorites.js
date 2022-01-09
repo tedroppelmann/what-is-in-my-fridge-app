@@ -20,7 +20,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { fetchUser } from '../../redux/actions/index'
 import { useDispatch  } from 'react-redux'
 
-import {createRecipeApiQuery} from '../Spoonacular'
+import {createRecipeApiQuery} from './Support/Spoonacular'
 
 export class Favorites extends Component{
     
