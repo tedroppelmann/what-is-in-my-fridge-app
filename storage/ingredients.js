@@ -31,7 +31,7 @@ export const INGREDIENTS = [
     },
     {
         name: 'Cow meat',
-        slug: 'cow meat',
+        slug: 'beef,cow,steak',
         image: require('./ingredients_images/cow_meat.png'),
         category: 'meat, animal',
     },
@@ -63,7 +63,7 @@ export const INGREDIENTS = [
         name: 'Spaghetti',
         slug: 'spaghetti',
         image: require('./ingredients_images/spaghetti.png'),
-        category: 'pasta',
+        category: 'grains',
     },
     {
         name: 'Sausage',
@@ -115,15 +115,15 @@ export const INGREDIENTS = [
     },
     {
         name: 'Vanilla bean',
-        slug: 'vanilla bean',
+        slug: 'vanilla',
         image: require('./ingredients_images/vanilla.png'),
-        category: 'spices',
+        category: 'condiments',
     },
     {
         name: 'Cinnamon',
         slug: 'cinnamon',
         image: require('./ingredients_images/cinnamon.png'),
-        category: 'spices',
+        category: 'condiments',
     },
     {
         name: 'Chicken',
@@ -298,5 +298,29 @@ export const INGREDIENTS = [
         slug: 'cream',
         image: require('./ingredients_images/cream.png'),
         category: 'dairies',
+    },
+    {
+        name: 'Salt',
+        slug: 'salt',
+        image: require('./ingredients_images/salt.png'),
+        category: 'condiments',
+    },
+    {
+        name: 'Black pepper',
+        slug: 'black pepper',
+        image: require('./ingredients_images/black_pepper.png'),
+        category: 'condiments',
+    },
+    {
+        name: 'Olive oil',
+        slug: 'olive oil',
+        image: require('./ingredients_images/olive.png'),
+        category: 'condiments',
+    },
+    {
+        name: 'Sugar',
+        slug: 'sugar',
+        image: require('./ingredients_images/sugar.png'),
+        category: 'condiments',
     },
 ];

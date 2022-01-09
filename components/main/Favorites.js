@@ -20,6 +20,8 @@ import { useIsFocused } from '@react-navigation/native'
 import { fetchUser } from '../../redux/actions/index'
 import { useDispatch  } from 'react-redux'
 
+import {createRecipeApiQuery} from '../Spoonacular'
+
 export class Favorites extends Component{
     
     /*
@@ -142,8 +144,9 @@ export class Favorites extends Component{
                     //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
                     //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
                     //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
-                    const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=80256361caf04b358f4cd2de7f094dc6"
+                    // const apiString = "https://api.spoonacular.com/recipes/" + recipe.recipe_id + "/information?includeNutrition=false&apiKey=80256361caf04b358f4cd2de7f094dc6"
                     //console.log("Api String: ", apiString)
+                    const apiString = createRecipeApiQuery(recipe.recipe_id)
                     
                     const apiRes = await fetch(apiString)
                     const apiResJson = await apiRes.json()
@@ -191,13 +194,14 @@ export class Favorites extends Component{
                                 justifyContent={"center"}>
                                 <Box key={uuidv4()} justifyContent={"center"} >
                                     <Image
-                                        borderRadius={300}
+                                        borderTopLeftRadius={20}
+                                        borderTopRightRadius={20}
                                         style={styles.image}
                                         source={{uri: favoriteRecipe.sourceUrl}}
                                         alt={favoriteRecipe.title}
                                         key={uuidv4()}
                                     />
-                                    <Heading key={uuidv4()} size='sm' mb='5' mt='2' textAlign='center'>
+                                    <Heading key={uuidv4()} size='md' mb='3' mt='3' textAlign='center' color='white'>
                                     {favoriteRecipe.title}
                                     </Heading>
                                 </Box>
@@ -263,7 +267,7 @@ const styles = StyleSheet.create({
         marginBottom: 0,
         borderRadius: 20,
 
-        backgroundColor: '#f5f5f4',
+        backgroundColor: '#10b981',
     },
 
     image: {
