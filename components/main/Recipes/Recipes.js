@@ -18,6 +18,8 @@ import {
 } from 'native-base';
 import { getAuth }  from 'firebase/auth'
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from 'uuid'
+import { createComplexSearchApiQuery } from '../../Spoonacular';
 
 
 export default function Recipes(props) {
@@ -41,59 +43,57 @@ export default function Recipes(props) {
     
     useEffect(() => {
         if (isFocused) {
-            console.log(ingredients);
+            console.log('Ingredients:', ingredients);
             if (recipes_min == '' && recipes_max == '') {
                 getDoc(doc(db, 'Users', getAuth().currentUser.uid))
                     .then((snapshot) => {
                         if (snapshot.data().diets) {
                             dietRestriction = snapshot.data().diets;
-                            console.log(dietRestriction);
+                            console.log('Dietary restrictions:', dietRestriction);
                         };
                         if (snapshot.data().intolerances) {
                             intoleranceRestriction = snapshot.data().intolerances;
-                            console.log(intoleranceRestriction);
+                            console.log('Intolerance restrictions:',intoleranceRestriction);
                         };
-                        fetch(
-                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                        )
+                        fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
                             .then((response) => response.json())
                             .then((data) => {
                                 setRecipesMin(data);
                                 setLoading(true);
+                                console.log('API Min data stored');
                             })
                             .catch(() => {
                                 console.log("error");
                             });
-                        fetch(
-                            `https://api.spoonacular.com/recipes/complexSearch?apiKey=80256361caf04b358f4cd2de7f094dc6&includeIngredients=${ingredients}&number=2&sort=max-used-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=${intoleranceRestriction}&diet=${dietRestriction}`
-                        )
-                            .then((response) => response.json())
-                            .then((data) => {
-                                setRecipesMax(data);
-                                setLoading(true);
-                            })
-                            .catch(() => {
-                                console.log("error");
-                            });
+                        fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'max-used'))
+                        .then((response) => response.json())
+                        .then((data) => {
+                            setRecipesMax(data);
+                            setLoading(true);
+                            console.log('API Max data stored');
+                        })
+                        .catch(() => {
+                            console.log("error");
+                        });
                     });
             } 
         }
     }, [isFocused]);
 
     const renderRecipes = ({ item, index }) => {
-        const { id, title, image, missedIngredients, usedIngredientCount, missedIngredientCount } = item;
+        const { id, title, image, usedIngredientCount, missedIngredientCount, usedIngredients } = item;
 
         return (
             <TouchableOpacity
-            onPress={() => props.navigation.navigate('Recipe', { recipe_id: id, missed_ingredients: missedIngredients })}
+            onPress={() => props.navigation.navigate('Recipe', { recipe_id: id, used_ingredients: usedIngredients })}
             style= {[ styles.item ]}
             >
                 <Box flex={1} >
                     <Image
                         style={styles.image}
                         source={{uri: image}}
-                        alt={title}
-                        key={title}
+                        alt={uuidv4()}
+                        key={uuidv4()}
                     />
                     <Heading size='sm' mb='5' mt='2' textAlign='center'>
                     {title}
@@ -179,7 +179,6 @@ export default function Recipes(props) {
                         }
                         showsVerticalScrollIndicator={false}
                         data={ isSelected ? recipes_min.results : recipes_max.results}
-                        keyExtractor={(item, index) => index.toString()}
                         renderItem={renderRecipes}
                         numColumns={2}
                     />
@@ -206,10 +205,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
 
         backgroundColor: '#f5f5f4',
-        /*
-        borderWidth: 1,
-        borderColor: 'grey',
-        borderRadius: 7,*/
     },
 
     category_left: {

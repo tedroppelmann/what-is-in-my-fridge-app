@@ -20,13 +20,15 @@ import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "f
 import { fetchUser } from '../../../redux/actions/index'  // AL Modification: 
 import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
 
+import { createRecipeApiQuery } from '../../Spoonacular';
+
 export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(false);
     const [favorite, setFavorite] = useState(false);
     const dispatch = useDispatch(); // To dispatch an action in order to update local redux store with new favorites.
     const recipe_id = props.route.params.recipe_id; // AL Modifications: Changed route to props
-    const missed_ingredients = props.route.params.missed_ingredients; // AL Modifications: Changed route to props
+    const used_ingredients = props.route.params.used_ingredients; // AL Modifications: Changed route to props
     const auth = getAuth();
     const db = getFirestore();
     const prevFavoritesRef = useRef();  // AL Modification: 
@@ -48,12 +50,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         
         if (recipe === null) {
             //console.log("RECIPE SCREEN. 1 Recipe is empty? Checking GlutenFree to see if recipe is empty: ", recipe.glutenFree)
-            fetch(
-                //Spoonacular Tomas apiKey=80256361caf04b358f4cd2de7f094dc6
-                //Spoonacular Andres apiKEy=4a53e799e6134b139ddc05f3d97f7136
-                //Spoonacular Andres2 apiKey=4a418dc794ec4390a4d7c7f21ae271da
-                `https://api.spoonacular.com/recipes/${recipe_id}/information?apiKey=80256361caf04b358f4cd2de7f094dc6&includeNutrition=true`
-            )
+            fetch(createRecipeApiQuery(recipe_id))
                 .then((response) => response.json())
                 .then((data) => {
                     //console.log("RECIPE SCREEN. Setting recipe with data from Spoonacular API...")
@@ -105,16 +102,16 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
 
     const renderIngredient = ({ item, index }) => {
         // AL Modifications. This modifications is required for the Favorites feature.
-        var isMissed = false
-        if (missed_ingredients != null || missed_ingredients != undefined){
-            isMissed = missed_ingredients.filter((i) => i.name === item.name).length > 0;  
+        var isUsed = false
+        if (used_ingredients != null || used_ingredients != undefined){
+            isUsed = used_ingredients.filter((i) => i.name === item.name).length > 0;  
         } 
         // AL Modifications
         return(
             <Center style={ [styles.item, 
             {marginRight: (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 1) ? 25 : 
                 (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 2) ? 15 : 5},
-            {backgroundColor: isMissed ? 'tomato' : 'yellowgreen'} ] }>
+            {backgroundColor: used_ingredients == null ? '#d3d3d3' : isUsed ? 'yellowgreen' : 'tomato'} ] }>
                 <Text textAlign='center' bold>{item.name}</Text>
                 <Text textAlign='center'>{item.amount} {item.unit}</Text>
             </Center>
@@ -198,15 +195,15 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                 <HStack flex={1} mx="auto" mb='3'>
                                     <Center  m='2' alignItems="center" borderRadius='7' >
                                         <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
-                                        <Text>Dairy Free</Text>
+                                        {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
                                     </Center>
                                     <Center m='2' alignItems="center" borderRadius='7'>
-                                        <MaterialCommunityIcons name='barley' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
-                                        <Text>Gluten Free</Text>
+                                        <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
+                                        {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
                                     </Center>
                                     <Center m='2' alignItems="center" borderRadius='7'>
                                         <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
-                                        <Text>Vegetarian</Text>
+                                        {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
                                     </Center>
                                 </HStack>
                             </Box>

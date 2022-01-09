@@ -3,7 +3,7 @@ export const CATEGORIES = [
     {name: 'Meat',},
     {name: 'Fruits'},
     {name: 'Grains'},
-    {name: 'Spices'},
-    {name: 'Pasta'},
-    {name: 'Dairies'}
+    {name: 'Condiments'},
+    {name: 'Dairies'},
+    {name: 'Sauces'},
 ]
