@@ -60,7 +60,20 @@ export class Register extends Component {
                     this.setState({
                         credential_error: 'used-email',
                         try_sign_up: false,
-                        })}
+                        })
+                } else if (error.code == 'auth/internal-error') {
+                    console.log("Internal Error")
+                    this.setState({
+                        credential_error: 'missing_password',
+                        try_sign_up: false,
+                        })
+                } else {
+                    console.log("Generic error")
+                    this.setState({
+                        credential_error: 'generic_error',
+                        try_sign_up: false,
+                        })
+                }
             });
         this.setState({
             try_sign_up: true,
@@ -82,7 +95,7 @@ export class Register extends Component {
                     </Heading>
                     {credential_error == 'email' ? (
                         <Heading size="xs" color='error.700'>
-                        Invalidad email. Please insert valid credentials.
+                        Invalid email. Please insert valid credentials.
                         </Heading>
                     ) : credential_error == 'weak-password' ? (
                         <Heading size="xs" color='error.700'>
@@ -91,6 +104,14 @@ export class Register extends Component {
                     ) : credential_error == 'used-email' ? (
                         <Heading size="xs" color='error.700'>
                         You already have an account with this email.
+                        </Heading>
+                    ) : credential_error == 'missing_password' ? (
+                        <Heading size="xs" color='error.700'>
+                        Password is Empty. Fields with * are mandatory. Try again!
+                        </Heading>
+                    ) : credential_error == 'generic_error' ? (
+                        <Heading size="xs" color='error.700'>
+                        An error has ocurred. Try again!
                         </Heading>
                     ) : ''
                     }
@@ -105,7 +126,7 @@ export class Register extends Component {
                         </FormControl>
                         <FormControl>
                             <FormControl.Label>
-                                Email
+                                Email*
                             </FormControl.Label>
                             <Input 
                                 onChangeText={(email) => this.setState({ email })}
@@ -113,7 +134,7 @@ export class Register extends Component {
                         </FormControl>
                         <FormControl>
                             <FormControl.Label>
-                                Password
+                                Password*
                             </FormControl.Label>
                             <Input 
                                 type="password"

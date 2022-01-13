@@ -53,6 +53,18 @@ export class Login extends Component {
                         credential_error: 'user-not-found',
                         try_login: false,
                       })
+                } else if (error.code == 'auth/internal-error') {
+                    //console.log("Internal Error")
+                    this.setState({
+                        credential_error: 'missing_password',
+                        try_login: false,
+                      })
+                } else {
+                    //console.log("Generic error")
+                    this.setState({
+                        credential_error: 'generic_error',
+                        try_login: false,
+                      })
                 }
             });
         this.setState({
@@ -76,7 +88,7 @@ export class Login extends Component {
 
                     {credential_error == 'email' ? (
                         <Heading size="xs" color='error.700'>
-                        Invalidad email. Please insert valid credentials.
+                        Invalid email. Please insert valid credentials.
                         </Heading>
                     ) : credential_error == 'password' ? (
                         <Heading size="xs" color='error.700'>
@@ -86,12 +98,20 @@ export class Login extends Component {
                         <Heading size="xs" color='error.700'>
                         User not found. Try again!
                         </Heading>
+                    ) : credential_error == 'missing_password' ? (
+                        <Heading size="xs" color='error.700'>
+                        Password is Empty. Fields with * are mandatory. Try again!
+                        </Heading>
+                    ) : credential_error == 'generic_error' ? (
+                        <Heading size="xs" color='error.700'>
+                        An error has ocurred. Try again!
+                        </Heading>
                     ) : ''
                     }
                     <VStack space={3} mt="2">
                         <FormControl>
                             <FormControl.Label>
-                                Email
+                                Email*
                             </FormControl.Label>
                             <Input 
                                 size="lg"
@@ -100,7 +120,7 @@ export class Login extends Component {
                         </FormControl>
                         <FormControl>
                             <FormControl.Label>
-                                Password
+                                Password*
                             </FormControl.Label>
                             <Input 
                                 size="lg"
