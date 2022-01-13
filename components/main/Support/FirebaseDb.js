@@ -34,16 +34,20 @@ export default class FirebaseDb{
     Method Returns: A string with the ID of a document that belongs to a collection. 
     */
     async queryIdFromCollectionFdb(collectionFromDb, field, relation, filter){
-        const queryResult = query(collectionFromDb, where(field, relation, filter))
-        const querySnapshot = await getDocs(queryResult)
-        var docId = null
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            //console.log(doc.id, " => ", doc.data())
-            docId = doc.id // You should validate if there are other docIDs and if there are more than one, throw an error. 
-        });
+        try{
+            const queryResult = query(collectionFromDb, where(field, relation, filter))
+            const querySnapshot = await getDocs(queryResult)
+            var docId = null
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                //console.log(doc.id, " => ", doc.data())
+                docId = doc.id // You should validate if there are other docIDs and if there are more than one, throw an error. 
+            });
 
-        return docId
+            return docId
+        }catch(e){
+            //console.log(e)
+        }
     }
     
     /*
@@ -55,16 +59,21 @@ export default class FirebaseDb{
     Method returns: all fields of a queried document
     */
     async queryDocFromFdb(fdb, dbName, docId){
-        const docRef = doc(fdb, dbName, docId);
-        const docSnap = await getDoc(docRef);
-        /*
-        if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-        } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-        }*/
-        return docSnap.data()
+        try{
+            const docRef = doc(fdb, dbName, docId);
+            const docSnap = await getDoc(docRef);
+            /*
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }*/
+            return docSnap.data()
+        }catch(e){
+            console.log(e)
+            return null
+        }
     }
 
     async updateRegistryDb(fdb, docId, dbName, field, value){
@@ -73,15 +82,15 @@ export default class FirebaseDb{
                 //Insert Diet for logged in user
                 const docResult = doc(fdb, dbName, docId);
                 await updateDoc(docResult, { [`${field}`]: value }); // { fieldOnFirestore : reactVariable } // Utilizar setDoc y agregar los campos nuevos con sus valores
-                console.log("Document updated: ", docId);
+                //console.log("Document updated: ", docId);
                 return true
             } else {
                 //doc.data() will be undefined in this case
                 console.log("Empty Document ID. Update was not performed.");
                 return false
             }
-        }catch(error){
-            console.log(error)
+        }catch(e){
+            console.log(e)
             return false
         }
     }

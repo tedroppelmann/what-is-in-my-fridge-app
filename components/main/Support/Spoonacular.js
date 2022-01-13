@@ -10,7 +10,7 @@ export function createComplexSearchApiQuery (ing, intoleranceRestriction, dietRe
 
     var keys = [apiKey1, apiKey2, apiKey3, apiKey4, apiKey5, apiKey6, apiKey7];
     keys.sort(function(x,y){return x[1] - y[1];});
-    console.log(keys);
+    //console.log(keys);
 
     const endpoint = 'https://api.spoonacular.com/recipes/complexSearch';
     const apiKey = '?apiKey=' + keys[0][0];
@@ -34,7 +34,7 @@ export function createRecipeApiQuery (recipe_id) {
 
     var keys = [apiKey1, apiKey2, apiKey3, apiKey4, apiKey5, apiKey6, apiKey7];
     keys.sort(function(x,y){return x[1] - y[1];});
-    console.log(keys);
+    //console.log(keys);
 
     const endpoint = 'https://api.spoonacular.com/recipes/' + recipe_id + '/information';
     const apiKey = '?apiKey=' + keys[0][0];
