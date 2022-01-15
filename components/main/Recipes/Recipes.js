@@ -146,7 +146,7 @@ export default function Recipes(props) {
     
     return (
         <Box flex={1} bg='white'>
-                <Box w="95%" mx="auto" mb='5'>
+                <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
                     <FlatList
                         ListHeaderComponent={
                             <HStack key={uuidv4()}>
