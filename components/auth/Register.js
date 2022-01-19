@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
 import { getAuth, createUserWithEmailAndPassword }  from 'firebase/auth'
-import { getFirestore, setDoc, doc } from "firebase/firestore";
-
+//import { getFirestore, setDoc, doc } from "firebase/firestore";
+import FirebaseDb from '../main/Support/FirebaseDb'
 import {
     Box,
     Text,
@@ -31,17 +31,26 @@ export class Register extends Component {
         this.onSignUp = this.onSignUp.bind(this)
     }
 
+    async setUserInFirestore(name, email){
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb()
+        await fdb.insertNewUserDb(initFdb, getAuth().currentUser.uid, "Users", name, email)
+    }
+
     onSignUp() {
         const { email, password, name } = this.state;
         const auth = getAuth();
-        const db = getFirestore();
+        //const db = getFirestore();
         createUserWithEmailAndPassword(auth, email, password)
             .then((result) => {
-                setDoc(doc(db, 'Users', auth.currentUser.uid), {
+                this.setUserInFirestore(name,email).then(() => {
+                    console.log("Registered new user.")
+                })
+                /*setDoc(doc(db, 'Users', auth.currentUser.uid), {
                     name: name,
                     email: email,
                     favorites: [],
-                  });
+                  });*/
                 console.log(result)
             })
             .catch((error) => {

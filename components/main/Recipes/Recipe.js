@@ -16,10 +16,10 @@ import {
     Spinner,
 } from 'native-base';
 import { getAuth }  from 'firebase/auth'
-import { getFirestore, updateDoc, doc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { arrayUnion, arrayRemove } from "firebase/firestore";
 import { fetchUser } from '../../../redux/actions/index'  // AL Modification: 
 import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
-
+import FirebaseDb from '../Support/FirebaseDb'
 import { createRecipeApiQuery } from '../Support/Spoonacular';
 
 export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
@@ -30,45 +30,34 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
     const recipe_id = props.route.params.recipe_id; // AL Modifications: Changed route to props
     const used_ingredients = props.route.params.used_ingredients; // AL Modifications: Changed route to props
     const auth = getAuth();
-    const db = getFirestore();
     const prevFavoritesRef = useRef();  // AL Modification: 
     const prevFavorites = prevFavoritesRef.current;  // AL Modification: Set previous favorite state from the saved state in useEffect hook. 
     const user = useSelector(state => state.userState.currentUser); // AL Modification: Get the current user from the context
+    const fdb = new FirebaseDb()
 
     useEffect(() => { 
         prevFavoritesRef.current = user.favorites // AL Modification: Saving previous favorite recipes
         
-        /*
-        getDoc(doc(db, 'Users', getAuth().currentUser.uid))
-            .then((snapshot) => {
-                if (snapshot.data().favorites.filter(e => e.recipe_id === recipe_id).length > 0) {
-                    setFavorite(true);
-                    console.log("RECIPE ERROR. Getting data from Firestore and setting favorite to true")
-                };
-            });
-        */
-        
         if (recipe === null) {
-            //console.log("RECIPE SCREEN. 1 Recipe is empty? Checking GlutenFree to see if recipe is empty: ", recipe.glutenFree)
             fetch(createRecipeApiQuery(recipe_id))
-                .then((response) => response.json())
-                .then((data) => {
-                    //console.log("RECIPE SCREEN. Setting recipe with data from Spoonacular API...")
-                    setRecipe(data);
-                    setLoading(true);
-                }).then(() =>{
-                    if(user.favorites.filter(e => e.recipe_id === recipe_id).length > 0){
-                        //console.log("RECIPE SCREEN. Set Favorite to TRUE")
-                        setFavorite(true);
-                    } else {
-                        //console.log("RECIPE SCREEN. Set Favorite to FALSE")
-                        setFavorite(false);
-                    }
-                })
-                .catch(() => {
-                    console.log("RECIPE SCREEN. Error");
-                });
-        } else{
+            .then((response) => response.json())
+            .then((data) => {
+                setRecipe(data);
+                setLoading(true);
+            }).then(() =>{
+                if(user.favorites.filter(e => e.recipe_id === recipe_id).length > 0){
+                    //console.log("RECIPE SCREEN. Set Favorite to TRUE")
+                    setFavorite(true);
+                } else {
+                    //console.log("RECIPE SCREEN. Set Favorite to FALSE")
+                    setFavorite(false);
+                }
+            })
+            .catch(() => {
+                console.log("RECIPE SCREEN. Error");
+            });
+
+        } else {
             //console.log("RECIPE SCREEN. 2 Recipe is empty? Checking GlutenFree to see if recipe is empty: ", recipe.glutenFree)
             // Check if favorites have changed. 
             if(JSON.stringify(user.favorites) !== JSON.stringify(prevFavorites)){
@@ -126,6 +115,18 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         )
     };
 
+    async function addFavorite(){
+        const initFdb = await fdb.initFirestoreDb()
+        const registryUpdated = await fdb.updateRegistryDb(initFdb, auth.currentUser.uid, "Users", "favorites", arrayUnion({recipe_id}))
+        console.log("User Updated.", registryUpdated)
+    }
+
+    async function removeFavorite(){
+        const initFdb = await fdb.initFirestoreDb()
+        const registryUpdated = await fdb.updateRegistryDb(initFdb, auth.currentUser.uid, "Users", "favorites", arrayRemove({recipe_id}))
+        console.log("User Updated.", registryUpdated)
+    }
+
     return (
         <Center flex={1}>
                 <FlatList
@@ -148,19 +149,16 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                         onPress={() => {
                                             if (!favorite) {
                                                 setFavorite(true);
-                                                updateDoc(doc(db, 'Users', auth.currentUser.uid), {
-                                                    favorites: arrayUnion({recipe_id}),
-                                                }).then(()=> {
-                                                    dispatch(fetchUser()); // AL Modifications: Update the local redux store with new favorites.
-                                                });
+                                                addFavorite().then(() => {
+                                                    dispatch(fetchUser())
+                                                    console.log("Updating Local Redux with new favorite recipes.")
+                                                })
                                             } else {
                                                 setFavorite(false);
-                                                updateDoc(doc(db, 'Users', auth.currentUser.uid), {
-                                                    favorites: arrayRemove({recipe_id}),
-                                                }).then(()=> {
-                                                      dispatch(fetchUser()); // AL Modifications: Update the local redux store with new favorites. 
-                                                });
-                                                
+                                                removeFavorite().then(() => {
+                                                    dispatch(fetchUser())
+                                                    console.log("Updating Local Redux with lesser favorite recipes.")
+                                                })
                                             }
                                             
                                         }}

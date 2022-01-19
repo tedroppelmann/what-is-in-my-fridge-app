@@ -172,25 +172,25 @@ export class DietRestrictions extends Component{
     }
 
     showAlert(title, message, status) {
-        Alert.alert(
-            "Alert Title",
-            "My Alert Msg",
+        /*Alert.alert(
+            title,
+            message,
             [
               {
                 text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
+                onPress: () => //console.log("Cancel Pressed"),
                 style: "cancel"
               },
-              { text: "OK", onPress: () => console.log("OK Pressed") }
+              { text: "OK", onPress: () => //console.log("OK Pressed") }
             ]
-          );
+          );*/
       
-        /*this.props.toast.show({
+        this.props.toast.show({
             title: title,
             status: status,
             description: message,
             duration: 1000,
-        })*/
+        })
     }
     
     render(){

@@ -17,45 +17,50 @@ import {
     Spinner,
 } from 'native-base';
 import { getAuth }  from 'firebase/auth'
-import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid'
 import { createComplexSearchApiQuery } from '../Support/Spoonacular';
-
+import FirebaseDb from '../Support/FirebaseDb'
 
 export default function Recipes(props) {
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSelected, setSeleted] = useState(true);
+    const fdb = new FirebaseDb()
 
     function transformIngredients(array) {
         let query = array.join();
         return query;
     }
     const ingredients = transformIngredients(props.route.params.selected)
-
-    const db = getFirestore();
     
     let dietRestriction = '';
     let intoleranceRestriction = '';
 
     const isFocused = useIsFocused();
     
+    async function getUserDocument(){
+        const initFdb = await fdb.initFirestoreDb()
+        const userData = await fdb.queryDocFromFdb(initFdb, "Users", getAuth().currentUser.uid)
+        console.log("User Queried is: ", userData.email)
+        return userData
+    }
+
     useEffect(() => {
         if (isFocused) {
             console.log('Ingredients:', ingredients);
             if (recipes_min == '' && recipes_max == '') {
-                getDoc(doc(db, 'Users', getAuth().currentUser.uid))
-                    .then((snapshot) => {
-                        if (snapshot.data().diets) {
-                            dietRestriction = snapshot.data().diets;
-                            console.log('Dietary restrictions:', dietRestriction);
-                        };
-                        if (snapshot.data().intolerances) {
-                            intoleranceRestriction = snapshot.data().intolerances;
-                            console.log('Intolerance restrictions:',intoleranceRestriction);
-                        };
-                        fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
+                
+                getUserDocument().then((data) => {
+                    if (data.diets) {
+                        dietRestriction = data.diets;
+                        console.log('Dietary restrictions:', dietRestriction);
+                    };
+                    if (data.intolerances) {
+                        intoleranceRestriction = data.intolerances;
+                        console.log('Intolerance restrictions:',intoleranceRestriction);
+                    };
+                    fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
                             .then((response) => response.json())
                             .then((data) => {
                                 setRecipesMin(data);
@@ -75,7 +80,8 @@ export default function Recipes(props) {
                         .catch(() => {
                             console.log("error");
                         });
-                    });
+                })
+
             } 
         }
     }, [isFocused]);
