@@ -37,7 +37,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
 
     useEffect(() => { 
         prevFavoritesRef.current = user.favorites // AL Modification: Saving previous favorite recipes
-        
+        console.log("Recipe Screen. Props looks like: ", props)
         if (recipe === null) {
             fetch(createRecipeApiQuery(recipe_id))
             .then((response) => response.json())

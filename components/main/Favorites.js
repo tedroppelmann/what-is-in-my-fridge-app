@@ -213,6 +213,18 @@ export class Favorites extends Component{
             })
         }
 
+        // If there are no favorite recipes, then display a message
+        if (favoriteRecipes.length == 0){
+            console.log("There are no favorite recipes")
+            JSX.push(
+                <VStack key={uuidv4()}>
+                    <Heading key={uuidv4()} size='md' mb='3' mt='3' textAlign='center' color='#10b981'>
+                        There are no favorite recipes yet...
+                    </Heading>
+                </VStack>
+            )
+        }
+
         return (
             <Center flex={1}>
                 <Box flex={1} pt="1" w="95%" mx="auto">

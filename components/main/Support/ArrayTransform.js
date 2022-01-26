@@ -1,6 +1,5 @@
-import { getFirestore, getDoc, getDocs, doc, updateDoc, collection, query, where } from "firebase/firestore";
 
-// Firestore database class
+
 export default class ArrayTransform{
 
     /*

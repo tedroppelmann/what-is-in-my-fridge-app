@@ -8,6 +8,12 @@
     "eject": "expo eject",
     "test": "jest"
   },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|@expo|jest-expo|expo-font|expo-modules-core|expo-status-bar|expo-asset|expo-constants|expo-error-recovery|expo-file-system|expo-font|expo-keep-awake|expo-modules-autolinking|expo-modules-core|expo-status-bar|firebase|native-base|react|react-dom|react-native|react-native-gesture-handler|react-native-paper|react-native-safe-area-context|react-native-screens|react-native-svg|react-native-vector-icons|react-native-web|react-redux|redux|redux-thunk|styled-components|styled-system/(.*))"
+    ]
+  },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.0.9",
@@ -36,7 +42,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "jest": "^27.4.7"
+    "babel-jest": "^27.4.6",
+    "jest": "^27.4.7",
+    "jest-expo": "^44.0.1",
+    "react-test-renderer": "^17.0.2"
   },
   "private": true
 }

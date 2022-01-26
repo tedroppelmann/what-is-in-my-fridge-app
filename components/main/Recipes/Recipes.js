@@ -88,7 +88,8 @@ export default function Recipes(props) {
 
     const renderRecipes = ({ item, index }) => {
         const { id, title, image, usedIngredientCount, missedIngredientCount, usedIngredients } = item;
-
+        console.log("Recipessss Screen. recipeID looks like:", id)
+        console.log("Recipessss Screen. usedIngredients looks like:", usedIngredients)
         return (
             <TouchableOpacity
             key={uuidv4()}
