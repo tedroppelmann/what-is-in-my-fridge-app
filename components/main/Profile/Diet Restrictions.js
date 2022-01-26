@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, TouchableOpacity, Alert, Image } from 'react-native'
 import { 
     View, 
     Input, 
@@ -47,31 +47,39 @@ export class DietRestrictions extends Component{
     Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
     */
     async componentDidMount(){
-        //console.log("componentDidMount diets previous state: ", this.state.userId)        
-        await this.setDietRestrictions()
-        //console.log("componentDidMount diets after initialization state", this.state.diets)
-        //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
-        //console.log("componentDidMount user is: ", this.state.user)
+        try{
+            //console.log("componentDidMount navigation: ", this.props.navigation)        
+            await this.setDietRestrictions()
+            //console.log("componentDidMount diets after initialization state", this.state.diets)
+            //console.log("componentsDidMount selectedDiet after initialization: ", this.state.selectedDiet)
+            //console.log("componentDidMount user is: ", this.state.user)
+        }catch(e){
+            console.log(e)
+        }
     }
 
     /* 
     Method description: Parse to string the diets selected on the UI and save them on the users collection on firestore
     */
     async identifySelectedDiets(){
-        var selectedDiets = [];
-        var i=0;
-        this.state.diets.forEach(() => {
-            if(this.state.diets[i].toggle){
-                selectedDiets.push(this.state.diets[i].name);
-                //console.log(this.state.diets[i].name," was selected.");
-            }else{
-                //console.log(this.state.diets[i].name," was not selected.");
-            }
-            i++;
-        })
-        var selectedDietsToString = selectedDiets.toString();
-        //console.log("Diets parsed to string: ", selectedDietsToString);
-        return selectedDietsToString; 
+        try{
+            var selectedDiets = [];
+            var i=0;
+            this.state.diets.forEach(() => {
+                if(this.state.diets[i].toggle){
+                    selectedDiets.push(this.state.diets[i].name);
+                    //console.log(this.state.diets[i].name," was selected.");
+                }else{
+                    //console.log(this.state.diets[i].name," was not selected.");
+                }
+                i++;
+            })
+            var selectedDietsToString = selectedDiets.toString();
+            //console.log("Diets parsed to string: ", selectedDietsToString);
+            return selectedDietsToString; 
+        }catch(e){
+            //console.log(e)
+        }
     }
 
     /*
@@ -97,20 +105,20 @@ export class DietRestrictions extends Component{
             // Update (or insert if the field diets does not exist) the diets of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
             const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "diets", this.state.selectedDiet)
+            console.log("User Updated: ", updatedRegistry)
 
             // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
             //await this.props.dispatch(fetchUser())
-            //console.log("REDUX Updated")
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingDiets to false
             this.setState({ savingDiets: false })
             //console.log("Saving Diets? (After update) ", this.state.savingDiets)
 
-            if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!", "message") } else { this.showAlert("Diet Restrictions", "Diet not saved!", "warning") }
-        
+            //if (updatedRegistry){ this.showAlert("Diet Restrictions", "Diet Saved Successfully!", "success") } else { this.showAlert("Diet Restrictions", "Diet not saved!", "warning") }
+            if (!updatedRegistry) { this.showAlert("Diet Restrictions", "Diet might not saved!", "warning") } else { this.props.navigation.goBack() }
         }catch(e){
-            console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Diet Restrictions", "An error has ocurred. Diet might not be saved!", "warning")
+            //console.log(e) // An exception could be thrown if there is no connection to Firestore.
+            this.showAlert("Diet Restrictions", "An error has ocurred. Diet might not be saved!", "error")
         }
     }
     
@@ -164,12 +172,25 @@ export class DietRestrictions extends Component{
     }
 
     showAlert(title, message, status) {
+        /*Alert.alert(
+            title,
+            message,
+            [
+              {
+                text: "Cancel",
+                onPress: () => //console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => //console.log("OK Pressed") }
+            ]
+          );*/
+      
         this.props.toast.show({
             title: title,
-            status: 'success',
+            status: status,
             description: message,
             duration: 1000,
-        })    
+        })
     }
     
     render(){

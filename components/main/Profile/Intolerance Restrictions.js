@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import {  
     View, 
     Switch, 
@@ -49,31 +49,39 @@ export class IntoleranceRestrictions extends Component{
     Method description: https://es.reactjs.org/docs/react-component.html#componentdidmount
     */
     async componentDidMount(){
-        //console.log("componentDidMount intolerances previous state: ", this.state.intolerances)        
-        var intolerances = await this.setIntoleranceRestrictions()
-        // Call an extra render of the UI after the setting of the intolerance restriction in the previous line
-        this.setState({intolerances: intolerances})
-        //console.log("componentDidMount intolerances after initialization state", this.state.intolerances)
+        try{
+            //console.log("componentDidMount intolerances previous state: ", this.state.intolerances)        
+            var intolerances = await this.setIntoleranceRestrictions()
+            // Call an extra render of the UI after the setting of the intolerance restriction in the previous line
+            this.setState({intolerances: intolerances})
+            //console.log("componentDidMount intolerances after initialization state", this.state.intolerances)
+        }catch(e){
+            //console.log(e)
+        }
     }
 
     /* 
     Method description: Parse to string the intolerances selected on the UI and save them on the users collection on firestore
     */
     async identifySelectedIntolerances(){
-        var selectedIntolerances = [];
-        var i=0;
-        this.state.intolerances.forEach(() => {
-            if(this.state.intolerances[i].toggle){
-                selectedIntolerances.push(this.state.intolerances[i].name);
-                //console.log(this.state.intolerances[i].name," was selected.");
-            }else{
-                //console.log(this.state.intolerances[i].name," was not selected.");
-            }
-            i++;
-        })
-        var selectedIntolerancesToString = selectedIntolerances.toString();
-        //console.log("Intolerances parsed to string: ", selectedIntolerancesToString);
-        return selectedIntolerancesToString; 
+        try{
+            var selectedIntolerances = [];
+            var i=0;
+            this.state.intolerances.forEach(() => {
+                if(this.state.intolerances[i].toggle){
+                    selectedIntolerances.push(this.state.intolerances[i].name);
+                    //console.log(this.state.intolerances[i].name," was selected.");
+                }else{
+                    //console.log(this.state.intolerances[i].name," was not selected.");
+                }
+                i++;
+            })
+            var selectedIntolerancesToString = selectedIntolerances.toString();
+            //console.log("Intolerances parsed to string: ", selectedIntolerancesToString);
+            return selectedIntolerancesToString;
+        }catch(e){
+            //console.log(e)
+        } 
     }
 
     /*
@@ -103,20 +111,20 @@ export class IntoleranceRestrictions extends Component{
             // Update (or insert if the field intolerances does not exist) the intolerances of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
             const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "intolerances", intolerances)
+            console.log("User Updated: ", updatedRegistry)
 
             // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
             //await this.props.dispatch(fetchUser())
-            //console.log("REDUX Updated")
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingIntolerances to false
             this.setState({ savingIntolerances: false })
             //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
 
-            if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!", "message") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!", "warning") }
-        
+            //if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!", "success") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!", "warning") }
+            if (!updatedRegistry) { this.showAlert("Intolerance Restrictions", "Intolerances might not saved!", "warning") } else { this.props.navigation.goBack() }
         }catch(e){
             console.log(e) // An exception could be thrown if there is no connection to Firestore.
-            this.showAlert("Intolerance Restrictions", "An error has ocurred. Intolerances might not be saved!", "warning")
+            this.showAlert("Intolerance Restrictions", "An error has ocurred. Intolerances might not be saved!", "error")
         }
     }
     
@@ -182,7 +190,7 @@ export class IntoleranceRestrictions extends Component{
     showAlert(title, message, status) {     
         this.props.toast.show({
             title: title,
-            status: 'success',
+            status: status,
             description: message,
             duration: 1000,
         })    

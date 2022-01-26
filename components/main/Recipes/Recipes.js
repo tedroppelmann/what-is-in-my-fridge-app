@@ -17,45 +17,50 @@ import {
     Spinner,
 } from 'native-base';
 import { getAuth }  from 'firebase/auth'
-import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid'
 import { createComplexSearchApiQuery } from '../Support/Spoonacular';
-
+import FirebaseDb from '../Support/FirebaseDb'
 
 export default function Recipes(props) {
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSelected, setSeleted] = useState(true);
+    const fdb = new FirebaseDb()
 
     function transformIngredients(array) {
         let query = array.join();
         return query;
     }
     const ingredients = transformIngredients(props.route.params.selected)
-
-    const db = getFirestore();
     
     let dietRestriction = '';
     let intoleranceRestriction = '';
 
     const isFocused = useIsFocused();
     
+    async function getUserDocument(){
+        const initFdb = await fdb.initFirestoreDb()
+        const userData = await fdb.queryDocFromFdb(initFdb, "Users", getAuth().currentUser.uid)
+        console.log("User Queried is: ", userData.email)
+        return userData
+    }
+
     useEffect(() => {
         if (isFocused) {
             console.log('Ingredients:', ingredients);
             if (recipes_min == '' && recipes_max == '') {
-                getDoc(doc(db, 'Users', getAuth().currentUser.uid))
-                    .then((snapshot) => {
-                        if (snapshot.data().diets) {
-                            dietRestriction = snapshot.data().diets;
-                            console.log('Dietary restrictions:', dietRestriction);
-                        };
-                        if (snapshot.data().intolerances) {
-                            intoleranceRestriction = snapshot.data().intolerances;
-                            console.log('Intolerance restrictions:',intoleranceRestriction);
-                        };
-                        fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
+                
+                getUserDocument().then((data) => {
+                    if (data.diets) {
+                        dietRestriction = data.diets;
+                        console.log('Dietary restrictions:', dietRestriction);
+                    };
+                    if (data.intolerances) {
+                        intoleranceRestriction = data.intolerances;
+                        console.log('Intolerance restrictions:',intoleranceRestriction);
+                    };
+                    fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
                             .then((response) => response.json())
                             .then((data) => {
                                 setRecipesMin(data);
@@ -75,48 +80,51 @@ export default function Recipes(props) {
                         .catch(() => {
                             console.log("error");
                         });
-                    });
+                })
+
             } 
         }
     }, [isFocused]);
 
     const renderRecipes = ({ item, index }) => {
         const { id, title, image, usedIngredientCount, missedIngredientCount, usedIngredients } = item;
-
+        console.log("Recipessss Screen. recipeID looks like:", id)
+        console.log("Recipessss Screen. usedIngredients looks like:", usedIngredients)
         return (
             <TouchableOpacity
+            key={uuidv4()}
             onPress={() => props.navigation.navigate('Recipe', { recipe_id: id, used_ingredients: usedIngredients })}
             style= {[ styles.item ]}
             >
-                <Box flex={1} >
+                <Box key={uuidv4()} flex={1} key={uuidv4()} >
                     <Image
                         style={styles.image}
                         source={{uri: image}}
                         alt={uuidv4()}
                         key={uuidv4()}
                     />
-                    <Heading size='sm' mb='5' mt='2' textAlign='center'>
+                    <Heading key={uuidv4()} size='sm' mb='5' mt='2' textAlign='center'>
                     {title}
                     </Heading>
                 </Box> 
-                <Box>
-                    <Heading size='xs' mb='2' mt='1' textAlign='center'>
+                <Box key={uuidv4()}>
+                    <Heading key={uuidv4()} size='xs' mb='2' mt='1' textAlign='center'>
                         Ingredients
                     </Heading>
-                    <HStack mb='5' justifyContent= 'center'>
-                        <VStack>
-                            <Heading size='lg' textAlign='center' color='yellowgreen'>
+                    <HStack key={uuidv4()} mb='5' justifyContent= 'center'>
+                        <VStack key={uuidv4()}>
+                            <Heading key={uuidv4()} size='lg' textAlign='center' color='yellowgreen'>
                                 {usedIngredientCount}
                             </Heading>
-                            <Text textAlign='center'>
+                            <Text key={uuidv4()} textAlign='center'>
                                 used
                             </Text>
                         </VStack>
-                        <VStack ml='8'>
-                            <Heading size='lg' textAlign='center' color='tomato'>
+                        <VStack key={uuidv4()} ml='8'>
+                            <Heading key={uuidv4()} size='lg' textAlign='center' color='tomato'>
                                 {missedIngredientCount}
                             </Heading>
-                            <Text textAlign='center'>
+                            <Text key={uuidv4()} textAlign='center'>
                                 missed
                             </Text>
                         </VStack>
@@ -145,33 +153,33 @@ export default function Recipes(props) {
     
     return (
         <Box flex={1} bg='white'>
-                <Box w="95%" mx="auto" mb='5'>
+                <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
                     <FlatList
                         ListHeaderComponent={
-                            <HStack>
-                                <TouchableOpacity
+                            <HStack key={uuidv4()}>
+                                <TouchableOpacity key={uuidv4()}
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(true)}}
                                     style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
-                                    <Heading size='sm' textAlign='center' color={color_left}>
+                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
                                         Less missed
                                     </Heading>
-                                    <Heading size='sm' textAlign='center' color={color_left}>
+                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
                                         ingredients
                                     </Heading>
                                 </TouchableOpacity>
-                                <TouchableOpacity
+                                <TouchableOpacity key={uuidv4()}
                                     delayPressIn={0}
                                     activeOpacity={1}
                                     onPress={() => {setSeleted(false)}}
                                     style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
                                 >
-                                    <Heading size='sm' textAlign='center' color={color_right}>
+                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
                                         More used
                                     </Heading>
-                                    <Heading size='sm' textAlign='center' color={color_right}>
+                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
                                         ingredients
                                     </Heading>
                                 </TouchableOpacity>

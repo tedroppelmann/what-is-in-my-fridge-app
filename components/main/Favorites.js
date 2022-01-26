@@ -189,7 +189,7 @@ export class Favorites extends Component{
                         <VStack key={uuidv4()}>
                             <TouchableOpacity
                                 onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: favoriteRecipe.recipe_id, missed_ingredients: null })}
-                                style= {[ styles.item ]} 
+                                style= {styles.item} 
                                 key={uuidv4()}
                                 justifyContent={"center"}>
                                 <Box key={uuidv4()} justifyContent={"center"} >
@@ -211,6 +211,18 @@ export class Favorites extends Component{
                 }
                 
             })
+        }
+
+        // If there are no favorite recipes, then display a message
+        if (favoriteRecipes.length == 0){
+            console.log("There are no favorite recipes")
+            JSX.push(
+                <VStack key={uuidv4()}>
+                    <Heading key={uuidv4()} size='md' mb='3' mt='3' textAlign='center' color='#10b981'>
+                        There are no favorite recipes yet...
+                    </Heading>
+                </VStack>
+            )
         }
 
         return (
@@ -260,7 +272,6 @@ export default function(props) {
 
 const styles = StyleSheet.create({
     item: {
-        flex: 1/2,
         marginRight: 5,
         marginLeft: 5,
         marginTop: 10,
