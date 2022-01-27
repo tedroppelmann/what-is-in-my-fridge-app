@@ -13,6 +13,16 @@ export default class FirebaseDb{
     }
 
     /*
+    Method Description: Instantiate a Firebase database (not a collection) given an initialized firestore app. 
+                        NOTE: Used during automated testing with JEST tool.
+    Method returns: a firestore database connection
+    */
+    async initFirestoreDb(app){
+        const fdb = getFirestore(app)
+        return fdb
+    }
+
+    /*
     Method description: Query a document from an already initialized firestore database with the method initFirestoreDb()
     Method parameters:
         * fdb is an initialized firebase database
