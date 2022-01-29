@@ -36,10 +36,10 @@ export default class FirebaseDb{
             const docSnap = await getDoc(docRef);
             /*
             if (docSnap.exists()) {
-                console.log("Document data:", docSnap.data());
+               //console.log("Document data:", docSnap.data());
             } else {
                 // doc.data() will be undefined in this case
-                console.log("No such document!");
+               //console.log("No such document!");
             }*/
             return docSnap.data()
         }catch(e){
@@ -64,11 +64,11 @@ export default class FirebaseDb{
                 //Insert Diet for logged in user
                 const docResult = doc(fdb, dbName, docId);
                 await updateDoc(docResult, { [`${field}`]: value }); // { fieldOnFirestore : reactVariable } // Utilizar setDoc y agregar los campos nuevos con sus valores
-                //console.log("Document updated: ", docId);
+               //console.log("Document updated: ", docId);
                 return true
             } else {
                 //doc.data() will be undefined in this case
-                console.log("Empty Document ID. Update was not performed.");
+               //console.log("Empty Document ID. Update was not performed.");
                 return false
             }
         }catch(e){
@@ -100,11 +100,11 @@ export default class FirebaseDb{
                   });
                 
                 //await updateDoc(docResult, { [`${field}`]: value }); // { fieldOnFirestore : reactVariable } // Utilizar setDoc y agregar los campos nuevos con sus valores
-                console.log("Document inserted: ", docId);
+               //console.log("Document inserted: ", docId);
                 return true
             } else {
                 //doc.data() will be undefined in this case
-                console.log("Empty Document ID. Insert was not performed.");
+               //console.log("Empty Document ID. Insert was not performed.");
                 return false
             }
         }catch(e){
@@ -143,13 +143,13 @@ export default class FirebaseDb{
             var docId = null
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                //console.log(doc.id, " => ", doc.data())
+               //console.log(doc.id, " => ", doc.data())
                 docId = doc.id // You should validate if there are other docIDs and if there are more than one, throw an error. 
             });
 
             return docId
         }catch(e){
-            //console.log(e)
+            console.log(e)
         }
     }
 

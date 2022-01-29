@@ -44,14 +44,9 @@ export class Register extends Component {
         createUserWithEmailAndPassword(auth, email, password)
             .then((result) => {
                 this.setUserInFirestore(name,email).then(() => {
-                    console.log("Registered new user.")
+                    //console.log("Registered new user.")
                 })
-                /*setDoc(doc(db, 'Users', auth.currentUser.uid), {
-                    name: name,
-                    email: email,
-                    favorites: [],
-                  });*/
-                console.log(result)
+                //console.log(result)
             })
             .catch((error) => {
                 console.log(error.code)
@@ -71,13 +66,13 @@ export class Register extends Component {
                         try_sign_up: false,
                         })
                 } else if (error.code == 'auth/internal-error') {
-                    console.log("Internal Error")
+                    //console.log("Internal Error")
                     this.setState({
                         credential_error: 'missing_password',
                         try_sign_up: false,
                         })
                 } else {
-                    console.log("Generic error")
+                    //console.log("Generic error")
                     this.setState({
                         credential_error: 'generic_error',
                         try_sign_up: false,

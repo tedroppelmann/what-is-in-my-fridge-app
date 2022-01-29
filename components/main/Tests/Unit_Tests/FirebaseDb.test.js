@@ -1,5 +1,6 @@
 import FirebaseDb from '../../Support/FirebaseDb'
 import { initializeApp } from 'firebase/app';
+import { arrayUnion, arrayRemove } from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDit6k1tOCrdsXQudPATUdQytB-LryhE10",
@@ -119,7 +120,7 @@ describe('FirebaseDb.js', () => {
         await expect(expectString).toBe(toBeString)
     })
 
-    test('FTC8. FirebaseDb.js updates intolerance field with three intolerances in a user document as expected.', async () => {
+    test('FTC9. FirebaseDb.js updates intolerance field with three intolerances in a user document as expected.', async () => {
         var toBeString = false
         const expectString = true
         const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
@@ -132,7 +133,7 @@ describe('FirebaseDb.js', () => {
         await expect(expectString).toBe(toBeString)
     })
 
-    test('FTC9. FirebaseDb.js updates intolerance field with an empty intolerance in a user document as expected.', async () => {
+    test('FTC10. FirebaseDb.js updates intolerance field with an empty intolerance in a user document as expected.', async () => {
         var toBeString = false
         const expectString = true
         const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
@@ -145,7 +146,7 @@ describe('FirebaseDb.js', () => {
         await expect(expectString).toBe(toBeString)
     })
 
-    test('FTC10. FirebaseDb.js inserts a new user document as expected.', async () => {
+    test('FTC11. FirebaseDb.js inserts a new user document as expected.', async () => {
         var toBeString = false
         const expectString = true
         const userId = "YKs93qVHuLXZ1PaDFQQ1FVynX6r2" 
@@ -156,6 +157,209 @@ describe('FirebaseDb.js', () => {
         console.log("Expected String: ", expectString, ". To Be String: ", toBeString)
 
         await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC12. FirebaseDb.js given an restriction document id, queries all the existing diets as expected.', async () => {
+        var toBeString = ""
+        const expectString = "Gluten Free,Ketogenic,Lacto-Vegetarian,Low FODMAP,Ovo-Vegetarian,Paleo,Pescetarian,Primal,Vegan,Vegetarian,Whole30"
+        const restrictionId = "diets"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.queryDocFromFdb(initFdb, "Restrictions", restrictionId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.diets)
+
+        await expect(expectString).toBe(toBeString.diets)
+    })
+
+    test('FTC13. FirebaseDb.js given an restriction document id, queries all the existing intolerances as expected.', async () => {
+        var toBeString = ""
+        const expectString = "Dairy,Egg,Gluten,Grain,Peanut,Seafood,Sesame,Shellfish,Soy,Sulfite,Tree Nut,Wheat"
+        const restrictionId = "intolerances"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.queryDocFromFdb(initFdb, "Restrictions", restrictionId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.intolerances)
+
+        await expect(expectString).toBe(toBeString.intolerances)
+    })
+
+
+
+
+    test('FTC14. FirebaseDb.js given a document id, deletes a favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const recipe_id = 633338
+        
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayRemove({recipe_id}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC15. FirebaseDb.js given a document id, deletes a second favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        
+        const recipe_id2 = 642303
+        
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        
+        const toBeString2 = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayRemove({recipe_id2}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString2)
+
+        await expect(expectString).toBe(toBeString2)
+    })
+
+    test('FTC16. FirebaseDb.js given a document id, deletes a third favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+
+        const recipe_id3 = 642825
+        
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+
+        const toBeString3 = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayRemove({recipe_id3}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString3)
+
+        await expect(expectString).toBe(toBeString3)
+    })
+
+    test('FTC17. FirebaseDb.js given a document id, inserts one favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const recipe_id = 633338
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayUnion({recipe_id}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC18. FirebaseDb.js given a document id, inserts a second favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const recipe_id = 642825
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayUnion({recipe_id}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC19. FirebaseDb.js given a document id, inserts a third favorite recipe as expected.', async () => {
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const recipe_id = 642303
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "favorites", arrayUnion({recipe_id}))
+
+        console.log("Expected: ", expectString, ". To Be: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC20. FirebaseDb.js given a document id, queries one favorite recipe as expected.', async () => {
+        var toBeString = ""
+        const expectString = 642825
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.queryDocFromFdb(initFdb, "Users", userId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.favorites[0].recipe_id)
+
+        await expect(expectString).toBe(toBeString.favorites[0].recipe_id)
+    })
+
+    test('FTC21. FirebaseDb.js given a document id, queries two favorite recipes as expected.', async () => {
+        var toBeString = ""
+        const expectString = "642825" + "," + "642303"
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.queryDocFromFdb(initFdb, "Users", userId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.favorites[0].recipe_id + "," + toBeString.favorites[1].recipe_id)
+
+        await expect(expectString).toBe(toBeString.favorites[0].recipe_id + "," + toBeString.favorites[1].recipe_id)
+    })
+
+    test('FTC22. FirebaseDb.js given a document id, queries three favorite recipes as expected.', async () => {
+        var toBeString = ""
+        const expectString = "642825" + "," + "642303" + "," + "633338";
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1" 
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.queryDocFromFdb(initFdb, "Users", userId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.favorites[0].recipe_id + "," + toBeString.favorites[1].recipe_id + "," + toBeString.favorites[2].recipe_id)
+
+        await expect(expectString).toBe(toBeString.favorites[0].recipe_id + "," + toBeString.favorites[1].recipe_id + "," + toBeString.favorites[2].recipe_id)
+    })
+
+    test('FTC23. FirebaseDb.js updates a diet field, with a different diet, in a user document as expected.', async () => {
+        var toBeString = false
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "diets", "Vegetarian")
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC24. FirebaseDb.js given an userId queries a user diet restriction as expected.', async () => {   
+        const expectString = "Vegetarian"
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.queryDocFromFdb(initFdb, "Users", userId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.diets)
+
+        await expect(expectString).toBe(toBeString.diets)
+    })
+
+    test('FTC25. FirebaseDb.js inserts three intolerances in a user document as expected.', async () => {
+        var toBeString = false
+        const expectString = true
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        toBeString = await fdb.updateRegistryDb(initFdb, userId, "Users", "intolerances", "Peanut,Dairy,Egg")
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString)
+
+        await expect(expectString).toBe(toBeString)
+    })
+
+    test('FTC26. FirebaseDb.js given an userId queries all user intolerances as expected.', async () => {
+        const expectString = "Peanut,Dairy,Egg"
+        const userId = "N9SMLRPcXfVlsxOD6VNo0LKoOyo1"
+        const fdb = new FirebaseDb()
+        const initFdb = await fdb.initFirestoreDb(app)
+        const toBeString = await fdb.queryDocFromFdb(initFdb, "Users", userId)
+
+        console.log("Expected String: ", expectString, ". To Be String: ", toBeString.intolerances)
+
+        await expect(expectString).toBe(toBeString.intolerances)
     })
 
 })

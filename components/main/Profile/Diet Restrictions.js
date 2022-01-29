@@ -94,18 +94,10 @@ export class DietRestrictions extends Component{
             // Create a new object from the class FirebaseDb to be able to query (select, insert and update) the Firestore NoSQL database
             const fdb = new FirebaseDb()
             
-            // Instantiate a Firebase database collection with the database name passed on the parameters
-            //const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            //console.log("Initialized users collection")
-            
-            // Query the ID of a user from an already initialized firestore collection given an email
-            //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
-            //console.log("User document ID obtained", userDocId)
-            
             // Update (or insert if the field diets does not exist) the diets of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
             const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "diets", this.state.selectedDiet)
-            console.log("User Updated: ", updatedRegistry)
+            //console.log("User Updated: ", updatedRegistry)
 
             // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
             //await this.props.dispatch(fetchUser())

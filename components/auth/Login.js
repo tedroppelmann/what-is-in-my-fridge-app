@@ -34,7 +34,7 @@ export class Login extends Component {
         const auth = getAuth();
         signInWithEmailAndPassword(auth, email, password)
             .then((result) => {
-                console.log(result)
+                //console.log(result)
             })
             .catch((error) => {
                 console.log(error.code)

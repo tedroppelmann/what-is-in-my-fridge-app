@@ -45,7 +45,7 @@ export default class ArrayTransform{
             
             return arrayValue
         }catch(e){
-            //console.log(e)
+            console.log(e)
             return []
         }
     }
@@ -74,11 +74,14 @@ export default class ArrayTransform{
             
             return arrayValue
         }catch(e){
-            //console.log(e)
+            console.log(e)
             return []
         }
     }
 
+    /*
+    Method description: Method used to set the toggle value in the stringToArray() method
+    */
     async setToggleValue(tmpToggleArray, element){
         var toggleValue = false
         //console.log("Element that will defines the toggle value: ", element, ". Value before setting it is ", toggleValue)
