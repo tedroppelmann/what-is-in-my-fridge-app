@@ -12,8 +12,10 @@ import {
     Heading,
     FlatList,
     HStack,
+    VStack,
     Center,
     Spinner,
+    ScrollView,
 } from 'native-base';
 import { getAuth }  from 'firebase/auth'
 import { arrayUnion, arrayRemove } from "firebase/firestore";
@@ -21,6 +23,9 @@ import { fetchUser } from '../../../redux/actions/index'  // AL Modification:
 import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
 import FirebaseDb from '../Support/FirebaseDb'
 import { createRecipeApiQuery } from '../Support/Spoonacular';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
     const [recipe, setRecipe] = useState(null);
@@ -127,13 +132,119 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         console.log("User Updated.", registryUpdated)
     }
 
-    return (
-        <Center flex={1}>
-                <FlatList
-                    ListHeaderComponent={
-                        <Box>
+    if (windowHeight > windowWidth){
+        return (
+            <Center flex={1}>
+                    <FlatList
+                        ListHeaderComponent={
+                            <Box>
+                                <ImageBackground
+                                    style={styles.image_phone}
+                                    source={{uri: recipe.image}}
+                                    alt={recipe.id}
+                                >
+                                    <Box 
+                                        bg='white'
+                                        position="absolute"
+                                        roundedTopLeft="lg"
+                                        bottom="0"
+                                        right='0'
+                                    >
+                                        <TouchableOpacity
+                                            delayPressIn={0}
+                                            onPress={() => {
+                                                if (!favorite) {
+                                                    setFavorite(true);
+                                                    addFavorite().then(() => {
+                                                        dispatch(fetchUser())
+                                                        console.log("Updating Local Redux with new favorite recipes.")
+                                                    })
+                                                } else {
+                                                    setFavorite(false);
+                                                    removeFavorite().then(() => {
+                                                        dispatch(fetchUser())
+                                                        console.log("Updating Local Redux with lesser favorite recipes.")
+                                                    })
+                                                }
+                                                
+                                            }}
+                                        >
+                                            <MaterialCommunityIcons name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
+                                        </TouchableOpacity>
+                                    </Box>
+                                </ImageBackground>
+                                <Box flex={1} py="6" w="90%" mx="auto" alignItems="center">
+                                    <Heading size='xl' mb='3' textAlign='center'>
+                                        {recipe.title}
+                                    </Heading>
+                                    <HStack>
+                                        <Center h="20" w="20">
+                                            <MaterialCommunityIcons name='clock-outline' size={30} />
+                                            <Text bold={true}>
+                                                {recipe.readyInMinutes}'
+                                            </Text>
+                                        </Center>
+                                        <Center h="20" w="20">
+                                            <MaterialCommunityIcons name='account-group-outline' size={30} />
+                                            <Text bold={true}>
+                                                {recipe.servings}
+                                            </Text>
+                                        </Center>
+                                    </HStack>
+                                </Box>
+                                <Box w="90%" mx='auto'>
+                                    <Heading size='lg' mb='3'>
+                                        Restrictions
+                                    </Heading>
+                                    <HStack flex={1} mx="auto" mb='3'>
+                                        <Center  m='2' alignItems="center" borderRadius='7' >
+                                            <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
+                                        </Center>
+                                        <Center m='2' alignItems="center" borderRadius='7'>
+                                            <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
+                                        </Center>
+                                        <Center m='2' alignItems="center" borderRadius='7'>
+                                            <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
+                                        </Center>
+                                    </HStack>
+                                </Box>
+                                <Box w="90%" mx='auto'>
+                                    <Heading size='lg' mb='3'>
+                                        Ingredients
+                                    </Heading>
+                                    <FlatList
+                                        showsVerticalScrollIndicator={false}
+                                        contentContainerStyle={{justifyContent: 'center'}}
+                                        scrollEnabled={false}
+                                        data={recipe.extendedIngredients}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        renderItem={renderIngredient}
+                                        numColumns={3}
+                                    />
+                                    <Heading size='lg' mb='3'mt='3'>
+                                        Steps
+                                    </Heading>
+                                </Box>
+                            </Box>
+                        }
+                        showsVerticalScrollIndicator={false}
+                        data={recipe.analyzedInstructions[0].steps}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={renderStep}
+                        numColumns={1}
+                    />
+            </Center>
+        )
+    } else {
+        return (
+                <HStack>
+                    <VStack backgroundColor='#f5f5f4' width={windowWidth/3} height={windowHeight}>
+                        <Box alignItems='center'>
                             <ImageBackground
-                                style={styles.image}
+                                style={styles.image_tablet}
                                 source={{uri: recipe.image}}
                                 alt={recipe.id}
                             >
@@ -167,77 +278,91 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                     </TouchableOpacity>
                                 </Box>
                             </ImageBackground>
-                            <Box flex={1} py="6" w="90%" mx="auto" alignItems="center">
-                                <Heading size='xl' mb='3' textAlign='center'>
-                                    {recipe.title}
-                                </Heading>
-                                <HStack>
-                                    <Center h="20" w="20">
-                                        <MaterialCommunityIcons name='clock-outline' size={30} />
-                                        <Text bold={true}>
-                                            {recipe.readyInMinutes}'
-                                        </Text>
-                                    </Center>
-                                    <Center h="20" w="20">
-                                        <MaterialCommunityIcons name='account-group-outline' size={30} />
-                                        <Text bold={true}>
-                                            {recipe.servings}
-                                        </Text>
-                                    </Center>
-                                </HStack>
-                            </Box>
-                            <Box w="90%" mx='auto'>
-                                <Heading size='lg' mb='3'>
-                                    Restrictions
-                                </Heading>
-                                <HStack flex={1} mx="auto" mb='3'>
-                                    <Center  m='2' alignItems="center" borderRadius='7' >
-                                        <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
-                                        {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
-                                    </Center>
-                                    <Center m='2' alignItems="center" borderRadius='7'>
-                                        <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
-                                        {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
-                                    </Center>
-                                    <Center m='2' alignItems="center" borderRadius='7'>
-                                        <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
-                                        {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
-                                    </Center>
-                                </HStack>
-                            </Box>
-                            <Box w="90%" mx='auto'>
-                                <Heading size='lg' mb='3'>
-                                    Ingredients
-                                </Heading>
-                                <FlatList
-                                    showsVerticalScrollIndicator={false}
-                                    contentContainerStyle={{justifyContent: 'center'}}
-                                    scrollEnabled={false}
-                                    data={recipe.extendedIngredients}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={renderIngredient}
-                                    numColumns={3}
-                                />
-                                <Heading size='lg' mb='3'mt='3'>
-                                    Steps
-                                </Heading>
-                            </Box>
                         </Box>
-                    }
-                    showsVerticalScrollIndicator={false}
-                    data={recipe.analyzedInstructions[0].steps}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={renderStep}
-                    numColumns={1}
-                />
-        </Center>
-    )
+                        <Box py="6" w="90%" mx="auto" alignItems="center">
+                            <Heading size='lg' mb='3' textAlign='center'>
+                                {recipe.title}
+                            </Heading>
+                            <HStack>
+                                <Center h="20" w="20" backgroundColor='#f5f5f4'>
+                                    <MaterialCommunityIcons name='clock-outline' size={30} />
+                                    <Text bold={true}>
+                                        {recipe.readyInMinutes}'
+                                    </Text>
+                                </Center>
+                                <Center h="20" w="20" backgroundColor='#f5f5f4'>
+                                    <MaterialCommunityIcons name='account-group-outline' size={30} />
+                                    <Text bold={true}>
+                                        {recipe.servings}
+                                    </Text>
+                                </Center>
+                            </HStack>
+                        </Box>
+                        <Heading size='lg' mb='3' textAlign='center'>
+                            Restrictions
+                        </Heading>
+                        <HStack mx="auto" mb='3'>
+                            <Center  m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
+                            </Center>
+                            <Center m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
+                            </Center>
+                            <Center m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
+                            </Center>
+                        </HStack>
+                    </VStack>
+                    <FlatList
+                        width={windowWidth/3}
+                        height={windowHeight}
+                        backgroundColor= 'white'
+                        marginBottom='20'
+                        ListHeaderComponent={
+                            <Box>
+                                <Box w="90%" mx='auto'>
+                                    <Heading size='lg' mb='3' mt='5'>
+                                        Ingredients
+                                    </Heading>
+                                    <FlatList
+                                        showsVerticalScrollIndicator={false}
+                                        contentContainerStyle={{justifyContent: 'center'}}
+                                        scrollEnabled={false}
+                                        data={recipe.extendedIngredients}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        renderItem={renderIngredient}
+                                        numColumns={3}
+                                    />
+                                    <Heading size='lg' mb='3'mt='3'>
+                                        Steps
+                                    </Heading>
+                                </Box>
+                            </Box>
+                        }
+                        showsVerticalScrollIndicator={false}
+                        data={recipe.analyzedInstructions[0].steps}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={renderStep}
+                        numColumns={1}
+                    />
+                    
+                </HStack>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
 
-    image: {
+    image_phone: {
         width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height/2.5,
+    }, 
+
+    image_tablet: {
+        width: Dimensions.get('window').width/3,
         height: Dimensions.get('window').height/2.5,
     }, 
 

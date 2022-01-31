@@ -21,6 +21,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { createComplexSearchApiQuery } from '../Support/Spoonacular';
 import FirebaseDb from '../Support/FirebaseDb'
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 export default function Recipes(props) {
     const [recipes_min, setRecipesMin] = useState("");
     const [recipes_max, setRecipesMax] = useState("");
@@ -150,49 +153,94 @@ export default function Recipes(props) {
             </Center>
         )
       }
-    
-    return (
-        <Box flex={1} bg='white'>
-                <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
-                    <FlatList
-                        ListHeaderComponent={
-                            <HStack key={uuidv4()}>
-                                <TouchableOpacity key={uuidv4()}
-                                    delayPressIn={0}
-                                    activeOpacity={1}
-                                    onPress={() => {setSeleted(true)}}
-                                    style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
-                                >
-                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
-                                        Less missed
-                                    </Heading>
-                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
-                                        ingredients
-                                    </Heading>
-                                </TouchableOpacity>
-                                <TouchableOpacity key={uuidv4()}
-                                    delayPressIn={0}
-                                    activeOpacity={1}
-                                    onPress={() => {setSeleted(false)}}
-                                    style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
-                                >
-                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
-                                        More used
-                                    </Heading>
-                                    <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
-                                        ingredients
-                                    </Heading>
-                                </TouchableOpacity>
-                            </HStack>
-                        }
-                        showsVerticalScrollIndicator={false}
-                        data={ isSelected ? recipes_min.results : recipes_max.results}
-                        renderItem={renderRecipes}
-                        numColumns={2}
-                    />
-                </Box>
-        </Box>
-    )
+
+    if (windowHeight > windowWidth){
+        return (
+            <Box flex={1} bg='white'>
+                    <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
+                        <FlatList
+                            ListHeaderComponent={
+                                <HStack key={uuidv4()}>
+                                    <TouchableOpacity key={uuidv4()}
+                                        delayPressIn={0}
+                                        activeOpacity={1}
+                                        onPress={() => {setSeleted(true)}}
+                                        style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
+                                    >
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
+                                            Less missed
+                                        </Heading>
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
+                                            ingredients
+                                        </Heading>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity key={uuidv4()}
+                                        delayPressIn={0}
+                                        activeOpacity={1}
+                                        onPress={() => {setSeleted(false)}}
+                                        style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
+                                    >
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
+                                            More used
+                                        </Heading>
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
+                                            ingredients
+                                        </Heading>
+                                    </TouchableOpacity>
+                                </HStack>
+                            }
+                            showsVerticalScrollIndicator={false}
+                            data={ isSelected ? recipes_min.results : recipes_max.results}
+                            renderItem={renderRecipes}
+                            numColumns={2}
+                        />
+                    </Box>
+            </Box>
+        )
+    } else {
+        return (
+            <Box flex={1} bg='white'>
+                    <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
+                        <FlatList
+                            ListHeaderComponent={
+                                <HStack key={uuidv4()}>
+                                    <TouchableOpacity key={uuidv4()}
+                                        delayPressIn={0}
+                                        activeOpacity={1}
+                                        onPress={() => {setSeleted(true)}}
+                                        style={[styles.category_left, isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
+                                    >
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
+                                            Less missed
+                                        </Heading>
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_left}>
+                                            ingredients
+                                        </Heading>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity key={uuidv4()}
+                                        delayPressIn={0}
+                                        activeOpacity={1}
+                                        onPress={() => {setSeleted(false)}}
+                                        style={[styles.category_right, !isSelected && { backgroundColor: '#10b981', borderColor: '#10b981'}]}
+                                    >
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
+                                            More used
+                                        </Heading>
+                                        <Heading key={uuidv4()} size='sm' textAlign='center' color={color_right}>
+                                            ingredients
+                                        </Heading>
+                                    </TouchableOpacity>
+                                </HStack>
+                            }
+                            showsVerticalScrollIndicator={false}
+                            data={ isSelected ? recipes_min.results : recipes_max.results}
+                            renderItem={renderRecipes}
+                            numColumns={5}
+                        />
+                    </Box>
+            </Box>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

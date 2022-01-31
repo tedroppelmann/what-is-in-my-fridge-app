@@ -10,6 +10,7 @@ import {
     Icon, 
     Center,
     Heading,
+    FlatList
 } from 'native-base'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { useSelector  } from 'react-redux'
@@ -22,6 +23,8 @@ import { useDispatch  } from 'react-redux'
 
 import {createRecipeApiQuery} from './Support/Spoonacular'
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 export class Favorites extends Component{
     
     /*
@@ -175,16 +178,46 @@ export class Favorites extends Component{
             }
         })
     } 
+
+    renderFavorites = ({ item, index }) => {
+        return(
+            <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: item.id, missed_ingredients: null })}
+                style= {styles.item} 
+                key={uuidv4()}
+                justifyContent={"center"}>
+                <Box key={uuidv4()} justifyContent={"center"} >
+                    <Image
+                        borderTopLeftRadius={20}
+                        borderTopRightRadius={20}
+                        style={styles.image}
+                        source={{uri: item.image}}
+                        alt={item.title}
+                        key={uuidv4()}
+                    />
+                    <Heading key={uuidv4()} size='md' mb='3' mt='3' textAlign='center' color='white'>
+                    {item.title}
+                    </Heading>
+                </Box>
+            </TouchableOpacity>
+        );
+    };
     
     render(){
         
         const { favoriteRecipes, searchTerm } = this.state
         //console.log("Array of Favorites Recipies: ", favoriteRecipies)
         const JSX = []
+        const favorites = []
         
         if (favoriteRecipes != undefined){
             favoriteRecipes.forEach((favoriteRecipe) => {
                 if (favoriteRecipe.title.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm == null || searchTerm == "") {
+                    favorites.push(
+                        {id: favoriteRecipe.recipe_id,
+                        title: favoriteRecipe.title,
+                        image: favoriteRecipe.sourceUrl}
+                    )
                     JSX.push(
                         <VStack key={uuidv4()}>
                             <TouchableOpacity
@@ -253,9 +286,14 @@ export class Favorites extends Component{
                             <Spinner/>
                         </Center>
                     :   
-                        <ScrollView>
-                            {JSX}
-                        </ScrollView>
+                        <FlatList
+                            contentContainerStyle={{justifyContent: 'center'}}
+                            data={favorites}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={this.renderFavorites}
+                            numColumns={windowWidth < windowHeight ? 1 : 4}
+                        />
+                    
                     }
                 </Box>
             </Center>
@@ -272,10 +310,10 @@ export default function(props) {
 
 const styles = StyleSheet.create({
     item: {
+        flex: 1/4,
         marginRight: 5,
         marginLeft: 5,
         marginTop: 10,
-        marginBottom: 0,
         borderRadius: 20,
 
         backgroundColor: '#10b981',
