@@ -45,43 +45,43 @@ export default function Recipes(props) {
     async function getUserDocument(){
         const initFdb = await fdb.initFirestoreDb()
         const userData = await fdb.queryDocFromFdb(initFdb, "Users", getAuth().currentUser.uid)
-        console.log("User Queried is: ", userData.email)
+        //console.log("User Queried is: ", userData.email)
         return userData
     }
 
     useEffect(() => {
         if (isFocused) {
-            console.log('Ingredients:', ingredients);
+            //console.log('Ingredients:', ingredients);
             if (recipes_min == '' && recipes_max == '') {
                 
                 getUserDocument().then((data) => {
                     if (data.diets) {
                         dietRestriction = data.diets;
-                        console.log('Dietary restrictions:', dietRestriction);
+                        //console.log('Dietary restrictions:', dietRestriction);
                     };
                     if (data.intolerances) {
                         intoleranceRestriction = data.intolerances;
-                        console.log('Intolerance restrictions:',intoleranceRestriction);
+                        //console.log('Intolerance restrictions:',intoleranceRestriction);
                     };
                     fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'min-missing'))
                             .then((response) => response.json())
                             .then((data) => {
                                 setRecipesMin(data);
                                 setLoading(true);
-                                console.log('API Min data stored');
+                                //console.log('API Min data stored');
                             })
                             .catch(() => {
-                                console.log("error");
+                                console.log("Recipes Screen. Min-missing fetch error.");
                             });
                         fetch(createComplexSearchApiQuery(ingredients, intoleranceRestriction, dietRestriction, 'max-used'))
                         .then((response) => response.json())
                         .then((data) => {
                             setRecipesMax(data);
                             setLoading(true);
-                            console.log('API Max data stored');
+                            //console.log('API Max data stored');
                         })
                         .catch(() => {
-                            console.log("error");
+                            console.log("Recipes Screen. Max-used fetch error.");
                         });
                 })
 
@@ -91,8 +91,8 @@ export default function Recipes(props) {
 
     const renderRecipes = ({ item, index }) => {
         const { id, title, image, usedIngredientCount, missedIngredientCount, usedIngredients } = item;
-        console.log("Recipessss Screen. recipeID looks like:", id)
-        console.log("Recipessss Screen. usedIngredients looks like:", usedIngredients)
+        //console.log("Recipessss Screen. recipeID looks like:", id)
+        //console.log("Recipessss Screen. usedIngredients looks like:", usedIngredients)
         return (
             <TouchableOpacity
             key={uuidv4()}

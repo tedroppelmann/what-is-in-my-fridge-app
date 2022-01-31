@@ -42,7 +42,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
 
     useEffect(() => { 
         prevFavoritesRef.current = user.favorites // AL Modification: Saving previous favorite recipes
-        console.log("Recipe Screen. Props looks like: ", props)
+        //console.log("Recipe Screen. Props looks like: ", props)
         if (recipe === null) {
             fetch(createRecipeApiQuery(recipe_id))
             .then((response) => response.json())
@@ -123,13 +123,13 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
     async function addFavorite(){
         const initFdb = await fdb.initFirestoreDb()
         const registryUpdated = await fdb.updateRegistryDb(initFdb, auth.currentUser.uid, "Users", "favorites", arrayUnion({recipe_id}))
-        console.log("User Updated.", registryUpdated)
+        //console.log("User Updated.", registryUpdated)
     }
 
     async function removeFavorite(){
         const initFdb = await fdb.initFirestoreDb()
         const registryUpdated = await fdb.updateRegistryDb(initFdb, auth.currentUser.uid, "Users", "favorites", arrayRemove({recipe_id}))
-        console.log("User Updated.", registryUpdated)
+        //console.log("User Updated.", registryUpdated)
     }
 
     if (windowHeight > windowWidth){
@@ -262,13 +262,13 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                                 setFavorite(true);
                                                 addFavorite().then(() => {
                                                     dispatch(fetchUser())
-                                                    console.log("Updating Local Redux with new favorite recipes.")
+                                                    //console.log("Updating Local Redux with new favorite recipes.")
                                                 })
                                             } else {
                                                 setFavorite(false);
                                                 removeFavorite().then(() => {
                                                     dispatch(fetchUser())
-                                                    console.log("Updating Local Redux with lesser favorite recipes.")
+                                                    //console.log("Updating Local Redux with lesser favorite recipes.")
                                                 })
                                             }
                                             
