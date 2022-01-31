@@ -50,13 +50,13 @@ export class IntoleranceRestrictions extends Component{
     */
     async componentDidMount(){
         try{
-            //console.log("componentDidMount intolerances previous state: ", this.state.intolerances)        
+           //console.log("componentDidMount intolerances previous state: ", this.state.intolerances)        
             var intolerances = await this.setIntoleranceRestrictions()
             // Call an extra render of the UI after the setting of the intolerance restriction in the previous line
             this.setState({intolerances: intolerances})
-            //console.log("componentDidMount intolerances after initialization state", this.state.intolerances)
+           //console.log("componentDidMount intolerances after initialization state", this.state.intolerances)
         }catch(e){
-            //console.log(e)
+            console.log(e)
         }
     }
 
@@ -70,17 +70,17 @@ export class IntoleranceRestrictions extends Component{
             this.state.intolerances.forEach(() => {
                 if(this.state.intolerances[i].toggle){
                     selectedIntolerances.push(this.state.intolerances[i].name);
-                    //console.log(this.state.intolerances[i].name," was selected.");
+                   //console.log(this.state.intolerances[i].name," was selected.");
                 }else{
-                    //console.log(this.state.intolerances[i].name," was not selected.");
+                   //console.log(this.state.intolerances[i].name," was not selected.");
                 }
                 i++;
             })
             var selectedIntolerancesToString = selectedIntolerances.toString();
-            //console.log("Intolerances parsed to string: ", selectedIntolerancesToString);
+           //console.log("Intolerances parsed to string: ", selectedIntolerancesToString);
             return selectedIntolerancesToString;
         }catch(e){
-            //console.log(e)
+            console.log(e)
         } 
     }
 
@@ -91,34 +91,34 @@ export class IntoleranceRestrictions extends Component{
         try{
             // In order to show the spinner while the execution of this method, set first savingIntolerances to true
             this.setState({ savingIntolerances: true })
-            //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
+           //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
 
             // Create a new object from the class FirebaseDb to be able to query (select, insert and update) the Firestore NoSQL database
             const fdb = new FirebaseDb()
             
             // Instantiate a Firebase database collection with the database name passed on the parameters
             //const usersCollectionFdb = await fdb.initCollectionDb("Users")
-            //console.log("Initialized users collection")
+           //console.log("Initialized users collection")
             
             // Query the ID of a user from an already initialized firestore collection given an email
             //const userDocId = await fdb.queryIdFromCollectionFdb(usersCollectionFdb, "email", "==", this.state.user.email)
-            //console.log("User document ID obtained", userDocId)
+           //console.log("User document ID obtained", userDocId)
             
             // Identify which intolerances were selected and create a string separated by commas.
             const intolerances = await this.identifySelectedIntolerances()
-            //console.log("intolerances selected: ", intolerances)
+           //console.log("intolerances selected: ", intolerances)
             
             // Update (or insert if the field intolerances does not exist) the intolerances of a specified user in the Users firestore collection
             const initFdb = await fdb.initFirestoreDb()
             const updatedRegistry = await fdb.updateRegistryDb(initFdb, this.state.userId, "Users", "intolerances", intolerances)
-            console.log("User Updated: ", updatedRegistry)
+           //console.log("User Updated: ", updatedRegistry)
 
             // Once the registry was updated on Firestore, we update the local redux data by calling fetchUser() method which will connect to Firestore and update local user data. 
             //await this.props.dispatch(fetchUser())
 
             // In order to stop showing the spinner when the execution of this method finishes, set savingIntolerances to false
             this.setState({ savingIntolerances: false })
-            //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
+           //console.log("Saving intolerances? (After update) ", this.state.savingIntolerances)
 
             //if (updatedRegistry){ this.showAlert("Intolerance Restrictions", "Intolerances Saved Successfully!", "success") } else { this.showAlert("Intolerance Restrictions", "Intolerances not saved!", "warning") }
             if (!updatedRegistry) { this.showAlert("Intolerance Restrictions", "Intolerances might not saved!", "warning") } else { this.props.navigation.goBack() }
@@ -137,7 +137,7 @@ export class IntoleranceRestrictions extends Component{
             const fdb = new FirebaseDb()
             const connFdb = await fdb.initFirestoreDb()
             const field = await fdb.queryDocFromFdb(connFdb, "Restrictions", "intolerances")
-            //console.log("Queried field from a document: ", field.intolerances)
+           //console.log("Queried field from a document: ", field.intolerances)
             
             // Query userId from the user document in Firestore
             //const usersCollectionFdb = await fdb.initCollectionDb("Users")
@@ -145,17 +145,17 @@ export class IntoleranceRestrictions extends Component{
             
             // Query the intolerances field 
             const field2 = await fdb.queryDocFromFdb(connFdb, "Users", this.state.userId)
-            //console.log("Queried field from a intolerance document: ", field.intolerances)
-            //console.log("Queried field2 from a user document: ", field2.intolerances)
+           //console.log("Queried field from a intolerance document: ", field.intolerances)
+           //console.log("Queried field2 from a user document: ", field2.intolerances)
             
             // Update the intolerances state with all a intolerances object array 
             const arrTrn = new ArrayTransform()
             const stringTurnedIntoArray = await arrTrn.stringToArray(field.intolerances, field2.intolerances)
             
             // In order to stop showing the spinner in the UI, if updating intolerances state finish executing then set uiIsLoading to false  
-            //console.log("UI is Loading? ", this.state.uiIsLoading)
+           //console.log("UI is Loading? ", this.state.uiIsLoading)
             this.setState({ uiIsLoading: false })
-            //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
+           //console.log("UI is Loading (After array transform)? ", this.state.uiIsLoading)
             
             return stringTurnedIntoArray
             
@@ -167,7 +167,7 @@ export class IntoleranceRestrictions extends Component{
     toggleSwitch = (i) => (event) => {
         this.setState((state, props) => {
           state.intolerances[i].toggle = !state.intolerances[i].toggle;
-          //console.log(state.intolerances[i].name, " toggled.")
+         //console.log(state.intolerances[i].name, " toggled.")
           return {
             intolerances: state.intolerances
           }
@@ -180,7 +180,7 @@ export class IntoleranceRestrictions extends Component{
     setSearchTerm(text){
         this.setState((state) => {
             state.searchTerm = text 
-            //console.log(state.searchTerm)
+           //console.log(state.searchTerm)
             return {
                 searchTerm: state.searchTerm 
             }
@@ -198,7 +198,7 @@ export class IntoleranceRestrictions extends Component{
     
     render(){
         const { intolerances, searchTerm } = this.state
-        //console.log("Array of intolerances: ", intolerances)
+       //console.log("Array of intolerances: ", intolerances)
         const JSX = []
         var switchKey=0;
         if (intolerances != undefined){
