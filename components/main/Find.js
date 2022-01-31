@@ -22,6 +22,9 @@ import {
 import { INGREDIENTS } from '../../storage/ingredients';
 import { CATEGORIES } from '../../storage/ingredients_categories';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 export default function App({ navigation }) {
     const ingredients = INGREDIENTS;
     const categories = CATEGORIES;
