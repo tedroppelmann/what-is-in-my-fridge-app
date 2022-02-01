@@ -24,7 +24,7 @@ export function createComplexSearchApiQuery (ing, intoleranceRestriction, dietRe
     const endpoint = 'https://api.spoonacular.com/recipes/complexSearch';
     const apiKey = '?apiKey=' + keys[0][0];
     const ingredients = '&includeIngredients=' + ing ;
-    const number = '&number=5';
+    const number = '&number=10';
     const sort = '&sort=' + sortBy + '-ingredients';
     const fill_ingredients = '&fillIngredients=true';
     const instructions = '&instructionsRequired=true';
