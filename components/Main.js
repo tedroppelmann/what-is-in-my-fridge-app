@@ -35,21 +35,21 @@ export class Main extends Component {
                 <Tab.Screen name='Favorites' component={FavoritesStackScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='star' color={color} size={30} />
+                            <MaterialCommunityIcons name='star' color={color} size={30} style={{ width:30 }}/>
                         ),
                         headerShown: false
                     }} />
                 <Tab.Screen name='Find' component={FindRecipesScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='fridge' color={color} size={35} />
+                            <MaterialCommunityIcons name='fridge' color={color} size={35} style={{ width:30 }}/>
                         ),
                         headerShown: false
                     }} />
                 <Tab.Screen name='Profile' component={ProfileStackScreen}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name='account-circle' color={color} size={30} />
+                            <MaterialCommunityIcons name='account-circle' color={color} size={30} style={{ width:30 }}/>
                         ),
                         headerShown: false
                     }} />

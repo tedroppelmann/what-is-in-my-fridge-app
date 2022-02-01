@@ -242,6 +242,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         return (
                 <HStack>
                     <VStack backgroundColor='#f5f5f4' width={windowWidth/3} height={windowHeight}>
+                        <ScrollView showsVerticalScrollIndicator={false}>
                         <Box alignItems='center'>
                             <ImageBackground
                                 style={styles.image_tablet}
@@ -315,12 +316,13 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                 {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
                             </Center>
                         </HStack>
+                        <Box mb='150'></Box>
+                        </ScrollView>
                     </VStack>
                     <FlatList
                         width={windowWidth/3}
                         height={windowHeight}
                         backgroundColor= 'white'
-                        marginBottom='20'
                         ListHeaderComponent={
                             <Box>
                                 <Box w="90%" mx='auto'>
@@ -347,8 +349,11 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderStep}
                         numColumns={1}
+                        ListFooterComponent={
+                            <Box mb='200'>
+                            </Box>
+                        }
                     />
-                    
                 </HStack>
         )
     }
