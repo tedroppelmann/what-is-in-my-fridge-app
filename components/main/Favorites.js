@@ -25,6 +25,8 @@ import {createRecipeApiQuery} from './Support/Spoonacular'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import * as Device from 'expo-device';
+
 export class Favorites extends Component{
     
     /*
@@ -38,9 +40,30 @@ export class Favorites extends Component{
             uiIsLoading: true,
             searchTerm: "", // this is required for the search input 
             dispatch: props.dispatch,
+            device: "",
         }
 
         this.setSearchTerm = this.setSearchTerm.bind(this)
+    }
+
+    async getDeviceType(){
+        try {
+            var deviceTypeToReturn = "UNKNOWN"
+            const deviceType = await Device.getDeviceTypeAsync()
+            if (deviceType == 1){
+                deviceTypeToReturn = "PHONE"
+            } else if (deviceType == 2){
+                deviceTypeToReturn = "TABLET"
+            } else if (deviceType == 3){
+                deviceTypeToReturn = "DESKTOP"
+            }
+            console.log("Favorites Screen. Device Type is: ", deviceType, " - ", deviceTypeToReturn)
+            return deviceTypeToReturn 
+        } catch (error) {
+            console.log(error)
+            return "UNKNOWN"
+        }
+        
     }
 
     /*
@@ -53,6 +76,8 @@ export class Favorites extends Component{
         // Call an extra render of the UI after the setting of the favorites in the previous line
         this.setState({favoriteRecipes: favoriteRecipes})
         //console.log("componentDidMount favoriteRecipies: ", this.state.favoriteRecipes) 
+        const device = await this.getDeviceType()
+        this.setState({device: device})
     }
 
     /*
@@ -185,7 +210,8 @@ export class Favorites extends Component{
                 onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: item.id, missed_ingredients: null })}
                 style= {styles.item} 
                 key={uuidv4()}
-                justifyContent={"center"}>
+                justifyContent={"center"}
+                key={uuidv4()}>
                 <Box key={uuidv4()} justifyContent={"center"} >
                     <Image
                         borderTopLeftRadius={20}
@@ -259,10 +285,11 @@ export class Favorites extends Component{
         }
 
         return (
-            <Center flex={1}>
-                <Box flex={1} pt="1" w="95%" mx="auto">
-                    <VStack>
-                        <Input  
+            <Center key={uuidv4()} flex={1}>
+                <Box key={uuidv4()} flex={1} pt="1" w="95%" mx="auto">
+                    <VStack key={uuidv4()}>
+                        <Input
+                            key={uuidv4()}  
                             placeholder='Search by name' 
                             onChangeText={(text) => this.setSearchTerm(text)}
                             m='3'
@@ -282,16 +309,17 @@ export class Favorites extends Component{
                         />
                     </VStack>
                     {this.state.uiIsLoading? 
-                        <Center flex={1}>
-                            <Spinner/>
+                        <Center key={uuidv4()} flex={1}>
+                            <Spinner key={uuidv4()}/>
                         </Center>
                     :   
                         <FlatList
+                            key={uuidv4()}
                             contentContainerStyle={{justifyContent: 'center'}}
                             data={favorites}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={this.renderFavorites}
-                            numColumns={windowWidth < windowHeight ? 1 : 4}
+                            numColumns={this.state.device=="PHONE" || windowWidth < windowHeight ? 1 : 4 }
                         />
                     
                     }

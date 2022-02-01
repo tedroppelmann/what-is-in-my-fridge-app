@@ -21,7 +21,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 
@@ -40,7 +40,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 
@@ -59,7 +59,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 
@@ -78,7 +78,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 
@@ -97,7 +97,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 
@@ -116,7 +116,7 @@ describe('Spoonacular.js', () => {
         const apiKey = getApiKeyFromString(complexSearchQuery, 57, 89)
 
         if (apiKeys.includes(apiKey)){
-            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=6&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
+            toBeString = "https://api.spoonacular.com/recipes/complexSearch?apiKey=" + apiKey + "&includeIngredients=" + ingredients + "&number=5&sort=min-missing-ingredients&fillIngredients=true&instructionsRequired=true&intolerances=" + intolerances + "&diet=" + diet + "&ignorePantry=false"
         }
         console.log("Expected complex query: ", toBeString)
 

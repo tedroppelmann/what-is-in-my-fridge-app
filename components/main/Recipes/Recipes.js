@@ -23,6 +23,7 @@ import FirebaseDb from '../Support/FirebaseDb'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import * as Device from 'expo-device';
 
 export default function Recipes(props) {
     const [recipes_min, setRecipesMin] = useState("");
@@ -30,6 +31,26 @@ export default function Recipes(props) {
     const [loading, setLoading] = useState(false);
     const [isSelected, setSeleted] = useState(true);
     const fdb = new FirebaseDb()
+    const [device, setDevice] = useState("")
+
+    async function getDeviceType(){
+        try {
+            var deviceTypeToReturn = "UNKNOWN"
+            const deviceType = await Device.getDeviceTypeAsync()
+            if (deviceType == 1){
+                deviceTypeToReturn = "PHONE"
+            } else if (deviceType == 2){
+                deviceTypeToReturn = "TABLET"
+            } else if (deviceType == 3){
+                deviceTypeToReturn = "DESKTOP"
+            }
+            console.log("Recipes Screen. Device Type is: ", deviceType, " - ", deviceTypeToReturn)
+            return deviceTypeToReturn 
+        } catch (error) {
+            console.log(error)
+            return "UNKNOWN"
+        }
+    }
 
     function transformIngredients(array) {
         let query = array.join();
@@ -50,6 +71,12 @@ export default function Recipes(props) {
     }
 
     useEffect(() => {
+        if (device == ""){
+            getDeviceType().then((deviceType) => {
+                setDevice(deviceType)
+            }).catch((e) => { console.log(e) })
+        }
+
         if (isFocused) {
             //console.log('Ingredients:', ingredients);
             if (recipes_min == '' && recipes_max == '') {
@@ -154,7 +181,7 @@ export default function Recipes(props) {
         )
       }
 
-    if (windowHeight > windowWidth){
+    if (device == "PHONE" || windowHeight > windowWidth){
         return (
             <Box flex={1} bg='white'>
                     <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>
@@ -197,7 +224,7 @@ export default function Recipes(props) {
                     </Box>
             </Box>
         )
-    } else {
+    } else if (device == "TABLET" || device == "DESKTOP" || windowHeight <= windowWidth) {
         return (
             <Box flex={1} bg='white'>
                     <Box w="95%" mx="auto" mb='5' flex={1} flexDirection={'row'}>

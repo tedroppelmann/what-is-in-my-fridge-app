@@ -23,9 +23,11 @@ import { fetchUser } from '../../../redux/actions/index'  // AL Modification:
 import { useSelector, useDispatch  } from 'react-redux'  // AL Modification: 
 import FirebaseDb from '../Support/FirebaseDb'
 import { createRecipeApiQuery } from '../Support/Spoonacular';
+import { v4 as uuidv4 } from 'uuid'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import * as Device from 'expo-device';
 
 export default function Recipe(props) { // AL Modifications: Changed route to props which is a more generic name and reflects much more of what is received from the parent components
     const [recipe, setRecipe] = useState(null);
@@ -39,11 +41,36 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
     const prevFavorites = prevFavoritesRef.current;  // AL Modification: Set previous favorite state from the saved state in useEffect hook. 
     const user = useSelector(state => state.userState.currentUser); // AL Modification: Get the current user from the context
     const fdb = new FirebaseDb()
+    const [device, setDevice] = useState("")
+
+    async function getDeviceType(){
+        try {
+            var deviceTypeToReturn = "UNKNOWN"
+            const deviceType = await Device.getDeviceTypeAsync()
+            if (deviceType == 1){
+                deviceTypeToReturn = "PHONE"
+            } else if (deviceType == 2){
+                deviceTypeToReturn = "TABLET"
+            } else if (deviceType == 3){
+                deviceTypeToReturn = "DESKTOP"
+            }
+            console.log("Recipe Screen. Device Type is: ", deviceType, " - ", deviceTypeToReturn)
+            return deviceTypeToReturn 
+        } catch (error) {
+            console.log(error)
+            return "UNKNOWN"
+        }
+    }
 
     useEffect(() => { 
+        if (device == ""){
+            getDeviceType().then((deviceType) => {
+                setDevice(deviceType)
+            }).catch((e) => { console.log(e) })
+        }
         prevFavoritesRef.current = user.favorites // AL Modification: Saving previous favorite recipes
         //console.log("Recipe Screen. Props looks like: ", props)
-        if (recipe === null) {
+        if (recipe === null) {            
             fetch(createRecipeApiQuery(recipe_id))
             .then((response) => response.json())
             .then((data) => {
@@ -81,12 +108,12 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
 
     const renderStep = ({ item, index }) => {
         return(
-            <Box w="90%" mx='auto'>
-                <HStack mb='3' space={3} w="90%">
-                    <Heading size='lg'>
+            <Box key={uuidv4()} w="90%" mx='auto'>
+                <HStack key={uuidv4()} mb='3' space={3} w="90%">
+                    <Heading key={uuidv4()} size='lg'>
                         {item.number}
                     </Heading>
-                    <Text>
+                    <Text key={uuidv4()}>
                         {item.step}
                     </Text>
                 </HStack>
@@ -102,19 +129,19 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         } 
         // AL Modifications
         return(
-            <Center style={ [styles.item, 
+            <Center key={uuidv4()} style={ [styles.item, 
             {marginRight: (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 1) ? 25 : 
                 (recipe.extendedIngredients.length == index + 1 && recipe.extendedIngredients.length % 3 == 2) ? 15 : 5},
             {backgroundColor: used_ingredients == null ? '#d3d3d3' : isUsed ? 'yellowgreen' : 'tomato'} ] }>
-                <Text textAlign='center' bold>{item.name}</Text>
-                <Text textAlign='center'>{item.amount} {item.unit}</Text>
+                <Text key={uuidv4()} textAlign='center' bold>{item.name}</Text>
+                <Text key={uuidv4()} textAlign='center'>{item.amount} {item.unit}</Text>
             </Center>
         );
     };
 
     if (!loading) {
         return (
-            <Center flex={1}>
+            <Center key={uuidv4()} flex={1}>
                 <Spinner/>
             </Center>
         )
@@ -132,9 +159,9 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
         //console.log("User Updated.", registryUpdated)
     }
 
-    if (windowHeight > windowWidth){
+    if (device == "PHONE" || windowHeight > windowWidth){
         return (
-            <Center flex={1}>
+            <Center key={uuidv4()} flex={1}>
                     <FlatList
                         ListHeaderComponent={
                             <Box>
@@ -169,7 +196,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                                 
                                             }}
                                         >
-                                            <MaterialCommunityIcons name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
+                                            <MaterialCommunityIcons key={uuidv4()} name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
                                         </TouchableOpacity>
                                     </Box>
                                 </ImageBackground>
@@ -177,16 +204,16 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                     <Heading size='xl' mb='3' textAlign='center'>
                                         {recipe.title}
                                     </Heading>
-                                    <HStack>
-                                        <Center h="20" w="20">
-                                            <MaterialCommunityIcons name='clock-outline' size={30} />
-                                            <Text bold={true}>
+                                    <HStack key={uuidv4()}>
+                                        <Center key={uuidv4()} h="20" w="20">
+                                            <MaterialCommunityIcons key={uuidv4()} name='clock-outline' size={30} />
+                                            <Text key={uuidv4()} bold={true}>
                                                 {recipe.readyInMinutes}'
                                             </Text>
                                         </Center>
-                                        <Center h="20" w="20">
-                                            <MaterialCommunityIcons name='account-group-outline' size={30} />
-                                            <Text bold={true}>
+                                        <Center key={uuidv4()} h="20" w="20">
+                                            <MaterialCommunityIcons key={uuidv4()} name='account-group-outline' size={30} />
+                                            <Text key={uuidv4()} bold={true}>
                                                 {recipe.servings}
                                             </Text>
                                         </Center>
@@ -196,18 +223,18 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                     <Heading size='lg' mb='3'>
                                         Restrictions
                                     </Heading>
-                                    <HStack flex={1} mx="auto" mb='3'>
-                                        <Center  m='2' alignItems="center" borderRadius='7' >
-                                            <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
-                                            {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
+                                    <HStack key={uuidv4()} flex={1} mx="auto" mb='3'>
+                                        <Center key={uuidv4()} m='2' alignItems="center" borderRadius='7' >
+                                            <MaterialCommunityIcons key={uuidv4()} name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.dairyFree ? <Text key={uuidv4()}>Dairy Free</Text> : <Text key={uuidv4()}>Not Dairy Free</Text>}
                                         </Center>
-                                        <Center m='2' alignItems="center" borderRadius='7'>
-                                            <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
-                                            {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
+                                        <Center key={uuidv4()} m='2' alignItems="center" borderRadius='7'>
+                                            <MaterialCommunityIcons key={uuidv4()} name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.glutenFree ? <Text key={uuidv4()}>Gluten Free</Text> : <Text key={uuidv4()}>Not Gluten Free</Text>}
                                         </Center>
-                                        <Center m='2' alignItems="center" borderRadius='7'>
-                                            <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
-                                            {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
+                                        <Center key={uuidv4()} m='2' alignItems="center" borderRadius='7'>
+                                            <MaterialCommunityIcons key={uuidv4()} name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
+                                            {recipe.vegetarian ? <Text key={uuidv4()}>Vegetarian</Text> : <Text key={uuidv4()}>Not Vegetarian</Text>}
                                         </Center>
                                     </HStack>
                                 </Box>
@@ -238,9 +265,9 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                     />
             </Center>
         )
-    } else {
+    } else if (device == "TABLET" || device == "DESKTOP" || windowHeight <= windowWidth) {
         return (
-                <HStack>
+                <HStack key={uuidv4()}>
                     <VStack backgroundColor='#f5f5f4' width={windowWidth/3} height={windowHeight}>
                         <Box alignItems='center'>
                             <ImageBackground
@@ -274,7 +301,7 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                                             
                                         }}
                                     >
-                                        <MaterialCommunityIcons name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
+                                        <MaterialCommunityIcons key={uuidv4()} name={favorite ? 'star' : 'star-outline'} color={favorite ? 'gold' : 'gold'} size={40} style={{margin:10}}/>
                                     </TouchableOpacity>
                                 </Box>
                             </ImageBackground>
@@ -283,16 +310,16 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                             <Heading size='lg' mb='3' textAlign='center'>
                                 {recipe.title}
                             </Heading>
-                            <HStack>
-                                <Center h="20" w="20" backgroundColor='#f5f5f4'>
-                                    <MaterialCommunityIcons name='clock-outline' size={30} />
-                                    <Text bold={true}>
+                            <HStack key={uuidv4()}>
+                                <Center key={uuidv4()} h="20" w="20" backgroundColor='#f5f5f4'>
+                                    <MaterialCommunityIcons key={uuidv4()} name='clock-outline' size={30} />
+                                    <Text key={uuidv4()} bold={true}>
                                         {recipe.readyInMinutes}'
                                     </Text>
                                 </Center>
-                                <Center h="20" w="20" backgroundColor='#f5f5f4'>
-                                    <MaterialCommunityIcons name='account-group-outline' size={30} />
-                                    <Text bold={true}>
+                                <Center key={uuidv4()} h="20" w="20" backgroundColor='#f5f5f4'>
+                                    <MaterialCommunityIcons key={uuidv4()} name='account-group-outline' size={30} />
+                                    <Text key={uuidv4()} bold={true}>
                                         {recipe.servings}
                                     </Text>
                                 </Center>
@@ -301,18 +328,18 @@ export default function Recipe(props) { // AL Modifications: Changed route to pr
                         <Heading size='lg' mb='3' textAlign='center'>
                             Restrictions
                         </Heading>
-                        <HStack mx="auto" mb='3'>
-                            <Center  m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
-                                <MaterialCommunityIcons name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
-                                {recipe.dairyFree ? <Text>Dairy Free</Text> : <Text>Not Dairy Free</Text>}
+                        <HStack key={uuidv4()} mx="auto" mb='3'>
+                            <Center key={uuidv4()}  m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons key={uuidv4()} name='cow' size={26} color={recipe.dairyFree ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.dairyFree ? <Text key={uuidv4()}>Dairy Free</Text> : <Text key={uuidv4()}>Not Dairy Free</Text>}
                             </Center>
-                            <Center m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
-                                <MaterialCommunityIcons name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
-                                {recipe.glutenFree ? <Text>Gluten Free</Text> : <Text>Not Gluten Free</Text>}
+                            <Center key={uuidv4()} m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons key={uuidv4()} name='barley' size={26} color={recipe.glutenFree ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.glutenFree ? <Text key={uuidv4()}>Gluten Free</Text> : <Text key={uuidv4()}>Not Gluten Free</Text>}
                             </Center>
-                            <Center m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
-                                <MaterialCommunityIcons name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
-                                {recipe.vegetarian ? <Text>Vegetarian</Text> : <Text>Not Vegetarian</Text>}
+                            <Center key={uuidv4()} m='2' alignItems="center" borderRadius='7' backgroundColor='#f5f5f4'>
+                                <MaterialCommunityIcons key={uuidv4()} name='sprout' size={26} color={recipe.vegetarian ? 'yellowgreen' : 'tomato'}/>
+                                {recipe.vegetarian ? <Text key={uuidv4()}>Vegetarian</Text> : <Text key={uuidv4()}>Not Vegetarian</Text>}
                             </Center>
                         </HStack>
                     </VStack>
