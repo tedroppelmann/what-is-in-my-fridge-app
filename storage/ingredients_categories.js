@@ -5,5 +5,4 @@ export const CATEGORIES = [
     {name: 'Grains'},
     {name: 'Condiments'},
     {name: 'Dairies'},
-    {name: 'Sauces'},
 ]
