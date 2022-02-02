@@ -244,7 +244,7 @@ export class Favorites extends Component{
                         title: favoriteRecipe.title,
                         image: favoriteRecipe.sourceUrl}
                     )
-                    JSX.push(
+                    /*JSX.push(
                         <VStack key={uuidv4()}>
                             <TouchableOpacity
                                 onPress={() => this.props.navigation.navigate('Recipe', { recipe_id: favoriteRecipe.recipe_id, missed_ingredients: null })}
@@ -266,14 +266,14 @@ export class Favorites extends Component{
                                 </Box>
                             </TouchableOpacity>
                         </VStack>
-                    )
+                    )*/
                 }
                 
             })
         }
 
         // If there are no favorite recipes, then display a message
-        if (favoriteRecipes.length == 0){
+        /*if (favoriteRecipes.length == 0){
             //console.log("There are no favorite recipes")
             JSX.push(
                 <VStack key={uuidv4()}>
@@ -282,14 +282,13 @@ export class Favorites extends Component{
                     </Heading>
                 </VStack>
             )
-        }
+        }*/
 
         return (
-            <Center key={uuidv4()} flex={1}>
-                <Box key={uuidv4()} flex={1} pt="1" w="95%" mx="auto">
-                    <VStack key={uuidv4()}>
-                        <Input
-                            key={uuidv4()}  
+            <Center flex={1}>
+                <Box flex={1} pt="1" w="95%" mx="auto">
+                    <VStack>
+                        <Input  
                             placeholder='Search by name' 
                             onChangeText={(text) => this.setSearchTerm(text)}
                             m='3'
