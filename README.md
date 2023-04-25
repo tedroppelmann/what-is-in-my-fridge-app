@@ -1,3 +1,5 @@
+# What's in my fridge? app
+
 To install the dependencies:
 ```
 npm install
