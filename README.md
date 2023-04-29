@@ -1,5 +1,10 @@
 # What's in my fridge? app
 
+Application that recommends cooking recipes depending on the ingredients available at home. 
+
+![plot](./main_screen.png)
+
+
 To install the dependencies:
 ```
 npm install
