@@ -2,7 +2,7 @@
 
 Application that recommends cooking recipes depending on the ingredients available at home. 
 
-![plot](./main_screen.PNG)
+<img src="/main_screen.PNG" width="200" />
 
 
 To install the dependencies:
